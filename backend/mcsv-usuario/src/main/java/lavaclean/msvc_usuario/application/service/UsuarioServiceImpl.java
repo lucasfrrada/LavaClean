@@ -1,10 +1,10 @@
 package lavaclean.msvc_usuario.application.service;
 
 import lavaclean.msvc_usuario.domain.exception.UsuarioException;
-import lavaclean.msvc_usuario.infrastructure.persistence.entity.Rol;
-import lavaclean.msvc_usuario.infrastructure.persistence.entity.Usuario;
-import lavaclean.msvc_usuario.infrastructure.persistence.repository.RolRepository;
-import lavaclean.msvc_usuario.infrastructure.persistence.repository.UsuarioRepository;
+import lavaclean.msvc_usuario.domain.model.entities.Rol;
+import lavaclean.msvc_usuario.domain.model.entities.Usuario;
+import lavaclean.msvc_usuario.domain.repository.RolRepository;
+import lavaclean.msvc_usuario.domain.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

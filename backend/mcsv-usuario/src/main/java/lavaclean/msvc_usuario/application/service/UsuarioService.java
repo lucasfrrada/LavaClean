@@ -1,6 +1,6 @@
 package lavaclean.msvc_usuario.application.service;
 
-import lavaclean.msvc_usuario.infrastructure.persistence.entity.Usuario;
+import lavaclean.msvc_usuario.domain.model.entities.Usuario;
 
 import java.util.List;
 import java.util.Optional;
