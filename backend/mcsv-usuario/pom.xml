@@ -8,8 +8,8 @@
         <version>0.0.1-SNAPSHOT</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>lavaclean</groupId>
-	<artifactId>mvsv-usuario</artifactId>
+	<groupId>mcsv</groupId>
+	<artifactId>usuario</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name/>
 	<description/>
