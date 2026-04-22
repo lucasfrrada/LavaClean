@@ -16,6 +16,7 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>mcsv-pedidos</module>
+        <module>mcsv-usuario</module>
 	</modules>
 	<url/>
 	<licenses>
