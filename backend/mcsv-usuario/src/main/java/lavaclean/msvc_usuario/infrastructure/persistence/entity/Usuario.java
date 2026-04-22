@@ -1,9 +1,8 @@
-package lavaclean.msvc_usuario.domain.model.entities;
+package lavaclean.msvc_usuario.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
+import lavaclean.msvc_usuario.infrastructure.persistence.entity.Rol;
 import lombok.*;
-import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table(name = "usuario")
@@ -24,9 +23,13 @@ public class Usuario {
     @Column(name = "ap_materno")
     private String apMaterno;
 
-    @Column(name = "correo")
+    @Column(name = "correo", nullable = false, unique = true)
     private String correo;
 
-    @Column(name = "telefono")
-    private Integer telefono;
+    @Column(name = "telefono", nullable = false, unique = true)
+    private String telefono;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_rol", referencedColumnName = "id_rol", nullable = false)
+    private Rol rol;
 }
