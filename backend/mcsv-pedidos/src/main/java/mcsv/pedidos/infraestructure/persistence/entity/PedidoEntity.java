@@ -1,17 +1,20 @@
-package mcsv.pedidos.domain.model.entities;
+package mcsv.pedidos.infraestructure.persistence.entity;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
+import mcsv.pedidos.domain.model.EstadoPedido;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table(name="pedidos")
-@Getter @Setter @ToString
-@NoArgsConstructor @AllArgsConstructor
-public class Pedido {
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+public class PedidoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +24,7 @@ public class Pedido {
     private Long idPedido;
 
     @Column(name = "estado_pedido")
-    private String estado;
+    private EstadoPedido estado;
 
     @Column(name = "fecha_entrega")
     private LocalDate fecha_entrega;
@@ -32,4 +35,6 @@ public class Pedido {
     @Column(name = "id_usuario")
     private Long idUsuario;
 
+    @Column(name = "total")
+    private BigDecimal total;
 }

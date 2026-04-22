@@ -1,6 +1,5 @@
 package mcsv.pedidos.application.service;
 
-import mcsv.pedidos.domain.model.entities.Pedido;
 
 import java.util.List;
 
