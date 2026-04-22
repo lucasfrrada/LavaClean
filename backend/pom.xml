@@ -15,7 +15,7 @@
 	<description/>
 	<packaging>pom</packaging>
 	<modules>
-		<module>pedidos</module>
+		<module>mcsv-pedidos</module>
 	</modules>
 	<url/>
 	<licenses>
