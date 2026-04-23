@@ -1,7 +1,7 @@
 package lavaclean.msvc_usuario.application.service;
 
 import lavaclean.msvc_usuario.domain.exception.UsuarioException;
-import lavaclean.msvc_usuario.domain.model.entities.Rol;
+import lavaclean.msvc_usuario.infrastructure.persistence.entity.Rol;
 import lavaclean.msvc_usuario.infrastructure.persistence.entity.Usuario;
 import lavaclean.msvc_usuario.infrastructure.persistence.repository.RolRepository;
 import lavaclean.msvc_usuario.infrastructure.persistence.repository.UsuarioRepository;
