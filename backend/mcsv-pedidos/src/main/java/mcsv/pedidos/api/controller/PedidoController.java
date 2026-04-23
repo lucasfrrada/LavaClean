@@ -3,6 +3,7 @@ package mcsv.pedidos.api.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mcsv.pedidos.api.dto.CrearPedidoRequest;
+import mcsv.pedidos.api.dto.PedidoResponse;
 import mcsv.pedidos.application.service.PedidoService;
 import mcsv.pedidos.infraestructure.persistence.entity.PedidoEntity;
 import org.springframework.http.HttpStatus;
@@ -20,9 +21,9 @@ public class PedidoController {
     private final PedidoService pedidoService;
 
     @PostMapping
-    public ResponseEntity<PedidoEntity> createPedido(@Valid @RequestBody CrearPedidoRequest crearPedidoRequest){
+    public ResponseEntity<PedidoResponse> createPedido(@Valid @RequestBody CrearPedidoRequest crearPedidoRequest){
 
-        PedidoEntity pedido = pedidoService.save(crearPedidoRequest);
+        PedidoResponse pedido = pedidoService.save(crearPedidoRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(pedido);
 
     }

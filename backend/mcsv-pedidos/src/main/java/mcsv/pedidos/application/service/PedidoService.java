@@ -5,6 +5,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import mcsv.pedidos.api.dto.CrearDetallePedidoRequest;
 import mcsv.pedidos.api.dto.CrearPedidoRequest;
+import mcsv.pedidos.api.dto.PedidoResponse;
+import mcsv.pedidos.application.mapper.PedidoMapper;
 import mcsv.pedidos.domain.model.EstadoPedido;
 import mcsv.pedidos.infraestructure.persistence.entity.DetallePedidoEntity;
 import mcsv.pedidos.infraestructure.persistence.entity.PedidoEntity;
@@ -28,7 +30,7 @@ public class PedidoService {
     private final ServicioRepository servicioRepository;
 
     @Transactional
-    public PedidoEntity save(CrearPedidoRequest newPedidoRequest) {
+    public PedidoResponse save(CrearPedidoRequest newPedidoRequest) {
 
         PedidoEntity pedido = new PedidoEntity();
         pedido.setEstado(EstadoPedido.CREADO);
@@ -68,7 +70,9 @@ public class PedidoService {
         pedido.setDetallePedido(detalles);
         pedido.setTotal(total);
 
+        PedidoEntity saved = pedidoRepository.save(pedido);
 
-        return pedidoRepository.save(pedido);
+
+        return PedidoMapper.toResponse(saved);
     }
 }
