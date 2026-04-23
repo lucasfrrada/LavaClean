@@ -6,6 +6,8 @@ import mcsv.pedidos.domain.model.EstadoPedido;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="pedidos")
@@ -14,6 +16,7 @@ import java.time.LocalDate;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class PedidoEntity {
 
     @Id
@@ -35,6 +38,11 @@ public class PedidoEntity {
     @Column(name = "id_usuario")
     private Long idUsuario;
 
-    @Column(name = "total")
+    @Column(name = "total", nullable = false, precision = 10, scale = 2)
     private BigDecimal total;
+
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<DetallePedidoEntity> detallePedido = new ArrayList<>();
+
 }

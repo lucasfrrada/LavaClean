@@ -1,4 +1,4 @@
-package mcsv.pedidos.infraestructure.persistence;
+package mcsv.pedidos.infraestructure.persistence.repository;
 
 import mcsv.pedidos.infraestructure.persistence.entity.ServicioEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
