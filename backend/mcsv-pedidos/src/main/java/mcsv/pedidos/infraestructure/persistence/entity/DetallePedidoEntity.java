@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @Setter @Getter
 @AllArgsConstructor @NoArgsConstructor
 @ToString
-public class DetallePedido {
+public class DetallePedidoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
