@@ -1,14 +1,13 @@
 package lavaclean.msvc_usuario.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
-import lavaclean.msvc_usuario.infrastructure.persistence.entity.Rol;
 import lombok.*;
 
 @Entity
 @Table(name = "usuario")
 @Getter @Setter @ToString
 @NoArgsConstructor @AllArgsConstructor
-public class Usuario {
+public class UsuarioEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_usuario")
@@ -27,9 +26,9 @@ public class Usuario {
     private String correo;
 
     @Column(name = "telefono", nullable = false, unique = true)
-    private String telefono;
+    private Long telefono;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_rol", referencedColumnName = "id_rol", nullable = false)
-    private Rol rol;
+    private RolEntity idRolEntity;
 }

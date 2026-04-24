@@ -1,8 +1,8 @@
 package lavaclean.msvc_usuario.application.service;
 
 import lavaclean.msvc_usuario.domain.exception.UsuarioException;
-import lavaclean.msvc_usuario.infrastructure.persistence.entity.Rol;
-import lavaclean.msvc_usuario.infrastructure.persistence.entity.Usuario;
+import lavaclean.msvc_usuario.infrastructure.persistence.entity.RolEntity;
+import lavaclean.msvc_usuario.infrastructure.persistence.entity.UsuarioEntity;
 import lavaclean.msvc_usuario.infrastructure.persistence.repository.RolRepository;
 import lavaclean.msvc_usuario.infrastructure.persistence.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,15 +27,15 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional(readOnly = true)
-    public Usuario findById(Long id) {
+    public UsuarioEntity findById(Long id) {
         return this.usuarioRepository.findById(id).orElseThrow(
-                () -> new UsuarioException("Usuario con id " + id + " no encontrado en el sistema.")
+                () -> new UsuarioException("UsuarioEntity con id " + id + " no encontrado en el sistema.")
         );
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Usuario> findAll() {
+    public List<UsuarioEntity> findAll() {
         return this.usuarioRepository.findAll();
     }
 
@@ -43,55 +43,55 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     public void deleteById(Long id) {
         // Reutilización de findById para lanzar la excepción automáticamente si no existe
-        Usuario usuario = this.findById(id);
-        this.usuarioRepository.delete(usuario);
+        UsuarioEntity usuarioEntity = this.findById(id);
+        this.usuarioRepository.delete(usuarioEntity);
     }
 
     @Override
     @Transactional
-    public Usuario save(Usuario usuario) {
+    public UsuarioEntity save(UsuarioEntity usuarioEntity) {
         // Validación correo duplicado
-        if (this.usuarioRepository.findByCorreo(usuario.getCorreo()).isPresent()) {
-            throw new UsuarioException("El correo " + usuario.getCorreo() + " ya se encuentra registrado.");
+        if (this.usuarioRepository.findByCorreo(usuarioEntity.getCorreo()).isPresent()) {
+            throw new UsuarioException("El correo " + usuarioEntity.getCorreo() + " ya se encuentra registrado.");
         }
 
         // NOTA: En el futuro, agregar lógica para encriptar la contraseña (hash)
         // antes de hacer el save().
 
-        return this.usuarioRepository.save(usuario);
+        return this.usuarioRepository.save(usuarioEntity);
     }
 
     @Override
     @Transactional
-    public Usuario update(Long id, Usuario usuarioActualizado) {
-        Usuario usuarioExistente = this.findById(id);
+    public UsuarioEntity update(Long id, UsuarioEntity usuarioEntityActualizado) {
+        UsuarioEntity usuarioEntityExistente = this.findById(id);
 
         // Solo actualizar datos de perfil
-        usuarioExistente.setNombres(usuarioActualizado.getNombres());
-        usuarioExistente.setApPaterno(usuarioActualizado.getApPaterno());
-        usuarioExistente.setApMaterno(usuarioActualizado.getApMaterno());
-        usuarioExistente.setTelefono(usuarioActualizado.getTelefono());
+        usuarioEntityExistente.setNombres(usuarioEntityActualizado.getNombres());
+        usuarioEntityExistente.setApPaterno(usuarioEntityActualizado.getApPaterno());
+        usuarioEntityExistente.setApMaterno(usuarioEntityActualizado.getApMaterno());
+        usuarioEntityExistente.setTelefono(usuarioEntityActualizado.getTelefono());
 
-        return this.usuarioRepository.save(usuarioExistente);
+        return this.usuarioRepository.save(usuarioEntityExistente);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Usuario> findByCorreo(String correo) {
+    public Optional<UsuarioEntity> findByCorreo(String correo) {
         return this.usuarioRepository.findByCorreo(correo);
     }
 
     @Override
     @Transactional
-    public Usuario asignarRol(Long idUsuario, Integer idRol) {
-        Usuario usuario = this.findById(idUsuario);
+    public UsuarioEntity asignarRol(Long idUsuario, Integer idRol) {
+        UsuarioEntity usuarioEntity = this.findById(idUsuario);
 
-        Rol nuevoRol = this.rolRepository.findById(idRol).orElseThrow(
+        RolEntity nuevoRolEntity = this.rolRepository.findById(idRol).orElseThrow(
                 () -> new UsuarioException("El Rol con id " + idRol + " no existe.")
         );
 
-        usuario.setRol(nuevoRol);
-        return this.usuarioRepository.save(usuario);
+        usuarioEntity.setIdRolEntity(nuevoRolEntity);
+        return this.usuarioRepository.save(usuarioEntity);
     }
 
 }

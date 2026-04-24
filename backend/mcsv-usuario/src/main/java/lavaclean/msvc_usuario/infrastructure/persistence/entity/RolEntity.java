@@ -7,12 +7,12 @@ import lombok.*;
 @Table(name = "rol")
 @Getter @Setter @ToString
 @NoArgsConstructor @AllArgsConstructor
-public class Rol {
+public class RolEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_rol")
-    private Integer idRol;
+    private Long idRol;
 
     @Column(name = "nombre_rol", nullable = false, unique = true)
     private String nombreRol;

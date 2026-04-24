@@ -4,13 +4,11 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data @Builder
-public class UsuarioResponde {
+public class UsuarioResponse {
 
     private Long idUsuario;
     private Long idRol;
-    private String nombres;
-    private String apPaterno;
-    private String apMaterno;
+    private String nombreCompleto;
     private String correo;
-    private String telefono;
+    private Long telefono;
 }
