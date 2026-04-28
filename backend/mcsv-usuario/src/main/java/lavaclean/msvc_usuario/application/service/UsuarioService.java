@@ -12,13 +12,10 @@ public interface UsuarioService {
     UsuarioEntity save(UsuarioEntity usuarioEntity);
     UsuarioEntity update(Long id, UsuarioEntity usuarioEntity);
 
-    // ==========================================
     // Métodos Críticos para Seguridad y JWT
-    // ==========================================
 
     // Esencial para el Login: Busca al usuario (y su rol EAGER) por email
     Optional<UsuarioEntity> findByCorreo(String correo);
-
     // Metodo seguro para cambiar exclusivamente el rol sin tocar otros datos
     UsuarioEntity asignarRol(Long idUsuario, Integer idRol);
 }

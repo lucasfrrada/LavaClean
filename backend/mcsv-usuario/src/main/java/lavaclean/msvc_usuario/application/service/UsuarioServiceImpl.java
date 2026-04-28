@@ -20,25 +20,23 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Autowired
     private RolRepository rolRepository;
 
-    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, RolRepository rolRepository) {
-        this.usuarioRepository = usuarioRepository;
-        this.rolRepository = rolRepository;
-    }
-
+    // Buscar usuario por ID
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public UsuarioEntity findById(Long id) {
         return this.usuarioRepository.findById(id).orElseThrow(
                 () -> new UsuarioException("UsuarioEntity con id " + id + " no encontrado en el sistema.")
         );
     }
 
+    // Listar todos los Usuarios
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<UsuarioEntity> findAll() {
         return this.usuarioRepository.findAll();
     }
 
+    // Eliminar Usurio por ID
     @Override
     @Transactional
     public void deleteById(Long id) {
@@ -47,6 +45,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         this.usuarioRepository.delete(usuarioEntity);
     }
 
+    // Guardar Nuevo Usuario
     @Override
     @Transactional
     public UsuarioEntity save(UsuarioEntity usuarioEntity) {
@@ -61,10 +60,12 @@ public class UsuarioServiceImpl implements UsuarioService {
         return this.usuarioRepository.save(usuarioEntity);
     }
 
+    // Update Datos de Perfil Usuario por ID
     @Override
     @Transactional
     public UsuarioEntity update(Long id, UsuarioEntity usuarioEntityActualizado) {
-        UsuarioEntity usuarioEntityExistente = this.findById(id);
+        UsuarioEntity usuarioEntityExistente = usuarioRepository.findById(id)
+                        .orElseThrow(() -> new UsuarioException("Alumno con id "+id+" no encontrado"));
 
         // Solo actualizar datos de perfil
         usuarioEntityExistente.setNombres(usuarioEntityActualizado.getNombres());
@@ -75,16 +76,19 @@ public class UsuarioServiceImpl implements UsuarioService {
         return this.usuarioRepository.save(usuarioEntityExistente);
     }
 
+    // Buscar Usuario por correo
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public Optional<UsuarioEntity> findByCorreo(String correo) {
         return this.usuarioRepository.findByCorreo(correo);
     }
 
+
     @Override
     @Transactional
     public UsuarioEntity asignarRol(Long idUsuario, Integer idRol) {
-        UsuarioEntity usuarioEntity = this.findById(idUsuario);
+        UsuarioEntity usuarioEntity = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new UsuarioException("Alumno con id "+idUsuario+" no encontrado"));;
 
         RolEntity nuevoRolEntity = this.rolRepository.findById(idRol).orElseThrow(
                 () -> new UsuarioException("El Rol con id " + idRol + " no existe.")
