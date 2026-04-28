@@ -1,12 +1,15 @@
 package mcsv.pedidos.application.service;
 
+import feign.FeignException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import mcsv.pedidos.api.dto.request.*;
 import mcsv.pedidos.api.dto.response.PedidoResponse;
+import mcsv.pedidos.api.dto.response.UsuarioResponseRest;
 import mcsv.pedidos.application.mapper.PedidoMapper;
 import mcsv.pedidos.domain.model.EstadoPedido;
+import mcsv.pedidos.infraestructure.client.UsuarioClientRest;
 import mcsv.pedidos.infraestructure.persistence.entity.DetallePedidoEntity;
 import mcsv.pedidos.infraestructure.persistence.entity.PedidoEntity;
 import mcsv.pedidos.infraestructure.persistence.entity.PrendaEntity;
@@ -27,6 +30,7 @@ public class PedidoService {
     private final PedidoRepository pedidoRepository;
     private final PrendaRepository prendaRepository;
     private final ServicioRepository servicioRepository;
+    private final UsuarioClientRest usuarioClientRest;
 
     /* GUARDAR PEDIDO */
     @Transactional
@@ -36,6 +40,14 @@ public class PedidoService {
         pedido.setEstado(EstadoPedido.PENDIENTE);
         pedido.setFecha_entrega(newPedidoRequest.getFecha_entrega());
         pedido.setFecha_llegada(newPedidoRequest.getFecha_llegada());
+
+        try{
+            UsuarioResponseRest usuario = usuarioClientRest.getUsuario(newPedidoRequest.getIdUsuario());
+        } catch (FeignException.NotFound ex){
+            throw new EntityNotFoundException("Usuario con ID: "+newPedidoRequest.getIdUsuario()+" no encontrado");
+        }
+
+
         pedido.setIdUsuario(newPedidoRequest.getIdUsuario());
 
         List<DetallePedidoEntity> detalles = new ArrayList<>();
