@@ -1,42 +1,53 @@
 package lavaclean.msvc_usuario.api.controller;
 
+import jakarta.validation.Valid;
 import lavaclean.msvc_usuario.api.dto.UsuarioRequest;
 import lavaclean.msvc_usuario.api.dto.UsuarioResponse;
+import lavaclean.msvc_usuario.application.mapper.UsuarioMapper; // <-- Importamos tu traductor
 import lavaclean.msvc_usuario.application.service.UsuarioService;
 import lavaclean.msvc_usuario.infrastructure.persistence.entity.UsuarioEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/usuarios")
+@RequiredArgsConstructor
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
 
-    public UsuarioController(UsuarioService usuarioService) {
-        this.usuarioService = usuarioService;
+    // Listar todos los Usuarios
+    @GetMapping
+    public ResponseEntity<List<UsuarioResponse>> ListarUsuarios(){
+        return ResponseEntity.status(HttpStatus.OK).body(this.usuarioService.findAll());
     }
 
+    // Guardar Usuario
     @PostMapping
-    public ResponseEntity<UsuarioResponse> registrar(@RequestBody UsuarioRequest request) {
-        // Convertimos Request -> Entity (En el futuro esto lo hace el Mapper)
-        UsuarioEntity usuario = new UsuarioEntity();
-        usuario.setNombres(request.getNombres());
-        usuario.setCorreo(request.getCorreo());
-        // ... setear resto de campos ...
-
-        UsuarioEntity guardado = usuarioService.save(usuario);
-
-        // Convertimos Entity -> Response (Filtramos datos sensibles)
-        UsuarioResponse response = UsuarioResponse.builder()
-                .idUsuario(guardado.getIdUsuario())
-                .idRol(guardado.getIdRolEntity().getIdRol())
-                .nombreCompleto(guardado.getNombres() + " " + guardado.getApPaterno())
-                .correo(guardado.getCorreo())
-                .telefono(guardado.getTelefono())
-                .build();
+    public ResponseEntity<UsuarioResponse> registrar(@Valid @RequestBody UsuarioRequest request) {
+        UsuarioEntity usuarioEntity = UsuarioMapper.toEntity(request);
+        UsuarioEntity guardado = usuarioService.save(usuarioEntity);
+        UsuarioResponse response = UsuarioMapper.toResponse(guardado);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    // Actualizar datos de perfil por ID
+    @PutMapping("/{id}")
+    public ResponseEntity<UsuarioResponse> actualizar(@PathVariable Long id, @Valid @RequestBody UsuarioRequest request) {
+        UsuarioEntity datosActualizar = UsuarioMapper.toEntity(request);
+        UsuarioEntity actualizado = this.usuarioService.update(id, datosActualizar);
+        return ResponseEntity.ok(UsuarioMapper.toResponse(actualizado));
+    }
+
+    // Eliminar Usuario por ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        this.usuarioService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
