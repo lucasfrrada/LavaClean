@@ -1,7 +1,7 @@
 package mcsv.pedidos.domain.model;
 
 public enum EstadoPedido {
-    CREADO,
+    PENDIENTE,
     EN_PROCESO,
     LISTO,
     ENTREGADO,

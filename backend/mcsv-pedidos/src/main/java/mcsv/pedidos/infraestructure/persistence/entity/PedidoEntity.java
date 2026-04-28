@@ -26,6 +26,7 @@ public class PedidoEntity {
     // @Schema(description = "Primary key Pedido", example = "1")
     private Long idPedido;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "estado_pedido")
     private EstadoPedido estado;
 

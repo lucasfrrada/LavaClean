@@ -1,7 +1,7 @@
 package mcsv.pedidos.application.mapper;
 
-import mcsv.pedidos.api.dto.DetallePedidoResponse;
-import mcsv.pedidos.api.dto.PedidoResponse;
+import mcsv.pedidos.api.dto.response.DetallePedidoResponse;
+import mcsv.pedidos.api.dto.response.PedidoResponse;
 import mcsv.pedidos.infraestructure.persistence.entity.DetallePedidoEntity;
 import mcsv.pedidos.infraestructure.persistence.entity.PedidoEntity;
 
