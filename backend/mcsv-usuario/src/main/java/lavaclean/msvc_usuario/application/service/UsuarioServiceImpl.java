@@ -1,6 +1,6 @@
 package lavaclean.msvc_usuario.application.service;
 
-import lavaclean.msvc_usuario.api.dto.UsuarioRequest; // <-- ¡Faltaba importar esto!
+import lavaclean.msvc_usuario.api.dto.UsuarioRequest;
 import lavaclean.msvc_usuario.api.dto.UsuarioResponse;
 import lavaclean.msvc_usuario.application.mapper.UsuarioMapper;
 import lavaclean.msvc_usuario.domain.exception.UsuarioException;
@@ -47,27 +47,18 @@ public class UsuarioServiceImpl implements UsuarioService {
         this.usuarioRepository.delete(usuarioEntity);
     }
 
-    // 👇 AQUÍ ESTÁ LA CORRECCIÓN: Ahora recibe UsuarioRequest 👇
     @Override
     @Transactional
     public UsuarioEntity registrarUsuario(UsuarioRequest request) {
-        // 1. Validar correo duplicado
         if (this.usuarioRepository.findByCorreo(request.getCorreo()).isPresent()) {
             throw new UsuarioException("El correo " + request.getCorreo() + " ya se encuentra registrado.");
         }
-
-        // 2. Usar el Mapper para transformar los datos básicos (Nombres, correo, teléfono)
         UsuarioEntity nuevoUsuario = UsuarioMapper.toEntity(request);
-
-        // 3. Buscar el Rol en la BD y asignarlo
         RolEntity rolAsignado = rolRepository.findById(Long.valueOf(request.getIdRol()))
                 .orElseThrow(() -> new UsuarioException("El rol especificado no existe en el sistema"));
         nuevoUsuario.setIdRolEntity(rolAsignado);
-
-        // 4. Asignar la contraseña manualmente
         nuevoUsuario.setContrasenia(request.getContrasenia());
 
-        // 5. Guardar en la base de datos
         return this.usuarioRepository.save(nuevoUsuario);
     }
 

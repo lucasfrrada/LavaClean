@@ -3,7 +3,7 @@ package lavaclean.msvc_usuario.api.controller;
 import jakarta.validation.Valid;
 import lavaclean.msvc_usuario.api.dto.UsuarioRequest;
 import lavaclean.msvc_usuario.api.dto.UsuarioResponse;
-import lavaclean.msvc_usuario.application.mapper.UsuarioMapper; // <-- Importamos tu traductor
+import lavaclean.msvc_usuario.application.mapper.UsuarioMapper;
 import lavaclean.msvc_usuario.application.service.UsuarioService;
 import lavaclean.msvc_usuario.infrastructure.persistence.entity.UsuarioEntity;
 import lombok.RequiredArgsConstructor;
