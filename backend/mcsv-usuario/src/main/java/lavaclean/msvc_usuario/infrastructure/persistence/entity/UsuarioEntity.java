@@ -28,6 +28,9 @@ public class UsuarioEntity {
     @Column(name = "telefono", nullable = false, unique = true)
     private Long telefono;
 
+    @Column(nullable = false)
+    private String contrasenia;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_rol", referencedColumnName = "id_rol", nullable = false)
     private RolEntity idRolEntity;

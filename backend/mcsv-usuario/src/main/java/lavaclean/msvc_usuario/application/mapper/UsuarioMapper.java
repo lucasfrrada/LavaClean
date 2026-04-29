@@ -21,7 +21,7 @@ public class UsuarioMapper {
                 .nombreCompleto(nombreCompleto)
                 .correo(usuarioEntity.getCorreo())
                 .telefono(usuarioEntity.getTelefono())
-                .idRol(Long.valueOf(usuarioEntity.getIdRolEntity() != null ? usuarioEntity.getIdRolEntity().getNombreRol() : "SIN_ROL"))
+                .idRol(usuarioEntity.getIdRolEntity() != null ? usuarioEntity.getIdRolEntity().getIdRol() : null)
                 .build();
     }
 

@@ -1,7 +1,8 @@
 package lavaclean.msvc_usuario.application.service;
 
+import lavaclean.msvc_usuario.api.dto.UsuarioRequest; // <-- ¡Faltaba importar esto!
 import lavaclean.msvc_usuario.api.dto.UsuarioResponse;
-import lavaclean.msvc_usuario.application.mapper.UsuarioMapper; // Asumiendo que creaste el Mapper
+import lavaclean.msvc_usuario.application.mapper.UsuarioMapper;
 import lavaclean.msvc_usuario.domain.exception.UsuarioException;
 import lavaclean.msvc_usuario.infrastructure.persistence.entity.RolEntity;
 import lavaclean.msvc_usuario.infrastructure.persistence.entity.UsuarioEntity;
@@ -16,10 +17,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor // Esta anotación crea el constructor automáticamente
+@RequiredArgsConstructor
 public class UsuarioServiceImpl implements UsuarioService {
 
-    // Al poner "final", Lombok sabe que debe inyectarlos. ¡Adiós @Autowired!
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
 
@@ -34,7 +34,6 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional(readOnly = true)
     public List<UsuarioResponse> findAll() {
-        // Solución: Obtenemos las entidades y usamos el Mapper para convertirlas a Response
         return this.usuarioRepository.findAll()
                 .stream()
                 .map(UsuarioMapper::toResponse)
@@ -48,13 +47,28 @@ public class UsuarioServiceImpl implements UsuarioService {
         this.usuarioRepository.delete(usuarioEntity);
     }
 
+    // 👇 AQUÍ ESTÁ LA CORRECCIÓN: Ahora recibe UsuarioRequest 👇
     @Override
     @Transactional
-    public UsuarioEntity save(UsuarioEntity usuarioEntity) {
-        if (this.usuarioRepository.findByCorreo(usuarioEntity.getCorreo()).isPresent()) {
-            throw new UsuarioException("El correo " + usuarioEntity.getCorreo() + " ya se encuentra registrado.");
+    public UsuarioEntity registrarUsuario(UsuarioRequest request) {
+        // 1. Validar correo duplicado
+        if (this.usuarioRepository.findByCorreo(request.getCorreo()).isPresent()) {
+            throw new UsuarioException("El correo " + request.getCorreo() + " ya se encuentra registrado.");
         }
-        return this.usuarioRepository.save(usuarioEntity);
+
+        // 2. Usar el Mapper para transformar los datos básicos (Nombres, correo, teléfono)
+        UsuarioEntity nuevoUsuario = UsuarioMapper.toEntity(request);
+
+        // 3. Buscar el Rol en la BD y asignarlo
+        RolEntity rolAsignado = rolRepository.findById(Long.valueOf(request.getIdRol()))
+                .orElseThrow(() -> new UsuarioException("El rol especificado no existe en el sistema"));
+        nuevoUsuario.setIdRolEntity(rolAsignado);
+
+        // 4. Asignar la contraseña manualmente
+        nuevoUsuario.setContrasenia(request.getContrasenia());
+
+        // 5. Guardar en la base de datos
+        return this.usuarioRepository.save(nuevoUsuario);
     }
 
     @Override
@@ -79,7 +93,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional
-    public UsuarioEntity asignarRol(Long idUsuario, Integer idRol) {
+    public UsuarioEntity asignarRol(Long idUsuario, Long idRol) {
         UsuarioEntity usuarioEntity = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UsuarioException("Usuario con id " + idUsuario + " no encontrado"));
 

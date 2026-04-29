@@ -29,8 +29,7 @@ public class UsuarioController {
     // Guardar Usuario
     @PostMapping
     public ResponseEntity<UsuarioResponse> registrar(@Valid @RequestBody UsuarioRequest request) {
-        UsuarioEntity usuarioEntity = UsuarioMapper.toEntity(request);
-        UsuarioEntity guardado = usuarioService.save(usuarioEntity);
+        UsuarioEntity guardado = usuarioService.registrarUsuario(request);
         UsuarioResponse response = UsuarioMapper.toResponse(guardado);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
