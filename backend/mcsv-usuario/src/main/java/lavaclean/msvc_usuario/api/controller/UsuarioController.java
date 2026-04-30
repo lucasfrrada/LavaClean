@@ -49,4 +49,10 @@ public class UsuarioController {
         this.usuarioService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    //Buscar usuario por ID
+    @GetMapping("/{id}")
+    public ResponseEntity<UsuarioResponse> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(UsuarioMapper.toResponse(usuarioService.findById(id)));
+    }
 }
