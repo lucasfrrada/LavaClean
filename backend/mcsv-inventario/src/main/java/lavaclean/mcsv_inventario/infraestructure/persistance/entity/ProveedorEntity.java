@@ -19,13 +19,16 @@ public class ProveedorEntity {
     @Column(name = "nombre_proveedor")
     private String nombreProveedor;
 
-    @Column(name = "correo_proveedor")
-    private String correoProveedor;
+    @Column(name = "correo")
+    private String correo;
 
-    @Column(name = "telefono_proveedor")
-    private String telefonoProveedor;
+    @Column(name = "telefono")
+    private String telefono;
 
-    @Column(name = "direccion_proveedor")
-    private String direccionProveedor;
+    @Column(name = "direccion")
+    private String direccion;
+
+    @Column(name = "estado")
+    private String estado;
 
 }
