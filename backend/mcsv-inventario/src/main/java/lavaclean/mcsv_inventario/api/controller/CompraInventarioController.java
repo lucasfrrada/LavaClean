@@ -2,6 +2,8 @@ package lavaclean.mcsv_inventario.api.controller;
 
 import jakarta.validation.Valid;
 import lavaclean.mcsv_inventario.api.dto.request.compraInventario.CrearCompraInventarioRequest;
+import lavaclean.mcsv_inventario.api.dto.request.detalleCompra.ActualizarDetalleCompraRequest;
+import lavaclean.mcsv_inventario.api.dto.request.detalleCompra.CrearDetalleCompraRequest;
 import lavaclean.mcsv_inventario.api.dto.response.compraInventario.CompraInventarioResponse;
 import lavaclean.mcsv_inventario.application.service.CompraInventarioService;
 import lombok.RequiredArgsConstructor;
@@ -36,5 +38,18 @@ public class CompraInventarioController {
         return ResponseEntity.ok(compraInventarioService.obtenerCompraPorId(id));
     }
 
+    //CANCELAR COMPRA
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> cancelarCompra(@PathVariable("id") Long id){
+        compraInventarioService.cancelarCompra(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    //EDITAR DETALLE COMPRA POR ID
+    @PatchMapping("/{id}/detalles")
+    public ResponseEntity<CompraInventarioResponse> actualizarDetallesCompra(@PathVariable Long id, @Valid @RequestBody ActualizarDetalleCompraRequest request){
+        return ResponseEntity.ok(compraInventarioService.actualizarDetalleCompra(id, request));
+    }
 
 }
