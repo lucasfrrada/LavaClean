@@ -26,7 +26,7 @@ public class CompraInventarioEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_proveedor", nullable = false)
-    private ProveedorEntity idProveedor;
+    private ProveedorEntity proveedor;
 
     @Column(name = "fecha_compra")
     private LocalDate fechaCompra;
@@ -49,7 +49,5 @@ public class CompraInventarioEntity {
     @Builder.Default
     private List<DetalleCompraInventarioEntity> detalles = new ArrayList<>();
 
-    @OneToMany(mappedBy = "compraInventario")
-    @Builder.Default
-    private List<MovimientoInventarioEntity> movimientos = new ArrayList<>();
+
 }
