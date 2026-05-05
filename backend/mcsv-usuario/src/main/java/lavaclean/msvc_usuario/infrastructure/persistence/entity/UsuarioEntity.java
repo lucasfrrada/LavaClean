@@ -1,6 +1,8 @@
 package lavaclean.msvc_usuario.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity
@@ -22,12 +24,15 @@ public class UsuarioEntity {
     @Column(name = "ap_materno")
     private String apMaterno;
 
+    @NotBlank(message = "El correo no puede estar vacío")
+    @Email(message = "El formato del correo electrónico no es válido")
     @Column(name = "correo", nullable = false, unique = true)
     private String correo;
 
     @Column(name = "telefono", nullable = false, unique = true)
     private Long telefono;
 
+    @NotBlank(message = "La contraseña no puede estar vacía")
     @Column(nullable = false)
     private String contrasenia;
 
