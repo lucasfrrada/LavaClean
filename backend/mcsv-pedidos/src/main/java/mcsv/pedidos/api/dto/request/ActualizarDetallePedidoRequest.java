@@ -1,17 +1,17 @@
-package mcsv.pedidos.api.dto;
+package mcsv.pedidos.api.dto.request;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.*;
 
 @Data
-public class CrearDetallePedidoRequest {
+public class ActualizarDetallePedidoRequest {
 
     @NotNull
-    private Long idPrenda;
+    private Long prendaId;
 
     @NotNull
-    private Long idServicio;
+    private Long servicioId;
 
     @NotNull
     @Min(1)

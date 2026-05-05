@@ -17,6 +17,7 @@
 	<modules>
 		<module>mcsv-pedidos</module>
         <module>mcsv-usuario</module>
+        <module>mcsv-notificacion</module>
 	</modules>
 	<url/>
 	<licenses>

@@ -1,6 +1,6 @@
 package lavaclean.msvc_usuario.application.service;
 
-import lavaclean.msvc_usuario.api.dto.UsuarioRequest; // <-- Importación necesaria
+import lavaclean.msvc_usuario.api.dto.UsuarioRequest;
 import lavaclean.msvc_usuario.api.dto.UsuarioResponse;
 import lavaclean.msvc_usuario.infrastructure.persistence.entity.UsuarioEntity;
 

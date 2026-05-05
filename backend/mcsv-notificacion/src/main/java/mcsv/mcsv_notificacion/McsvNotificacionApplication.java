@@ -1,14 +1,15 @@
-package lavaclean.msvc_usuario;
+package mcsv.mcsv_notificacion;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @EnableFeignClients
 @SpringBootApplication
-public class MsvcUsuarioApplication {
+public class McsvNotificacionApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MsvcUsuarioApplication.class, args);
+		SpringApplication.run(McsvNotificacionApplication.class, args);
 	}
 
 }
