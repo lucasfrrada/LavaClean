@@ -31,6 +31,7 @@ public class MovimientoInventarioService {
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado"));
 
 
+
         if (!"ACTIVO".equalsIgnoreCase(producto.getEstado())) {
             throw new IllegalStateException("No se pueden registrar movimiento para un producto inactivo");
         }
@@ -41,8 +42,9 @@ public class MovimientoInventarioService {
                 request.getCantidad(),
                 request.getTipoMovimiento()
         );
+        
 
-        if (stockNuevo.compareTo(stockAnterior) < 0) {
+        if (stockNuevo.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalStateException("Stock quedaría en negativo, no se puede hacer");
         }
 
