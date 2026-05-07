@@ -89,13 +89,13 @@ public class NotificacionServiceImpl implements NotificacionService {
 
             // Enviar correo usando Brevo
             String asunto = "Novedades en tu pedido LavaClean!";
-            emailSender.enviarCorreoTextoPlano(usuario.getEmail(), asunto, notificacion.getMensaje());
+            emailSender.enviarCorreoTextoPlano(usuario.getCorreo(), asunto, notificacion.getMensaje());
 
             // Si no explotó, se envió con éxito
             notificacion.setEstadoEnvio(EstadoNotificacion.ENVIADO);
             notificacion.setFechaEnvio(LocalDateTime.now());
 
-            log.info("Notificación con ID:{} enviada con éxito a {}", notificacion.getIdNotificacion(), usuario.getEmail());
+            log.info("Notificación con ID:{} enviada con éxito a {}", notificacion.getIdNotificacion(), usuario.getCorreo());
 
         } catch (Exception e) {
             notificacion.setEstadoEnvio(EstadoNotificacion.FALLIDO);

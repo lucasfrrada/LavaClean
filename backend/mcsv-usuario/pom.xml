@@ -92,7 +92,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-openfeign-core</artifactId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
             <version>5.0.1</version>
             <scope>compile</scope>
         </dependency>
