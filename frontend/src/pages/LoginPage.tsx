@@ -56,12 +56,12 @@ export default function LoginPage() {
             />
           </div>
 
-          <button
-            type="button"
+          <Link
+            to="/register"
             className="block w-full pt-2 text-center text-xs font-semibold text-[#D8C7AF] transition hover:text-white"
           >
             Crear tu cuenta de LavaClean
-          </button>
+          </Link>
 
           {/* Información */}
           <div className="mt-5 flex gap-3 rounded-lg bg-[#15110F] p-4 text-xs leading-relaxed text-[#C9B8A4]">
