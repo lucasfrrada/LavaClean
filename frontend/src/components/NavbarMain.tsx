@@ -1,5 +1,4 @@
 import logo from "../assets/imgs/lc-icon-border.png";
-import {Link} from "react-router-dom";
 
 export default function NavbarMain() {
   return (
@@ -32,12 +31,9 @@ export default function NavbarMain() {
             </li>
           </ul>
 
-          <Link
-            to="/login"
-            className="rounded-full bg-[#F8EFD8] px-5 py-2 text-sm font-semibold text-[#6B4F3E] shadow-md transition hover:bg-white"
-          >
-            Iniciar Sesión
-          </Link>
+          <button className="rounded-full bg-[#F8EFD8] px-5 py-2 text-sm font-semibold text-[#6B4F3E] shadow-md transition hover:bg-white">
+            Agenda Ahora
+          </button>
         </div>
       </nav>
     </header>
