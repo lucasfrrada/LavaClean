@@ -1,9 +1,11 @@
 package lavaclean.msvc_usuario.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
+import lavaclean.msvc_usuario.domain.enums.RolEnum;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+
 
 @Entity
 @Table(name = "usuario")
@@ -36,7 +38,8 @@ public class UsuarioEntity {
     @Column(nullable = false)
     private String contrasenia;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_rol", referencedColumnName = "id_rol", nullable = false)
-    private RolEntity idRolEntity;
+    // Borra la relación vieja y pon esto:
+    @Enumerated(EnumType.STRING) // Guarda la palabra "ADMINISTRADOR" en BD, no un número
+    @Column(nullable = false)
+    private RolEnum rol;
 }

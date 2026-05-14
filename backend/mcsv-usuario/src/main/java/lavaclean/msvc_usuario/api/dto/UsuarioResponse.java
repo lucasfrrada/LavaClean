@@ -7,7 +7,7 @@ import lombok.Data;
 public class UsuarioResponse {
 
     private Long idUsuario;
-    private Long idRol;
+    private String rol;
     private String nombreCompleto;
     private String correo;
     private Long telefono;

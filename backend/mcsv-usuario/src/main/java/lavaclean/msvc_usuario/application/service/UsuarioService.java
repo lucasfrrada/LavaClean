@@ -17,5 +17,5 @@ public interface UsuarioService {
     // Esencial para el Login: Busca al usuario (y su rol EAGER) por email
     Optional<UsuarioEntity> findByCorreo(String correo);
     // Metodo seguro para cambiar exclusivamente el rol sin tocar otros datos
-    UsuarioEntity asignarRol(Long idUsuario, Long idRol);
+    UsuarioEntity asignarRol(Long idUsuario, String nombreRol);
 }

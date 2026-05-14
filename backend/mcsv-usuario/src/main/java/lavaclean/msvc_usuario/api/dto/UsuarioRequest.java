@@ -20,5 +20,5 @@ public class UsuarioRequest {
     private String correo;
     private Long telefono;
     private String contrasenia;
-    private Long idRol;
+    private String rol;
 }

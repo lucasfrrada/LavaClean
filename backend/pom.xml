@@ -15,6 +15,7 @@
 	<description/>
 	<packaging>pom</packaging>
 	<modules>
+        <module>auth</module>
 		<module>mcsv-pedidos</module>
         <module>mcsv-usuario</module>
         <module>mcsv-inventario</module>
