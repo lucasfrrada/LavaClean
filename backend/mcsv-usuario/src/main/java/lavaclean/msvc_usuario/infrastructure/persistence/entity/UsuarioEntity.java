@@ -38,8 +38,7 @@ public class UsuarioEntity {
     @Column(nullable = false)
     private String contrasenia;
 
-    // Borra la relación vieja y pon esto:
-    @Enumerated(EnumType.STRING) // Guarda la palabra "ADMINISTRADOR" en BD, no un número
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RolEnum rol;
 }

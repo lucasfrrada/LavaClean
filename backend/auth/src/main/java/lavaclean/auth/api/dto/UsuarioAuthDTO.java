@@ -15,6 +15,7 @@ public class UsuarioAuthDTO {
     private String contrasenia; // Hash
     private String nombres;
     private String apPaterno;
+    private String apMaterno;
     private Long telefono;
     private String rol;
 }

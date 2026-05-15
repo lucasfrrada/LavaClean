@@ -55,4 +55,12 @@ public class UsuarioController {
     public ResponseEntity<UsuarioResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(UsuarioMapper.toResponse(usuarioService.findById(id)));
     }
+
+    //Buscar usuario por Correo
+    @GetMapping("/correo/{correo}")
+    public ResponseEntity<UsuarioEntity> findByCorreo(@PathVariable String correo) {
+        return this.usuarioService.findByCorreo(correo)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }

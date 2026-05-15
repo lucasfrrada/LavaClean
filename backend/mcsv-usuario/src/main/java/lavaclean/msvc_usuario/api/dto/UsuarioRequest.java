@@ -15,8 +15,6 @@ public class UsuarioRequest {
     private String nombres;
     private String apPaterno;
     private String apMaterno;
-    @NotBlank(message = "El correo es obligatorio")
-    @Email(message = "Formato de correo inválido")
     private String correo;
     private Long telefono;
     private String contrasenia;

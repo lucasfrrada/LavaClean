@@ -11,4 +11,6 @@ public interface UsuarioClient {
     @GetMapping("/api/usuarios/{id}")
     UsuarioAuthDTO obtenerUsuarioPorId(@PathVariable("id") Long id);
 
+    @GetMapping("/api/usuarios/correo/{correo}")
+    UsuarioAuthDTO obtenerUsuarioPorCorreo(@PathVariable("correo") String correo);
 }
