@@ -5,6 +5,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import type {AuthUser} from "../types/auth";
 
 type User = {
   id?: number;
@@ -15,10 +16,10 @@ type User = {
 };
 
 type AuthContextType = {
-  user: User | null;
+  user: AuthUser | null;
   token: string | null;
   isAuthenticated: boolean;
-  login: (userData: User, userToken: string) => void;
+  login: (userData: AuthUser, userToken: string) => void;
   logout: () => void;
 };
 
@@ -29,7 +30,7 @@ type AuthProviderProps = {
 };
 
 export function AuthProvider({children}: AuthProviderProps) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
@@ -38,20 +39,16 @@ export function AuthProvider({children}: AuthProviderProps) {
 
     if (storedUser && storedToken) {
       try {
-        const parsedUser = JSON.parse(storedUser) as User;
-
-        setUser(parsedUser);
+        setUser(JSON.parse(storedUser) as AuthUser);
         setToken(storedToken);
-      } catch (error) {
-        console.error("Error al leer el usuario desde localStorage:", error);
-
+      } catch {
         localStorage.removeItem("authUser");
         localStorage.removeItem("authToken");
       }
     }
   }, []);
 
-  const login = (userData: User, userToken: string) => {
+  const login = (userData: AuthUser, userToken: string) => {
     setUser(userData);
     setToken(userToken);
 
@@ -67,14 +64,12 @@ export function AuthProvider({children}: AuthProviderProps) {
     localStorage.removeItem("authToken");
   };
 
-  const isAuthenticated = Boolean(token);
-
   return (
     <AuthContext.Provider
       value={{
         user,
         token,
-        isAuthenticated,
+        isAuthenticated: Boolean(token),
         login,
         logout,
       }}

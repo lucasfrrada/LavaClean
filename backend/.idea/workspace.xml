@@ -4,7 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8506d6f1-136c-4f08-984d-de26eb6eb7e2" name="Changes" comment="fix en Service de MovimientoInventarioService. TEST EN POSTMAN HECHOS" />
+    <list default="true" id="8506d6f1-136c-4f08-984d-de26eb6eb7e2" name="Changes" comment="fix en Service de MovimientoInventarioService. TEST EN POSTMAN HECHOS">
+      <change afterPath="$PROJECT_DIR$/mcsv-auth/src/main/java/lavaclean/auth/infrastructure/config/CorsConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mcsv-usuario/src/main/java/lavaclean/msvc_usuario/infrastructure/config/CorsConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-auth/src/main/java/lavaclean/auth/api/dto/request/AuthRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-auth/src/main/java/lavaclean/auth/api/dto/request/AuthRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-auth/src/main/java/lavaclean/auth/api/dto/response/AuthResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-auth/src/main/java/lavaclean/auth/api/dto/response/AuthResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-auth/src/main/java/lavaclean/auth/application/service/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-auth/src/main/java/lavaclean/auth/application/service/AuthServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-auth/src/main/java/lavaclean/auth/infrastructure/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-auth/src/main/java/lavaclean/auth/infrastructure/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-usuario/src/main/java/lavaclean/msvc_usuario/infrastructure/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-usuario/src/main/java/lavaclean/msvc_usuario/infrastructure/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/NavbarMain.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/NavbarMain.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/context/AuthContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/context/AuthContext.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/layouts/AdminLayout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/layouts/AdminLayout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/pages/LoginPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/pages/LoginPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/pages/RegisterPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/pages/RegisterPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/routes/AdminRoute.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/routes/AdminRoute.tsx" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -57,24 +72,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.McsvInventarioApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Application.MsvcUsuarioApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Application.PedidosApplication.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;mcsv-inventario&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/guts/Documents/GitHub/LavaClean/backend&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.AuthApplication.executor": "Run",
+    "Application.McsvInventarioApplication.executor": "Run",
+    "Application.MsvcUsuarioApplication.executor": "Run",
+    "Application.PedidosApplication.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "dev",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/guts/Documents/GitHub/LavaClean/backend",
+    "to.speed.mode.migration.done": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\guts\Documents\GitHub\LavaClean\backend" />
@@ -89,6 +105,40 @@
       <recent name="mcsv.pedidos.infraestructure.persistence.repository" />
       <recent name="mcsv.pedidos.infraestructure.persistence" />
     </key>
+  </component>
+  <component name="RunManager" selected="Application.MsvcUsuarioApplication">
+    <configuration name="AuthApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="lavaclean.auth.AuthApplication" />
+      <module name="auth" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="lavaclean.auth.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MsvcUsuarioApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="lavaclean.msvc_usuario.MsvcUsuarioApplication" />
+      <module name="usuario" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="lavaclean.msvc_usuario.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.MsvcUsuarioApplication" />
+        <item itemvalue="Application.AuthApplication" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
