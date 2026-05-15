@@ -4,6 +4,8 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import AgendarPage from "./pages/AgendarPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import PerfilPage from "./pages/PerfilPage";
+import PedidosPage from "./pages/PedidosPage";
 
 function App() {
   return (
@@ -16,6 +18,22 @@ function App() {
         element={
           <ProtectedRoute>
             <AgendarPage></AgendarPage>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mis-datos"
+        element={
+          <ProtectedRoute>
+            <PerfilPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mis-pedidos"
+        element={
+          <ProtectedRoute>
+            <PedidosPage />
           </ProtectedRoute>
         }
       />
