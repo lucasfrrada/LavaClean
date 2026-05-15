@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import NavbarMain from "../components/NavbarMain";
 import HeroSection from "../components/HeroSection";
+import {Link} from "react-router-dom";
 
 const commitments = [
   {
@@ -145,13 +146,16 @@ export default function LandingPage() {
           ¿Listo para disfrutar de ropa impecable?
         </h2>
 
-        <p className="mt-5 text-sm text-[#F5EEDC] md:text-base">
+        <p className="mt-5 mb-5 text-sm text-[#F5EEDC] md:text-base">
           Únete a miles de clientes satisfechos que confían en LavaClean
         </p>
 
-        <button className="mt-8 rounded-full bg-[#F8EFD8] px-9 py-3 text-sm font-bold text-[#6B4F3E] shadow-xl transition hover:-translate-y-1 hover:bg-white">
+        <Link
+          to="/agendar"
+          className="inline-flex items-center justify-center rounded-full bg-[#F8EFD8] px-9 py-3 text-sm font-bold text-[#6B4F3E] shadow-xl transition hover:-translate-y-1 hover:bg-white"
+        >
           Agenda tu servicio
-        </button>
+        </Link>
       </section>
 
       {/* Footer */}

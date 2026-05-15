@@ -1,0 +1,95 @@
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
+
+type User = {
+  id?: number;
+  nombre?: string;
+  email?: string;
+  telefono?: string;
+  rol?: string;
+};
+
+type AuthContextType = {
+  user: User | null;
+  token: string | null;
+  isAuthenticated: boolean;
+  login: (userData: User, userToken: string) => void;
+  logout: () => void;
+};
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+type AuthProviderProps = {
+  children: ReactNode;
+};
+
+export function AuthProvider({children}: AuthProviderProps) {
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("authUser");
+    const storedToken = localStorage.getItem("authToken");
+
+    if (storedUser && storedToken) {
+      try {
+        const parsedUser = JSON.parse(storedUser) as User;
+
+        setUser(parsedUser);
+        setToken(storedToken);
+      } catch (error) {
+        console.error("Error al leer el usuario desde localStorage:", error);
+
+        localStorage.removeItem("authUser");
+        localStorage.removeItem("authToken");
+      }
+    }
+  }, []);
+
+  const login = (userData: User, userToken: string) => {
+    setUser(userData);
+    setToken(userToken);
+
+    localStorage.setItem("authUser", JSON.stringify(userData));
+    localStorage.setItem("authToken", userToken);
+  };
+
+  const logout = () => {
+    setUser(null);
+    setToken(null);
+
+    localStorage.removeItem("authUser");
+    localStorage.removeItem("authToken");
+  };
+
+  const isAuthenticated = Boolean(token);
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        isAuthenticated,
+        login,
+        logout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+
+  if (!context) {
+    throw new Error("useAuth debe usarse dentro de un AuthProvider");
+  }
+
+  return context;
+}
