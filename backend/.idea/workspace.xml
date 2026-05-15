@@ -4,34 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8506d6f1-136c-4f08-984d-de26eb6eb7e2" name="Changes" comment="fix: arreglos necesarios en el backend">
-      <change afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/controller/PrendaController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/controller/ServicioController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/dto/request/Prenda/ActualizarPrendaRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/dto/request/Prenda/CrearPrendaRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/dto/request/Servicio/ActualizarServicioRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/dto/request/Servicio/CrearServicioRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/dto/response/Prenda/PrendaResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/dto/response/Servicio/ServicioResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/application/mapper/PrendaMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/application/mapper/ServicioMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/application/service/PrendaService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/application/service/ServicioService.java" afterDir="false" />
+    <list default="true" id="8506d6f1-136c-4f08-984d-de26eb6eb7e2" name="Changes" comment="feat: CRUD prendas y servicios.">
+      <change afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/infraestructure/config/CorsConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/controller/PedidoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/controller/PedidoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/dto/request/ActualizarDetallePedidoRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/dto/request/Pedido/ActualizarDetallePedidoRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/dto/request/ActualizarEstadoPedidoRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/dto/request/Pedido/ActualizarEstadoPedidoRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/dto/request/ActualizarPedidoRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/dto/request/Pedido/ActualizarPedidoRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/dto/request/CrearDetallePedidoRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/dto/request/Pedido/CrearDetallePedidoRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/dto/request/CrearPedidoRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/dto/request/Pedido/CrearPedidoRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/dto/response/DetallePedidoResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/dto/response/Pedido/DetallePedidoResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/dto/response/PedidoResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/dto/response/Pedido/PedidoResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/application/mapper/PedidoMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/application/mapper/PedidoMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/application/service/PedidoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/application/service/PedidoService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/infraestructure/persistence/entity/PrendaEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/infraestructure/persistence/entity/PrendaEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/infraestructure/persistence/entity/ServicioEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/infraestructure/persistence/entity/ServicioEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/infraestructure/persistence/repository/PrendaRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/infraestructure/persistence/repository/PrendaRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/infraestructure/persistence/repository/ServicioRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/infraestructure/persistence/repository/ServicioRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/pages/admin/AdminPrendasPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/pages/admin/AdminPrendasPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/pages/admin/AdminServicesPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/pages/admin/AdminServicesPage.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -119,7 +96,7 @@
       <recent name="mcsv.pedidos.api.dto.request" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.PedidosApplication">
+  <component name="RunManager" selected="Application.MsvcUsuarioApplication">
     <configuration name="AuthApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="lavaclean.auth.AuthApplication" />
       <module name="auth" />
@@ -286,7 +263,15 @@
       <option name="project" value="LOCAL" />
       <updated>1778882234908</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="feat: CRUD prendas y servicios.">
+      <option name="closed" value="true" />
+      <created>1778886967286</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1778886967286</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -314,6 +299,7 @@
     <MESSAGE value="MOVIMIENTO INVENTARIO CREACION POST-GET. Falta testear en POSTMAN" />
     <MESSAGE value="fix en Service de MovimientoInventarioService. TEST EN POSTMAN HECHOS" />
     <MESSAGE value="fix: arreglos necesarios en el backend" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: arreglos necesarios en el backend" />
+    <MESSAGE value="feat: CRUD prendas y servicios." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: CRUD prendas y servicios." />
   </component>
 </project>
