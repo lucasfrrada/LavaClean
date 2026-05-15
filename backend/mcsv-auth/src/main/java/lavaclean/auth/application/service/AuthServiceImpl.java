@@ -53,7 +53,8 @@ public class AuthServiceImpl implements AuthService{
                 usuarioBd.getApPaterno(),
                 usuarioBd.getApMaterno(),
                 usuarioBd.getCorreo(),
-                usuarioBd.getTelefono()
+                usuarioBd.getTelefono(),
+                usuarioBd.getRol()
         );
     }
 

@@ -19,6 +19,6 @@ public class AuthRequest {
 
 
     @NotBlank(message = "El campo no puede estar vacio")
-    @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres")
+    @Size(min = 6, message = "La contraseña debe tener al menos 8 caracteres")
     private String contrasenia;
 }
