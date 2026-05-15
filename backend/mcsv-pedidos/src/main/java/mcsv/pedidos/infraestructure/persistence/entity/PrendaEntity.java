@@ -9,6 +9,7 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class PrendaEntity {
 
     @Id
@@ -17,7 +18,7 @@ public class PrendaEntity {
     private Long idPrenda;
 
     @Column(name = "nombre_prenda")
-    private String nombre_prenda;
+    private String nombrePrenda;
 
     @Column(name = "categoria")
     private String categoria;

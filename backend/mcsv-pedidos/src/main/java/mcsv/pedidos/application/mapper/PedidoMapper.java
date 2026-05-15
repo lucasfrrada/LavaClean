@@ -1,7 +1,7 @@
 package mcsv.pedidos.application.mapper;
 
-import mcsv.pedidos.api.dto.response.DetallePedidoResponse;
-import mcsv.pedidos.api.dto.response.PedidoResponse;
+import mcsv.pedidos.api.dto.response.Pedido.DetallePedidoResponse;
+import mcsv.pedidos.api.dto.response.Pedido.PedidoResponse;
 import mcsv.pedidos.infraestructure.persistence.entity.DetallePedidoEntity;
 import mcsv.pedidos.infraestructure.persistence.entity.PedidoEntity;
 
@@ -31,7 +31,7 @@ public class PedidoMapper {
     public static DetallePedidoResponse toDetalleResponse(DetallePedidoEntity entity) {
         return DetallePedidoResponse.builder()
                 .idPedido(entity.getIdDetallePedido())
-                .prenda(entity.getPrenda().getNombre_prenda())
+                .prenda(entity.getPrenda().getNombrePrenda())
                 .categoriaPrenda(entity.getPrenda().getCategoria())
                 .servicio(entity.getServicio().getTipoServicio())
                 .cantidad(entity.getCantidad())

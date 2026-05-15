@@ -2,10 +2,10 @@ package mcsv.pedidos.api.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import mcsv.pedidos.api.dto.request.ActualizarEstadoPedidoRequest;
-import mcsv.pedidos.api.dto.request.ActualizarPedidoRequest;
-import mcsv.pedidos.api.dto.request.CrearPedidoRequest;
-import mcsv.pedidos.api.dto.response.PedidoResponse;
+import mcsv.pedidos.api.dto.request.Pedido.ActualizarEstadoPedidoRequest;
+import mcsv.pedidos.api.dto.request.Pedido.ActualizarPedidoRequest;
+import mcsv.pedidos.api.dto.request.Pedido.CrearPedidoRequest;
+import mcsv.pedidos.api.dto.response.Pedido.PedidoResponse;
 import mcsv.pedidos.application.service.PedidoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

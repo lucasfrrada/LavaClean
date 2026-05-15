@@ -1,4 +1,4 @@
-package mcsv.pedidos.api.dto.response;
+package mcsv.pedidos.api.dto.response.Pedido;
 
 import lombok.Builder;
 import lombok.Data;

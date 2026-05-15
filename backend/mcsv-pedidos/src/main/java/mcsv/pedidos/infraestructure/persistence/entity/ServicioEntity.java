@@ -10,12 +10,13 @@ import java.math.BigDecimal;
 @Getter @Setter
 @AllArgsConstructor @NoArgsConstructor
 @ToString
+@Builder
 public class ServicioEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_servicio")
-    private Long idServcio;
+    private Long idServicio;
 
     @Column(name = "tipo_servicio")
     private String tipoServicio;

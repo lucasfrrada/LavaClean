@@ -1,4 +1,4 @@
-package mcsv.pedidos.api.dto.request;
+package mcsv.pedidos.api.dto.request.Pedido;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
