@@ -15,7 +15,7 @@ export default function LoginPage() {
         id: 1,
         nombre: "Usuario LavaClean",
         email: "usuario@lavaclean.com",
-        rol: "CLIENTE",
+        rol: "ADMIN",
       },
       "token-de-prueba",
     );

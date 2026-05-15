@@ -1,6 +1,6 @@
 import {useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
-import {User, ClipboardList, LogOut, Settings} from "lucide-react";
+import {User, ClipboardList, LogOut, Settings, ShieldCheck} from "lucide-react";
 import {useAuth} from "../context/AuthContext";
 import logo from "../assets/imgs/lavaclean-icon.png";
 
@@ -67,14 +67,24 @@ export default function NavbarMain() {
             </Link>
           ) : (
             <div className="relative flex items-center gap-4">
-              <Link
-                to="/agendar"
-                className="rounded-full bg-[#F8EFD8] px-5 py-2 text-sm font-semibold text-[#6B4F3E] shadow-md transition hover:bg-white"
-              >
-                Agendar ahora
-              </Link>
+              {user?.rol === "ADMIN" ? (
+                <Link
+                  to="/admin/pedidos"
+                  onClick={() => setIsProfileOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-[#E7D9C2] transition hover:bg-white/10 hover:text-white"
+                >
+                  <ShieldCheck size={17} />
+                  Panel administrador
+                </Link>
+              ) : (
+                <Link
+                  to="/agendar"
+                  className="rounded-full bg-[#F8EFD8] px-5 py-2 text-sm font-semibold text-[#6B4F3E] shadow-md transition hover:bg-white"
+                >
+                  Agendar ahora
+                </Link>
+              )}
 
-              {/* Botón perfil */}
               <button
                 type="button"
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
