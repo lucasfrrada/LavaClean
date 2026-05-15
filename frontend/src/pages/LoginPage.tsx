@@ -1,8 +1,28 @@
 import {ArrowLeft, Info, Fingerprint} from "lucide-react";
 import logo from "../assets/imgs/lavaclean-icon.png";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
+import {useAuth} from "../context/AuthContext";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
+  const {login} = useAuth();
+
+  const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    login(
+      {
+        id: 1,
+        nombre: "Usuario LavaClean",
+        email: "usuario@lavaclean.com",
+        rol: "CLIENTE",
+      },
+      "token-de-prueba",
+    );
+
+    navigate("/");
+  };
+
   return (
     <main className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-gradient-to-br from-[#6B4F3E] via-[#7C604B] to-[#9A7C5F] px-4 py-10 text-white">
       {/* Botón volver */}
@@ -31,7 +51,7 @@ export default function LoginPage() {
         </h1>
 
         {/* Formulario */}
-        <form className="mt-7 space-y-4">
+        <form onSubmit={handleLogin} className="mt-7 space-y-4">
           <div>
             <label htmlFor="email" className="sr-only">
               Correo o número de teléfono
