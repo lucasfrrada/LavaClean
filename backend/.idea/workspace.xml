@@ -5,7 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8506d6f1-136c-4f08-984d-de26eb6eb7e2" name="Changes" comment="feat: CorsConfig en mcsv-pedidos">
-      <change beforePath="$PROJECT_DIR$/../frontend/src/api/usuarioService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/api/usuarioService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-usuario/src/main/java/lavaclean/msvc_usuario/api/dto/UsuarioResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-usuario/src/main/java/lavaclean/msvc_usuario/api/dto/UsuarioResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/api/pedidoService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/api/pedidoService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/pages/AgendarPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/pages/AgendarPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/types/pedido.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/types/pedido.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -135,8 +138,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.PedidosApplication" />
         <item itemvalue="Application.MsvcUsuarioApplication" />
+        <item itemvalue="Application.PedidosApplication" />
         <item itemvalue="Application.AuthApplication" />
       </list>
     </recent_temporary>

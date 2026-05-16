@@ -30,10 +30,46 @@ export type UpdateServicioRequest = {
   precio: number;
 };
 
-export type CreatePedidoRequest = {
-  idUsuario: number;
-  idPrenda: number;
-  idServicio: number;
-  cantidadPrendas: number;
+export type DetallePedido = {
+  idPedido: number;
+  prenda: string;
+  categoriaPrenda: string;
+  servicio: string;
+  precioUnitario: number;
+  cantidad: number;
+  subtotal: number;
   observaciones?: string;
 };
+
+export type Pedido = {
+  idPedido: number;
+  idUsuario: number;
+  estado: EstadoPedido;
+  fechaLlegada: string;
+  fechaEntrega: string;
+  total: number;
+  detalles: DetallePedido[];
+};
+
+export type CreatePedidoRequest = {
+  idUsuario: number;
+  fechaLlegada: string;
+  fechaEntrega: string;
+  detalles: {
+    idPrenda: number;
+    idServicio: number;
+    cantidad: number;
+    observaciones?: string;
+  }[];
+};
+
+export type UpdateEstadoPedidoRequest = {
+  estado: EstadoPedido;
+};
+
+export type EstadoPedido =
+  | "PENDIENTE"
+  | "EN_PROCESO"
+  | "COMPLETADO"
+  | "PAGADO"
+  | "CANCELADO";

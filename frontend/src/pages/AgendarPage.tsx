@@ -1,14 +1,35 @@
 import {useEffect, useState} from "react";
 import {ArrowLeft, CalendarDays, Package} from "lucide-react";
 import {Link, useNavigate} from "react-router-dom";
+
 import {useAuth} from "../context/AuthContext";
 import {getPrendasRequest} from "../api/prendaService";
 import {getServiciosRequest} from "../api/servicioService";
 import {createPedidoRequest} from "../api/pedidoService";
+
 import type {Prenda, Servicio} from "../types/pedido";
+
 import logo from "../assets/imgs/lavaclean-icon.png";
 
-export default function AgendarPage() {
+function formatCurrency(value: number) {
+  return new Intl.NumberFormat("es-CL", {
+    style: "currency",
+    currency: "CLP",
+  }).format(value);
+}
+
+function getTodayDate() {
+  return new Date().toISOString().split("T")[0];
+}
+
+function getTomorrowDate() {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  return tomorrow.toISOString().split("T")[0];
+}
+
+export default function BookingPage() {
   const navigate = useNavigate();
   const {token, user} = useAuth();
 
@@ -17,8 +38,11 @@ export default function AgendarPage() {
 
   const [idPrenda, setIdPrenda] = useState("");
   const [idServicio, setIdServicio] = useState("");
-  const [cantidadPrendas, setCantidadPrendas] = useState(1);
+  const [cantidad, setCantidad] = useState(1);
   const [observaciones, setObservaciones] = useState("");
+
+  const [fechaLlegada, setFechaLlegada] = useState(getTodayDate());
+  const [fechaEntrega, setFechaEntrega] = useState(getTomorrowDate());
 
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -55,8 +79,8 @@ export default function AgendarPage() {
   );
 
   const totalEstimado =
-    servicioSeleccionado && cantidadPrendas > 0
-      ? Number(servicioSeleccionado.precio) * cantidadPrendas
+    servicioSeleccionado && cantidad > 0
+      ? Number(servicioSeleccionado.precio) * cantidad
       : 0;
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -72,6 +96,16 @@ export default function AgendarPage() {
       return;
     }
 
+    if (!fechaLlegada || !fechaEntrega) {
+      setErrorMessage("Debes seleccionar fecha de llegada y fecha de entrega.");
+      return;
+    }
+
+    if (cantidad < 1) {
+      setErrorMessage("La cantidad debe ser mayor o igual a 1.");
+      return;
+    }
+
     try {
       setIsSaving(true);
       setErrorMessage("");
@@ -79,10 +113,16 @@ export default function AgendarPage() {
       await createPedidoRequest(
         {
           idUsuario: user.idUsuario,
-          idPrenda: Number(idPrenda),
-          idServicio: Number(idServicio),
-          cantidadPrendas: Number(cantidadPrendas),
-          observaciones: observaciones.trim(),
+          fechaLlegada,
+          fechaEntrega,
+          detalles: [
+            {
+              idPrenda: Number(idPrenda),
+              idServicio: Number(idServicio),
+              cantidad: Number(cantidad),
+              observaciones: observaciones.trim(),
+            },
+          ],
         },
         token,
       );
@@ -133,7 +173,7 @@ export default function AgendarPage() {
             </h1>
 
             <p className="mt-3 text-sm text-[#9A7C5F]">
-              Selecciona una prenda y servicio disponible
+              Selecciona una prenda y un servicio disponible
             </p>
           </div>
 
@@ -167,7 +207,8 @@ export default function AgendarPage() {
                   value={idPrenda}
                   onChange={(event) => setIdPrenda(event.target.value)}
                   required
-                  className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm text-[#6B4F3E] outline-none transition focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+                  disabled={isLoadingData}
+                  className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm text-[#6B4F3E] outline-none transition focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
                 >
                   <option value="">Selecciona una prenda</option>
 
@@ -192,7 +233,8 @@ export default function AgendarPage() {
                   value={idServicio}
                   onChange={(event) => setIdServicio(event.target.value)}
                   required
-                  className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm text-[#6B4F3E] outline-none transition focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+                  disabled={isLoadingData}
+                  className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm text-[#6B4F3E] outline-none transition focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
                 >
                   <option value="">Selecciona un servicio</option>
 
@@ -201,8 +243,8 @@ export default function AgendarPage() {
                       key={servicio.idServicio}
                       value={servicio.idServicio}
                     >
-                      {servicio.tipoServicio} - $
-                      {Number(servicio.precio).toLocaleString("es-CL")}
+                      {servicio.tipoServicio} -{" "}
+                      {formatCurrency(Number(servicio.precio))}
                     </option>
                   ))}
                 </select>
@@ -210,23 +252,59 @@ export default function AgendarPage() {
 
               <div>
                 <label
-                  htmlFor="cantidadPrendas"
+                  htmlFor="cantidad"
                   className="mb-2 block text-sm font-bold text-[#7A6252]"
                 >
                   Cantidad de prendas *
                 </label>
 
                 <input
-                  id="cantidadPrendas"
+                  id="cantidad"
                   type="number"
                   min={1}
-                  value={cantidadPrendas}
-                  onChange={(event) =>
-                    setCantidadPrendas(Number(event.target.value))
-                  }
+                  value={cantidad}
+                  onChange={(event) => setCantidad(Number(event.target.value))}
                   required
                   className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm text-[#6B4F3E] outline-none transition placeholder:text-[#B8A58F] focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
                 />
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <label
+                    htmlFor="fechaLlegada"
+                    className="mb-2 block text-sm font-bold text-[#7A6252]"
+                  >
+                    Fecha de llegada *
+                  </label>
+
+                  <input
+                    id="fechaLlegada"
+                    type="date"
+                    value={fechaLlegada}
+                    onChange={(event) => setFechaLlegada(event.target.value)}
+                    required
+                    className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm text-[#6B4F3E] outline-none transition focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="fechaEntrega"
+                    className="mb-2 block text-sm font-bold text-[#7A6252]"
+                  >
+                    Fecha de entrega *
+                  </label>
+
+                  <input
+                    id="fechaEntrega"
+                    type="date"
+                    value={fechaEntrega}
+                    onChange={(event) => setFechaEntrega(event.target.value)}
+                    required
+                    className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm text-[#6B4F3E] outline-none transition focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+                  />
+                </div>
               </div>
 
               <div>
@@ -269,7 +347,7 @@ export default function AgendarPage() {
                 <div className="rounded-lg bg-[#F5EEDC] px-4 py-3 text-sm font-semibold text-[#6B4F3E]">
                   Total estimado:{" "}
                   <span className="font-bold">
-                    ${totalEstimado.toLocaleString("es-CL")}
+                    {formatCurrency(totalEstimado)}
                   </span>
                 </div>
               )}

@@ -7,20 +7,13 @@ import {
 } from "react";
 import type {AuthUser} from "../types/auth";
 
-type User = {
-  id?: number;
-  nombre?: string;
-  email?: string;
-  telefono?: string;
-  rol?: string;
-};
-
 type AuthContextType = {
   user: AuthUser | null;
   token: string | null;
   isAuthenticated: boolean;
   login: (userData: AuthUser, userToken: string) => void;
   logout: () => void;
+  updateUser: (userData: AuthUser) => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -56,6 +49,11 @@ export function AuthProvider({children}: AuthProviderProps) {
     localStorage.setItem("authToken", userToken);
   };
 
+  const updateUser = (userData: AuthUser) => {
+    setUser(userData);
+    localStorage.setItem("authUser", JSON.stringify(userData));
+  };
+
   const logout = () => {
     setUser(null);
     setToken(null);
@@ -72,6 +70,7 @@ export function AuthProvider({children}: AuthProviderProps) {
         isAuthenticated: Boolean(token),
         login,
         logout,
+        updateUser,
       }}
     >
       {children}
