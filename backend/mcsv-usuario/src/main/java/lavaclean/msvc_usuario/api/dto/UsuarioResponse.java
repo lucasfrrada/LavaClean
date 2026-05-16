@@ -8,7 +8,9 @@ public class UsuarioResponse {
 
     private Long idUsuario;
     private String rol;
-    private String nombreCompleto;
+    private String nombres;
+    private String apPaterno;
+    private String apMaterno;
     private String correo;
     private Long telefono;
 }

@@ -18,7 +18,9 @@ public class UsuarioMapper {
 
         return UsuarioResponse.builder()
                 .idUsuario(usuarioEntity.getIdUsuario())
-                .nombreCompleto(nombreCompleto)
+                .nombres(nombreCompleto)
+                .apPaterno(usuarioEntity.getApPaterno())
+                .apMaterno(usuarioEntity.getApMaterno())
                 .correo(usuarioEntity.getCorreo())
                 .telefono(usuarioEntity.getTelefono())
                 .rol(usuarioEntity.getRol().name())
