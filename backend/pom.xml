@@ -20,6 +20,7 @@
         <module>mcsv-usuario</module>
         <module>mcsv-inventario</module>
         <module>mcsv-notificacion</module>
+        <module>mcsv-pago</module>
 	</modules>
 	<url/>
 	<licenses>
