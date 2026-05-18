@@ -229,6 +229,55 @@ El repositorio presenta una base funcional de aplicación fullstack con separaci
 
 ---
 
+## Guía: Creación de Nuevos Microservicios
+
+Todo nuevo microservicio debe generarse siguiendo un estándar estricto utilizando [Spring Initializr](https://start.spring.io/). Esto asegura la compatibilidad con nuestra versión de Java.
+
+### Paso 1: Configuración Base en Spring Initializr
+Al crear un nuevo servicio (ej. `mcsv-pago`), configura los siguientes parámetros iniciales:
+* **Project:** Maven
+* **Language:** Java
+* **Spring Boot:** 3.x.x (La versión estable más reciente compatible con Spring Cloud 2025.1.1)
+* **Project Metadata:**
+  * **Group:** `com.lavaclean`
+  * **Artifact:** `mcsv-[nombre-del-servicio]` (ej. `mcsv-pago`)
+  * **Packaging:** Jar
+  * **Java:** 21
+
+### Paso 2: Selección de Dependencias Estándar
+
+**Dependencias Transversales (Obligatorias en todos los servicios):**
+* `Lombok`: Para reducir el código boilerplate.
+* `Spring Web`: Para exponer la API REST.
+* `OpenFeign`: Para la comunicación síncrona entre microservicios.
+
+**Dependencias de Persistencia:**
+* `Spring Data JPA` + `PostgreSQL Driver`: Para servicios transaccionales core.
+* `Spring Data JPA` + `H2 Database`: Solo para servicios ligeros o en memoria (ej. notificaciones).
+
+### Paso 3: Estructuración Hexagonal del Proyecto
+Una vez descargado y extraído el `.zip` de Spring Initializr, no programes directamente en la carpeta raíz. Debes reestructurar los paquetes para cumplir con el patrón de **Puertos y Adaptadores**:
+
+```text
+src/main/java/com/lavaclean/usuario
+├── api/
+│   ├── controller/        # Endpoints REST (Adaptadores de entrada)
+│   └── dto/               
+│       ├── request/       # Objetos de entrada de datos
+│       └── response/      # Objetos de salida de datos
+├── application/
+│   ├── mapper/            # Transformadores entre Entity y DTO
+│   └── service/           # Lógica de orquestación y casos de uso
+├── domain/
+│   ├── exception/         # Excepciones personalizadas del negocio
+│   └── model/             # Entidades core del negocio (Interfaces/Enums)
+├── infrastructure/
+│   ├── config/            # Configuraciones globales (Beans, Seguridad, etc.)
+│   └── persistence/
+│       ├── entity/        # Entidades JPA (Mapeo a base de datos)
+│       └── repository/    # Interfaces de Spring Data JPA
+└── McsvUsuarioApplication.java # Clase principal de arranque de Spring Boot
+
 ## Licencia
 
 No se encontró un archivo `LICENSE` en la raíz del repositorio al momento de esta revisión. Si el proyecto será distribuido o publicado formalmente, se recomienda agregar una licencia.
