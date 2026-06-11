@@ -1,3 +1,5 @@
+import {isTokenExpired} from "../utils/jwt";
+
 type RequestOptions = {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: unknown;
@@ -11,7 +13,18 @@ export async function apiClient<T>(
 ): Promise<T> {
   const {method = "GET", body, token} = options;
 
-  const response = await fetch(`${baseUrl}${endpoint}`, {
+  if (token && isTokenExpired(token)) {
+    localStorage.removeItem("authUser");
+    localStorage.removeItem("authToken");
+
+    window.location.href = "/login";
+
+    throw new Error("Token expirado.");
+  }
+
+  const url = `${baseUrl}${endpoint}`;
+
+  const response = await fetch(url, {
     method,
     headers: {
       "Content-Type": "application/json",
@@ -20,14 +33,47 @@ export async function apiClient<T>(
     body: body ? JSON.stringify(body) : undefined,
   });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || "Error en la solicitud");
+  const contentType = response.headers.get("content-type");
+  const responseText = await response.text();
+
+  if (response.status === 401 || response.status === 403) {
+    if (token) {
+      localStorage.removeItem("authUser");
+      localStorage.removeItem("authToken");
+
+      window.location.href = "/login";
+
+      throw new Error("Sesión expirada o no autorizada.");
+    }
+
+    throw new Error(responseText || "Credenciales incorrectas.");
   }
 
-  if (response.status === 204) {
+  if (!response.ok) {
+    console.error("API ERROR:", {
+      status: response.status,
+      statusText: response.statusText,
+      url,
+      contentType,
+      responseText,
+    });
+
+    throw new Error(responseText || `Error ${response.status}`);
+  }
+
+  if (!responseText) {
     return null as T;
   }
 
-  return response.json() as Promise<T>;
+  if (!contentType?.includes("application/json")) {
+    console.error("La respuesta no es JSON:", {
+      url,
+      contentType,
+      responseText,
+    });
+
+    throw new Error("La respuesta del servidor no es JSON.");
+  }
+
+  return JSON.parse(responseText) as T;
 }
