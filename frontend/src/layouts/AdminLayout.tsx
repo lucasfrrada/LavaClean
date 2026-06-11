@@ -74,9 +74,11 @@ export default function AdminLayout() {
 
         {/* Perfil admin */}
         <div className="border-b border-white/10 px-6 py-5">
-          <p className="text-sm font-bold">{user?.nombre || "Administrador"}</p>
+          <p className="text-sm font-bold">
+            {user?.nombres || "Administrador"}
+          </p>
           <p className="mt-1 truncate text-xs text-white/45">
-            {user?.email || "admin@lavaclean.com"}
+            {user?.correo || "admin@lavaclean.com"}
           </p>
         </div>
 

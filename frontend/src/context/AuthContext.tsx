@@ -5,21 +5,15 @@ import {
   useState,
   type ReactNode,
 } from "react";
-
-type User = {
-  id?: number;
-  nombre?: string;
-  email?: string;
-  telefono?: string;
-  rol?: string;
-};
+import type {AuthUser} from "../types/auth";
 
 type AuthContextType = {
-  user: User | null;
+  user: AuthUser | null;
   token: string | null;
   isAuthenticated: boolean;
-  login: (userData: User, userToken: string) => void;
+  login: (userData: AuthUser, userToken: string) => void;
   logout: () => void;
+  updateUser: (userData: AuthUser) => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,7 +23,7 @@ type AuthProviderProps = {
 };
 
 export function AuthProvider({children}: AuthProviderProps) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
@@ -38,25 +32,26 @@ export function AuthProvider({children}: AuthProviderProps) {
 
     if (storedUser && storedToken) {
       try {
-        const parsedUser = JSON.parse(storedUser) as User;
-
-        setUser(parsedUser);
+        setUser(JSON.parse(storedUser) as AuthUser);
         setToken(storedToken);
-      } catch (error) {
-        console.error("Error al leer el usuario desde localStorage:", error);
-
+      } catch {
         localStorage.removeItem("authUser");
         localStorage.removeItem("authToken");
       }
     }
   }, []);
 
-  const login = (userData: User, userToken: string) => {
+  const login = (userData: AuthUser, userToken: string) => {
     setUser(userData);
     setToken(userToken);
 
     localStorage.setItem("authUser", JSON.stringify(userData));
     localStorage.setItem("authToken", userToken);
+  };
+
+  const updateUser = (userData: AuthUser) => {
+    setUser(userData);
+    localStorage.setItem("authUser", JSON.stringify(userData));
   };
 
   const logout = () => {
@@ -67,16 +62,15 @@ export function AuthProvider({children}: AuthProviderProps) {
     localStorage.removeItem("authToken");
   };
 
-  const isAuthenticated = Boolean(token);
-
   return (
     <AuthContext.Provider
       value={{
         user,
         token,
-        isAuthenticated,
+        isAuthenticated: Boolean(token),
         login,
         logout,
+        updateUser,
       }}
     >
       {children}

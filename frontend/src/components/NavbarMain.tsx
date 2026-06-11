@@ -67,7 +67,7 @@ export default function NavbarMain() {
             </Link>
           ) : (
             <div className="relative flex items-center gap-4">
-              {user?.rol === "ADMIN" ? (
+              {user?.rol === "ADMINISTRADOR" ? (
                 <Link
                   to="/admin/pedidos"
                   onClick={() => setIsProfileOpen(false)}
@@ -98,10 +98,10 @@ export default function NavbarMain() {
                 <div className="absolute right-0 top-14 w-56 overflow-hidden rounded-2xl bg-[#241E1A] shadow-2xl ring-1 ring-white/10">
                   <div className="border-b border-white/10 px-4 py-4">
                     <p className="text-sm font-bold text-white">
-                      {user?.nombre || "Usuario LavaClean"}
+                      {user?.nombres || "Usuario LavaClean"}
                     </p>
                     <p className="mt-1 truncate text-xs text-white/50">
-                      {user?.email || "cliente@lavaclean.com"}
+                      {user?.correo || "cliente@lavaclean.com"}
                     </p>
                   </div>
 
