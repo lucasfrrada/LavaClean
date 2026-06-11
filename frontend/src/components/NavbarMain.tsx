@@ -34,27 +34,39 @@ export default function NavbarMain() {
         <div className="flex items-center gap-8">
           <ul className="hidden items-center gap-8 text-sm font-medium text-white md:flex">
             <li>
-              <a href="#inicio" className="transition hover:text-[#F8EFD8]">
-                Inicio
-              </a>
+              <Link
+                to="/"
+                className="flex items-center gap-2 transition hover:text-[#F8EFD8]"
+              >
+                <span>Inicio</span>
+              </Link>
             </li>
 
             <li>
-              <a href="#servicios" className="transition hover:text-[#F8EFD8]">
-                Servicios
-              </a>
+              <Link
+                to="/"
+                className="flex items-center gap-2 transition hover:text-[#F8EFD8]"
+              >
+                <span>Servicios</span>
+              </Link>
             </li>
 
             <li>
-              <a href="#nosotros" className="transition hover:text-[#F8EFD8]">
-                Nosotros
-              </a>
+              <Link
+                to="/"
+                className="flex items-center gap-2 transition hover:text-[#F8EFD8]"
+              >
+                <span>Nosotros</span>
+              </Link>
             </li>
 
             <li>
-              <a href="#contacto" className="transition hover:text-[#F8EFD8]">
-                Contacto
-              </a>
+              <Link
+                to="/"
+                className="flex items-center gap-2 transition hover:text-[#F8EFD8]"
+              >
+                <span>Contacto</span>
+              </Link>
             </li>
           </ul>
 
