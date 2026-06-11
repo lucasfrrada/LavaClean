@@ -14,21 +14,45 @@ import AdminUsersPage from "./pages/admin/AdminUsersPage";
 import AdminServicesPage from "./pages/admin/AdminServicesPage";
 import AdminPrendasPage from "./pages/admin/AdminPrendasPage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
+import PageTransition from "./components/PageTransition";
 
 function App() {
   return (
     <Routes>
       {/* Rutas públicas */}
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<LoginPage></LoginPage>} />
-      <Route path="/register" element={<RegisterPage></RegisterPage>} />
+      <Route
+        path="/"
+        element={
+          <PageTransition>
+            <LandingPage />
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/login"
+        element={
+          <PageTransition>
+            <LoginPage></LoginPage>
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/register"
+        element={
+          <PageTransition>
+            <RegisterPage></RegisterPage>
+          </PageTransition>
+        }
+      />
 
       {/* Rutas cliente */}
       <Route
         path="/agendar"
         element={
           <ProtectedRoute>
-            <AgendarPage></AgendarPage>
+            <PageTransition>
+              <AgendarPage></AgendarPage>
+            </PageTransition>
           </ProtectedRoute>
         }
       />
@@ -36,7 +60,9 @@ function App() {
         path="/mis-datos"
         element={
           <ProtectedRoute>
-            <PerfilPage />
+            <PageTransition>
+              <PerfilPage />
+            </PageTransition>
           </ProtectedRoute>
         }
       />
@@ -44,7 +70,9 @@ function App() {
         path="/mis-pedidos"
         element={
           <ProtectedRoute>
-            <PedidosPage />
+            <PageTransition>
+              <PedidosPage />
+            </PageTransition>
           </ProtectedRoute>
         }
       />

@@ -11,6 +11,8 @@ import {
 import {Link, NavLink, Outlet, useNavigate} from "react-router-dom";
 import {useAuth} from "../context/AuthContext";
 import logo from "../assets/imgs/lavaclean-icon.png";
+import PageTransition from "../components/PageTransition";
+import {AnimatePresence} from "motion/react";
 
 const adminLinks = [
   {
@@ -151,7 +153,11 @@ export default function AdminLayout() {
         </header>
 
         <div className="px-6 py-8 lg:px-10">
-          <Outlet />
+          <AnimatePresence mode="wait">
+            <PageTransition>
+              <Outlet />
+            </PageTransition>
+          </AnimatePresence>
         </div>
       </section>
     </main>
