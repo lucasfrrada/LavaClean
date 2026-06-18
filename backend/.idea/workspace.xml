@@ -5,14 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3b32f422-cc46-4d9c-98e4-aa37fa91c765" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/mcsv-pedidos/src/test/java/mcsv/pedidos/api/controller/PrendaControllerTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mcsv-pedidos/src/test/java/mcsv/pedidos/api/controller/ServicioControllerTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mcsv-pedidos/src/test/java/mcsv/pedidos/application/service/PedidoServiceTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mcsv-pedidos/src/test/java/mcsv/pedidos/application/service/PrendaServiceTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mcsv-pedidos/src/test/java/mcsv/pedidos/application/service/ServicioServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mcsv-auth/src/test/java/lavaclean/auth/application/service/AuthServiceImplTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mcsv-usuario/src/test/java/lavaclean/msvc_usuario/api/controller/UsuarioControllerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mcsv-usuario/src/test/java/lavaclean/msvc_usuario/application/service/UsuarioServiceImplTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/test/java/mcsv/pedidos/PedidosApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/test/java/mcsv/pedidos/PedidosApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-auth/src/test/java/lavaclean/auth/AuthApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/test/java/mcsv/pedidos/PedidosApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-usuario/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-usuario/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-usuario/src/test/java/lavaclean/msvc_usuario/MsvcUsuarioApplicationTests.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
