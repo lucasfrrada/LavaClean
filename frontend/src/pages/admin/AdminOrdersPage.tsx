@@ -24,20 +24,24 @@ const emptyForm = {
 };
 
 const estadosPedido: EstadoPedido[] = [
-  "PENDIENTE",
-  "EN_PROCESO",
+  "REVISION",
+  "CONFIRMADO",
   "COMPLETADO",
+  "EN_PROCESO",
   "PAGADO",
   "CANCELADO",
+  "ENTREGADO",
 ];
 
 function getEstadoLabel(estado: EstadoPedido) {
   const labels: Record<EstadoPedido, string> = {
-    PENDIENTE: "Pendiente",
+    REVISION: "Revision",
     EN_PROCESO: "En proceso",
+    CONFIRMADO: "Confirmado",
     COMPLETADO: "Completado",
     PAGADO: "Pagado",
     CANCELADO: "Cancelado",
+    ENTREGADO: "Entregado",
   };
 
   return labels[estado];
@@ -45,11 +49,13 @@ function getEstadoLabel(estado: EstadoPedido) {
 
 function getEstadoClass(estado: EstadoPedido) {
   const classes: Record<EstadoPedido, string> = {
-    PENDIENTE: "bg-orange-100 text-orange-700",
-    EN_PROCESO: "bg-yellow-100 text-yellow-700",
+    REVISION: "bg-orange-100 text-orange-700",
+    EN_PROCESO: "bg-cyan-100 text-cyan-700",
+    CONFIRMADO: "bg-yellow-100 text-yellow-700",
     COMPLETADO: "bg-blue-100 text-blue-700",
     PAGADO: "bg-green-100 text-green-700",
     CANCELADO: "bg-red-100 text-red-700",
+    ENTREGADO: "bg-purple-100 text-purple-700",
   };
 
   return classes[estado];

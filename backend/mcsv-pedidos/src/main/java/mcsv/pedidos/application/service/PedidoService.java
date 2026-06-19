@@ -37,7 +37,7 @@ public class PedidoService {
     public PedidoResponse save(CrearPedidoRequest newPedidoRequest) {
 
         PedidoEntity pedido = new PedidoEntity();
-        pedido.setEstado(EstadoPedido.PENDIENTE);
+        pedido.setEstado(EstadoPedido.REVISION);
         pedido.setFecha_entrega(newPedidoRequest.getFecha_entrega());
         pedido.setFecha_llegada(newPedidoRequest.getFecha_llegada());
 
@@ -164,6 +164,26 @@ public class PedidoService {
         pedidoRepository.delete(pedido);
     }
 
+    /* CONFIRMAR PEDIDO */
+    @Transactional
+    public PedidoResponse confirmarPedido(Long id) {
+        PedidoEntity pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Pedido no encontrado con id: " + id));
+
+        if (pedido.getEstado() != EstadoPedido.REVISION) {
+            throw new IllegalStateException("Solo se pueden confirmar pedidos en estado REVISION");
+        }
+
+        BigDecimal total = calcularTotal(pedido.getDetallePedido());
+
+        pedido.setTotal(total);
+        pedido.setEstado(EstadoPedido.CONFIRMADO);
+
+        PedidoEntity actualizado = pedidoRepository.save(pedido);
+
+        return PedidoMapper.toResponse(actualizado);
+    }
+
 
     /* =================================== */
     /* AUXILIARES */
@@ -232,19 +252,23 @@ public class PedidoService {
 
     /* VALIDAR PEDIDO EDITABLE */
     private void validarPedidoEditable(PedidoEntity pedido){
-        if (pedido.getEstado() == EstadoPedido.ENTREGADO || pedido.getEstado() == EstadoPedido.CANCELADO){
-            throw new IllegalStateException("El pedido no puede editar");
+        if (pedido.getEstado() != EstadoPedido.REVISION) {
+            throw new IllegalStateException("Solo se pueden editar pedidos en estado REVISION");
         }
     }
 
     /* VALIDAR CAMBIO DE ESTADO */
-    private void validarCambioEstado(EstadoPedido actual, EstadoPedido nuevo){
-        if (actual == EstadoPedido.ENTREGADO || actual == EstadoPedido.CANCELADO){
-            throw new IllegalStateException("El pedido no puede editar");
+    private void validarCambioEstado(EstadoPedido actual, EstadoPedido nuevo) {
+        if (actual == EstadoPedido.ENTREGADO || actual == EstadoPedido.CANCELADO) {
+            throw new IllegalStateException("El pedido no puede cambiar de estado");
         }
 
-        if (actual == nuevo){
+        if (actual == nuevo) {
             throw new IllegalStateException("El pedido ya tiene ese estado");
+        }
+
+        if (actual == EstadoPedido.REVISION && nuevo != EstadoPedido.CONFIRMADO && nuevo != EstadoPedido.CANCELADO) {
+            throw new IllegalStateException("Un pedido en REVISION solo puede pasar a CONFIRMADO o CANCELADO");
         }
     }
 

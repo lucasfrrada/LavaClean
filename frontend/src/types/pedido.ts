@@ -68,8 +68,10 @@ export type UpdateEstadoPedidoRequest = {
 };
 
 export type EstadoPedido =
-  | "PENDIENTE"
+  | "REVISION"
+  | "CONFIRMADO"
   | "EN_PROCESO"
   | "COMPLETADO"
+  | "ENTREGADO"
   | "PAGADO"
   | "CANCELADO";

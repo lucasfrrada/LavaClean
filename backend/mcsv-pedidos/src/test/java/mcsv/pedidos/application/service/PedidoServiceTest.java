@@ -115,7 +115,7 @@ class PedidoServiceTest {
 
         PedidoEntity pedidoGuardado = pedidoCaptor.getValue();
 
-        assertThat(pedidoGuardado.getEstado()).isEqualTo(EstadoPedido.PENDIENTE);
+        assertThat(pedidoGuardado.getEstado()).isEqualTo(EstadoPedido.REVISION);
         assertThat(pedidoGuardado.getTotal()).isEqualByComparingTo("6000");
         assertThat(pedidoGuardado.getDetallePedido()).hasSize(1);
         assertThat(pedidoGuardado.getDetallePedido().get(0).getCantidad()).isEqualTo(2);
@@ -177,7 +177,7 @@ class PedidoServiceTest {
         PedidoEntity pedido = PedidoEntity.builder()
                 .idPedido(1L)
                 .idUsuario(1L)
-                .estado(EstadoPedido.PENDIENTE)
+                .estado(EstadoPedido.REVISION)
                 .fecha_llegada(LocalDate.of(2026, 6, 18))
                 .fecha_entrega(LocalDate.of(2026, 6, 19))
                 .total(new BigDecimal("6000"))
@@ -202,13 +202,13 @@ class PedidoServiceTest {
         PedidoEntity pedido = PedidoEntity.builder()
                 .idPedido(1L)
                 .idUsuario(1L)
-                .estado(EstadoPedido.PENDIENTE)
+                .estado(EstadoPedido.REVISION)
                 .total(new BigDecimal("6000"))
                 .detallePedido(List.of())
                 .build();
 
         ActualizarEstadoPedidoRequest request = new ActualizarEstadoPedidoRequest();
-        request.setEstado(EstadoPedido.PENDIENTE);
+        request.setEstado(EstadoPedido.REVISION);
 
         when(pedidoRepository.findById(1L)).thenReturn(Optional.of(pedido));
 

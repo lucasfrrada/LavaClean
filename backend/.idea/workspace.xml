@@ -1,6 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="RunManager" selected="Application.AuthApplication">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="4234a5ca-c62a-458a-9207-636d1fdbfec7" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/controller/PedidoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/controller/PedidoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/application/service/PedidoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/application/service/PedidoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/domain/model/EstadoPedido.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/domain/model/EstadoPedido.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/test/java/mcsv/pedidos/application/service/PedidoServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/test/java/mcsv/pedidos/application/service/PedidoServiceTest.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.AuthApplication.executor": "Run",
+    "Application.McsvInventarioApplication.executor": "Run",
+    "Application.MsvcUsuarioApplication.executor": "Run",
+    "Application.PedidosApplication.executor": "Run",
+    "git-widget-placeholder": "dev"
+  }
+}]]></component>
+  <component name="RunManager" selected="Application.PedidosApplication">
     <configuration name="AuthApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="lavaclean.auth.AuthApplication" />
       <module name="auth" />
@@ -55,11 +83,14 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.AuthApplication" />
-        <item itemvalue="Application.MsvcUsuarioApplication" />
         <item itemvalue="Application.PedidosApplication" />
+        <item itemvalue="Application.MsvcUsuarioApplication" />
         <item itemvalue="Application.McsvInventarioApplication" />
+        <item itemvalue="Application.AuthApplication" />
       </list>
     </recent_temporary>
+  </component>
+  <component name="TaskManager">
+    <servers />
   </component>
 </project>

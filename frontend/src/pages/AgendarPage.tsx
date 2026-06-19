@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {ArrowLeft, CalendarDays, Package} from "lucide-react";
+import {CalendarDays, Package} from "lucide-react";
 import {Link, useNavigate} from "react-router-dom";
 
 import {useAuth} from "../context/AuthContext";

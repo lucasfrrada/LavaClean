@@ -70,4 +70,10 @@ public class PedidoController {
         pedidoService.eliminarPedido(id);
         return ResponseEntity.noContent().build();
     }
+
+    //CONFIRMAR PEDIDO
+    @PatchMapping("/{id}/confirmar")
+    public ResponseEntity<PedidoResponse> confirmarPedido(@PathVariable Long id) {
+        return ResponseEntity.ok(pedidoService.confirmarPedido(id));
+    }
 }
