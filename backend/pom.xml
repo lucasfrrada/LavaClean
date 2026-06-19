@@ -13,6 +13,15 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name/>
 	<description/>
+	<packaging>pom</packaging>
+	<modules>
+        <module>mcsv-auth</module>
+		<module>mcsv-pedidos</module>
+        <module>mcsv-usuario</module>
+        <module>mcsv-inventario</module>
+        <module>mcsv-notificacion</module>
+        <module>mcsv-pago</module>
+	</modules>
 	<url/>
 	<licenses>
 		<license/>

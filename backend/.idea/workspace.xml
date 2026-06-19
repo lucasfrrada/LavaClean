@@ -4,7 +4,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8506d6f1-136c-4f08-984d-de26eb6eb7e2" name="Changes" comment="fix en Service de MovimientoInventarioService. TEST EN POSTMAN HECHOS" />
+    <list default="true" id="4234a5ca-c62a-458a-9207-636d1fdbfec7" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/mcsv-notificacion/.env.example" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mcsv-notificacion/src/main/java/mcsv/mcsv_notificacion/infrastructure/messaging/PedidoEstadoCambiadoEvent.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mcsv-notificacion/src/main/java/mcsv/mcsv_notificacion/infrastructure/messaging/PedidoEstadoConsumer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/dto/request/Notificaciones/NotificacionRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/infraestructure/client/NotificacionClientRest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/infraestructure/messaging/PedidoEstadoCambiadoEvent.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/infraestructure/messaging/PedidoEventProducer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-notificacion/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-notificacion/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-notificacion/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-notificacion/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-notificacion/src/main/java/mcsv/mcsv_notificacion/api/dto/UsuarioDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-notificacion/src/main/java/mcsv/mcsv_notificacion/api/dto/UsuarioDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-notificacion/src/main/java/mcsv/mcsv_notificacion/infrastructure/client/UsuarioClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-notificacion/src/main/java/mcsv/mcsv_notificacion/infrastructure/client/UsuarioClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-notificacion/src/main/java/mcsv/mcsv_notificacion/infrastructure/persistence/entity/NotificacionEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-notificacion/src/main/java/mcsv/mcsv_notificacion/infrastructure/persistence/entity/NotificacionEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-notificacion/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-notificacion/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-notificacion/src/test/java/mcsv/mcsv_notificacion/McsvNotificacionApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-notificacion/src/test/java/mcsv/mcsv_notificacion/McsvNotificacionApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/application/service/PedidoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/application/service/PedidoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/resources/application.properties" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,82 +32,129 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Enum" />
+        <option value="Dockerfile" />
         <option value="Interface" />
+        <option value="Record" />
         <option value="Class" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$/.." value="backend" />
-      </map>
-    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;jonaourdev&quot;
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "jonaourdev"
   }
-}</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/lucasfrrada/LavaClean.git&quot;,
-    &quot;accountId&quot;: &quot;7e6d2dc8-3eaa-46f0-a19f-ea3f80cf77d9&quot;
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/lucasfrrada/LavaClean.git",
+    "accountId": "7e6d2dc8-3eaa-46f0-a19f-ea3f80cf77d9"
   }
-}</component>
-  <component name="MavenImportPreferences">
-    <option name="generalSettings">
-      <MavenGeneralSettings>
-        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
-      </MavenGeneralSettings>
-    </option>
-  </component>
-  <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
-  </component>
-  <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 4
-}</component>
-  <component name="ProjectId" id="3ChN69TSe0oWNYjwThtyfsmCxZX" />
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 7
+}]]></component>
+  <component name="ProjectId" id="3FMPcBQ06aiCAZ5i1cNYNaPOZpQ" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.McsvInventarioApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Application.MsvcUsuarioApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Application.PedidosApplication.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;mcsv-inventario&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/guts/Documents/GitHub/LavaClean/backend&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.AuthApplication.executor": "Run",
+    "Application.McsvInventarioApplication.executor": "Run",
+    "Application.McsvNotificacionApplication.executor": "Run",
+    "Application.MsvcUsuarioApplication.executor": "Run",
+    "Application.PedidosApplication.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "dev",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "to.speed.mode.migration.done": "true"
   }
-}</component>
-  <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\guts\Documents\GitHub\LavaClean\backend" />
-      <recent name="C:\Users\guts\Documents\GitHub\LavaClean\backend\mcsv-pedidos\src\main\java\mcsv\pedidos\infraestructure" />
-      <recent name="C:\Users\guts\Documents\GitHub\LavaClean\backend\mcsv-pedidos\src\main\java\mcsv\pedidos\application" />
-      <recent name="C:\Users\guts\Documents\GitHub\LavaClean\backend\mcsv-pedidos\src\main\java\mcsv\pedidos\api" />
-    </key>
-    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
-      <recent name="lavaclean.mcsv_inventario.application.mapper" />
-      <recent name="mcsv.pedidos.api.dto.response" />
-      <recent name="mcsv.pedidos.api.dto.request" />
-      <recent name="mcsv.pedidos.infraestructure.persistence.repository" />
-      <recent name="mcsv.pedidos.infraestructure.persistence" />
-    </key>
+}]]></component>
+  <component name="RunManager" selected="Application.AuthApplication">
+    <configuration name="AuthApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="lavaclean.auth.AuthApplication" />
+      <module name="auth" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="lavaclean.auth.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="McsvInventarioApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="lavaclean.mcsv_inventario.McsvInventarioApplication" />
+      <module name="mcsv-inventario" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="lavaclean.mcsv_inventario.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="McsvNotificacionApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="mcsv.mcsv_notificacion.McsvNotificacionApplication" />
+      <module name="mcsv-notificacion" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="mcsv.mcsv_notificacion.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MsvcUsuarioApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="lavaclean.msvc_usuario.MsvcUsuarioApplication" />
+      <module name="usuario" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="lavaclean.msvc_usuario.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PedidosApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="mcsv.pedidos.PedidosApplication" />
+      <module name="pedidos" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="mcsv.pedidos.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.McsvNotificacionApplication" />
+        <item itemvalue="Application.PedidosApplication" />
+        <item itemvalue="Application.McsvInventarioApplication" />
+        <item itemvalue="Application.MsvcUsuarioApplication" />
+        <item itemvalue="Application.AuthApplication" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -99,135 +165,12 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="8506d6f1-136c-4f08-984d-de26eb6eb7e2" name="Changes" comment="" />
-      <created>1776833663941</created>
+      <changelist id="4234a5ca-c62a-458a-9207-636d1fdbfec7" name="Changes" comment="" />
+      <created>1781882044995</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1776833663941</updated>
+      <updated>1781882044995</updated>
     </task>
-    <task id="LOCAL-00001" summary="Se añadió infraestructure y api">
-      <option name="closed" value="true" />
-      <created>1776838903289</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1776838903289</updated>
-    </task>
-    <task id="LOCAL-00002" summary="dtos, entitys, repositorios">
-      <option name="closed" value="true" />
-      <created>1776907606335</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1776907606335</updated>
-    </task>
-    <task id="LOCAL-00003" summary="creacion de PedidoMapper, PedidoResponse y DetallePedidoResponse">
-      <option name="closed" value="true" />
-      <created>1776909760674</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1776909760674</updated>
-    </task>
-    <task id="LOCAL-00004" summary="conexion con mcsv-usuarios. PONER LINK DESPUES">
-      <option name="closed" value="true" />
-      <created>1777389434277</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1777389434277</updated>
-    </task>
-    <task id="LOCAL-00005" summary="Conexion entre microservicios hecha.&#10;Conexion hacia la base de datos RDS hecha en ambos microservicios.">
-      <option name="closed" value="true" />
-      <created>1777517973578</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1777517973578</updated>
-    </task>
-    <task id="LOCAL-00006" summary="Creacion microservicio inventario.&#10;Entidades y enumeraciones creadas.">
-      <option name="closed" value="true" />
-      <created>1777526482189</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1777526482189</updated>
-    </task>
-    <task id="LOCAL-00007" summary="CRUD Proveedores listo">
-      <option name="closed" value="true" />
-      <created>1777607187454</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1777607187454</updated>
-    </task>
-    <task id="LOCAL-00008" summary="CRUD Productos listo">
-      <option name="closed" value="true" />
-      <created>1777653404517</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1777653404517</updated>
-    </task>
-    <task id="LOCAL-00009" summary="POST y GET Compras-Inventario listo.">
-      <option name="closed" value="true" />
-      <created>1777673853316</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1777673853316</updated>
-    </task>
-    <task id="LOCAL-00010" summary="PUT y DELETE para compras-inventario">
-      <option name="closed" value="true" />
-      <created>1777675470761</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1777675470761</updated>
-    </task>
-    <task id="LOCAL-00011" summary="MOVIMIENTO INVENTARIO CREACION POST-GET. Falta testear en POSTMAN">
-      <option name="closed" value="true" />
-      <created>1777676861097</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1777676861097</updated>
-    </task>
-    <task id="LOCAL-00012" summary="fix en Service de MovimientoInventarioService. TEST EN POSTMAN HECHOS">
-      <option name="closed" value="true" />
-      <created>1778031207721</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1778031207721</updated>
-    </task>
-    <option name="localTasksCounter" value="13" />
     <servers />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="Se añadió infraestructure y api" />
-    <MESSAGE value="dtos, entitys, repositorios" />
-    <MESSAGE value="creacion de PedidoMapper, PedidoResponse y DetallePedidoResponse" />
-    <MESSAGE value="conexion con mcsv-usuarios. PONER LINK DESPUES" />
-    <MESSAGE value="Conexion entre microservicios hecha.&#10;Conexion hacia la base de datos RDS hecha en ambos microservicios." />
-    <MESSAGE value="Creacion microservicio inventario.&#10;Entidades y enumeraciones creadas." />
-    <MESSAGE value="CRUD Proveedores listo" />
-    <MESSAGE value="CRUD Productos listo" />
-    <MESSAGE value="POST y GET Compras-Inventario listo." />
-    <MESSAGE value="PUT y DELETE para compras-inventario" />
-    <MESSAGE value="MOVIMIENTO INVENTARIO CREACION POST-GET. Falta testear en POSTMAN" />
-    <MESSAGE value="fix en Service de MovimientoInventarioService. TEST EN POSTMAN HECHOS" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix en Service de MovimientoInventarioService. TEST EN POSTMAN HECHOS" />
   </component>
 </project>
