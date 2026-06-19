@@ -6,7 +6,7 @@
         <groupId>jyl</groupId>
         <artifactId>lavaclean</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-		<relativePath/> <!-- lookup parent from repository -->
+        <relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>mcsv</groupId>
 	<artifactId>usuario</artifactId>
@@ -95,6 +95,11 @@
             <artifactId>spring-cloud-starter-openfeign</artifactId>
             <version>5.0.1</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

@@ -5,10 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3b32f422-cc46-4d9c-98e4-aa37fa91c765" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/mcsv-inventario/src/main/java/lavaclean/mcsv_inventario/infraestructure/config/CorsConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mcsv-auth/src/test/java/lavaclean/auth/application/service/AuthServiceImplTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mcsv-usuario/src/test/java/lavaclean/msvc_usuario/api/controller/UsuarioControllerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mcsv-usuario/src/test/java/lavaclean/msvc_usuario/application/service/UsuarioServiceImplTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/layouts/AdminLayout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/layouts/AdminLayout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-auth/src/test/java/lavaclean/auth/AuthApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/test/java/mcsv/pedidos/PedidosApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-usuario/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-usuario/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mcsv-usuario/src/test/java/lavaclean/msvc_usuario/MsvcUsuarioApplicationTests.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,20 +57,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.AuthApplication.executor": "Run",
-    "Application.McsvInventarioApplication.executor": "Run",
-    "Application.MsvcUsuarioApplication.executor": "Run",
-    "Application.PedidosApplication.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "frontend",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "to.speed.mode.migration.done": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.AuthApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.McsvInventarioApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.MsvcUsuarioApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.PedidosApplication.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;backend&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/guts/Documents/GitHub/LavaClean/backend&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.project.maven.runner&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
   }
 }]]></component>
   <component name="RunManager" selected="Application.McsvInventarioApplication">
