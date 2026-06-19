@@ -6,7 +6,7 @@
         <groupId>jyl</groupId>
         <artifactId>lavaclean</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>lavaclean</groupId>
 	<artifactId>mcsv-inventario</artifactId>
