@@ -15,6 +15,7 @@ import AdminServicesPage from "./pages/admin/AdminServicesPage";
 import AdminPrendasPage from "./pages/admin/AdminPrendasPage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 import PageTransition from "./components/PageTransition";
+import AdminInventarioPage from "./pages/admin/AdminInventarioPage";
 
 function App() {
   return (
@@ -92,6 +93,7 @@ function App() {
         <Route path="clientes" element={<AdminUsersPage />} />
         <Route path="servicios" element={<AdminServicesPage />} />
         <Route path="prendas" element={<AdminPrendasPage />} />
+        <Route path="inventario" element={<AdminInventarioPage />} />
         <Route path="settings" element={<AdminSettingsPage />} />
       </Route>
     </Routes>

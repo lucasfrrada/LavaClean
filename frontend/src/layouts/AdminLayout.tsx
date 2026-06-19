@@ -2,11 +2,11 @@ import {
   LayoutDashboard,
   ClipboardList,
   Users,
-  Settings,
   LogOut,
   ArrowLeft,
   Shirt,
   WashingMachine,
+  Package,
 } from "lucide-react";
 import {Link, NavLink, Outlet, useNavigate} from "react-router-dom";
 import {useAuth} from "../context/AuthContext";
@@ -40,10 +40,11 @@ const adminLinks = [
     path: "/admin/prendas",
     icon: Shirt,
   },
+
   {
-    label: "Configuración",
-    path: "/admin/configuracion",
-    icon: Settings,
+    label: "Inventario",
+    path: "/admin/inventario",
+    icon: Package,
   },
 ];
 
