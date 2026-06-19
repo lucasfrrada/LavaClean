@@ -6,6 +6,7 @@ import {
   type ReactNode,
 } from "react";
 import type {AuthUser} from "../types/auth";
+import {isTokenExpired} from "../utils/jwt";
 
 type AuthContextType = {
   user: AuthUser | null;
@@ -30,14 +31,20 @@ export function AuthProvider({children}: AuthProviderProps) {
     const storedUser = localStorage.getItem("authUser");
     const storedToken = localStorage.getItem("authToken");
 
-    if (storedUser && storedToken) {
-      try {
-        setUser(JSON.parse(storedUser) as AuthUser);
-        setToken(storedToken);
-      } catch {
-        localStorage.removeItem("authUser");
-        localStorage.removeItem("authToken");
-      }
+    if (!storedUser || !storedToken) return;
+
+    if (isTokenExpired(storedToken)) {
+      localStorage.removeItem("authUser");
+      localStorage.removeItem("authToken");
+      return;
+    }
+
+    try {
+      setUser(JSON.parse(storedUser) as AuthUser);
+      setToken(storedToken);
+    } catch {
+      localStorage.removeItem("authUser");
+      localStorage.removeItem("authToken");
     }
   }, []);
 
@@ -61,6 +68,8 @@ export function AuthProvider({children}: AuthProviderProps) {
     localStorage.removeItem("authUser");
     localStorage.removeItem("authToken");
   };
+
+  const isAuthenticated = Boolean(token) && !isTokenExpired(token);
 
   return (
     <AuthContext.Provider

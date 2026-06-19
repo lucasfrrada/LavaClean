@@ -137,7 +137,7 @@ export default function PerfilPage() {
 
           <button
             type="button"
-            onClick={() => navigate("/")}
+            onClick={() => navigate(-1)}
             className="flex items-center gap-2 text-sm font-medium text-white/90 transition hover:text-white"
           >
             <ArrowLeft size={17} />

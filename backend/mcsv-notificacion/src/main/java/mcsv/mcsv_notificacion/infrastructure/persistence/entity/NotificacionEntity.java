@@ -20,7 +20,7 @@ public class NotificacionEntity {
     @Column(name = "id_notificacion")
     private Long idNotificacion;
 
-    @Column(name = "tipo_notifiacion")
+    @Column(name = "tipo_notificacion")
     private String tipoNotificacion;
 
     @Column(name = "mensaje")

@@ -2,15 +2,17 @@ import {
   LayoutDashboard,
   ClipboardList,
   Users,
-  Settings,
   LogOut,
   ArrowLeft,
   Shirt,
   WashingMachine,
+  Package,
 } from "lucide-react";
 import {Link, NavLink, Outlet, useNavigate} from "react-router-dom";
 import {useAuth} from "../context/AuthContext";
 import logo from "../assets/imgs/lavaclean-icon.png";
+import PageTransition from "../components/PageTransition";
+import {AnimatePresence} from "motion/react";
 
 const adminLinks = [
   {
@@ -38,10 +40,11 @@ const adminLinks = [
     path: "/admin/prendas",
     icon: Shirt,
   },
+
   {
-    label: "Configuración",
-    path: "/admin/configuracion",
-    icon: Settings,
+    label: "Inventario",
+    path: "/admin/inventario",
+    icon: Package,
   },
 ];
 
@@ -151,7 +154,11 @@ export default function AdminLayout() {
         </header>
 
         <div className="px-6 py-8 lg:px-10">
-          <Outlet />
+          <AnimatePresence mode="wait">
+            <PageTransition>
+              <Outlet />
+            </PageTransition>
+          </AnimatePresence>
         </div>
       </section>
     </main>
