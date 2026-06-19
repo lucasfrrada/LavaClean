@@ -31,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import mcsv.pedidos.infraestructure.messaging.PedidoEventProducer;
 
 @ExtendWith(MockitoExtension.class)
 class PedidoServiceTest {
@@ -46,6 +47,9 @@ class PedidoServiceTest {
 
     @Mock
     private UsuarioClientRest usuarioClientRest;
+
+    @Mock
+    private PedidoEventProducer pedidoEventProducer;
 
     @InjectMocks
     private PedidoService pedidoService;
@@ -78,7 +82,7 @@ class PedidoServiceTest {
     }
 
     @Test
-    void deberiaCrearPedidoConEstadoPendienteYTotalCorrecto() {
+    void deberiaCrearPedidoConEstadoRevisionYTotalCorrecto() {
         CrearPedidoRequest request = new CrearPedidoRequest();
         request.setIdUsuario(1L);
         request.setFecha_llegada(LocalDate.of(2026, 6, 18));
@@ -107,7 +111,7 @@ class PedidoServiceTest {
         assertThat(response).isNotNull();
         assertThat(response.getIdPedido()).isEqualTo(1L);
         assertThat(response.getIdUsuario()).isEqualTo(1L);
-        assertThat(response.getEstado()).isEqualTo("PENDIENTE");
+        assertThat(response.getEstado()).isEqualTo("REVISION");
         assertThat(response.getTotal()).isEqualByComparingTo("6000");
 
         ArgumentCaptor<PedidoEntity> pedidoCaptor = ArgumentCaptor.forClass(PedidoEntity.class);
@@ -185,14 +189,14 @@ class PedidoServiceTest {
                 .build();
 
         ActualizarEstadoPedidoRequest request = new ActualizarEstadoPedidoRequest();
-        request.setEstado(EstadoPedido.EN_PROCESO);
+        request.setEstado(EstadoPedido.CONFIRMADO);
 
         when(pedidoRepository.findById(1L)).thenReturn(Optional.of(pedido));
         when(pedidoRepository.save(any(PedidoEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         PedidoResponse response = pedidoService.actualizarEstado(1L, request);
 
-        assertThat(response.getEstado()).isEqualTo("EN_PROCESO");
+        assertThat(response.getEstado()).isEqualTo("CONFIRMADO");
 
         verify(pedidoRepository).save(pedido);
     }
