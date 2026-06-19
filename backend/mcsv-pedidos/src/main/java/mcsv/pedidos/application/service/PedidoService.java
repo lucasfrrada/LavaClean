@@ -4,12 +4,16 @@ import feign.FeignException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import mcsv.pedidos.api.dto.request.Notificaciones.NotificacionRequest;
 import mcsv.pedidos.api.dto.request.Pedido.*;
 import mcsv.pedidos.api.dto.response.Pedido.PedidoResponse;
 import mcsv.pedidos.api.dto.response.UsuarioResponseRest;
 import mcsv.pedidos.application.mapper.PedidoMapper;
 import mcsv.pedidos.domain.model.EstadoPedido;
+import mcsv.pedidos.infraestructure.client.NotificacionClientRest;
 import mcsv.pedidos.infraestructure.client.UsuarioClientRest;
+import mcsv.pedidos.infraestructure.messaging.PedidoEstadoCambiadoEvent;
+import mcsv.pedidos.infraestructure.messaging.PedidoEventProducer;
 import mcsv.pedidos.infraestructure.persistence.entity.DetallePedidoEntity;
 import mcsv.pedidos.infraestructure.persistence.entity.PedidoEntity;
 import mcsv.pedidos.infraestructure.persistence.entity.PrendaEntity;
@@ -18,11 +22,15 @@ import mcsv.pedidos.infraestructure.persistence.repository.PedidoRepository;
 import mcsv.pedidos.infraestructure.persistence.repository.PrendaRepository;
 import mcsv.pedidos.infraestructure.persistence.repository.ServicioRepository;
 import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PedidoService {
@@ -31,6 +39,8 @@ public class PedidoService {
     private final PrendaRepository prendaRepository;
     private final ServicioRepository servicioRepository;
     private final UsuarioClientRest usuarioClientRest;
+    private final NotificacionClientRest notificacionClientRest;
+    private final PedidoEventProducer pedidoEventProducer;
 
     /* GUARDAR PEDIDO */
     @Transactional
@@ -137,17 +147,39 @@ public class PedidoService {
 
     /* ACTUALIZAR ESTADO */
     @Transactional
-    public PedidoResponse actualizarEstado(Long id, ActualizarEstadoPedidoRequest request) {
+    public PedidoResponse actualizarEstado(
+            Long id,
+            ActualizarEstadoPedidoRequest request
+    ) {
         PedidoEntity pedido = pedidoRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Pedido no encontrado con id: " + id));
+                .orElseThrow(() ->
+                        new EntityNotFoundException(
+                                "Pedido no encontrado con id: " + id
+                        )
+                );
 
-        EstadoPedido nuevoEstado = EstadoPedido.valueOf(String.valueOf(request.getEstado()));
+        EstadoPedido nuevoEstado =
+                EstadoPedido.valueOf(String.valueOf(request.getEstado()));
 
         validarCambioEstado(pedido.getEstado(), nuevoEstado);
 
         pedido.setEstado(nuevoEstado);
 
         PedidoEntity actualizado = pedidoRepository.save(pedido);
+
+        PedidoEstadoCambiadoEvent evento = new PedidoEstadoCambiadoEvent(
+                UUID.randomUUID(),
+                actualizado.getIdPedido(),
+                actualizado.getIdUsuario(),
+                actualizado.getEstado().name(),
+                "CAMBIO_ESTADO",
+                "Tu pedido #" + actualizado.getIdPedido()
+                        + " cambió al estado " + actualizado.getEstado().name(),
+                LocalDateTime.now()
+        );
+
+        pedidoEventProducer.publicarCambioEstado(evento);
+
         return PedidoMapper.toResponse(actualizado);
     }
 
@@ -168,10 +200,16 @@ public class PedidoService {
     @Transactional
     public PedidoResponse confirmarPedido(Long id) {
         PedidoEntity pedido = pedidoRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Pedido no encontrado con id: " + id));
+                .orElseThrow(() ->
+                        new EntityNotFoundException(
+                                "Pedido no encontrado con id: " + id
+                        )
+                );
 
         if (pedido.getEstado() != EstadoPedido.REVISION) {
-            throw new IllegalStateException("Solo se pueden confirmar pedidos en estado REVISION");
+            throw new IllegalStateException(
+                    "Solo se pueden confirmar pedidos en estado REVISION"
+            );
         }
 
         BigDecimal total = calcularTotal(pedido.getDetallePedido());
@@ -180,6 +218,19 @@ public class PedidoService {
         pedido.setEstado(EstadoPedido.CONFIRMADO);
 
         PedidoEntity actualizado = pedidoRepository.save(pedido);
+
+        PedidoEstadoCambiadoEvent evento = new PedidoEstadoCambiadoEvent(
+                UUID.randomUUID(),
+                actualizado.getIdPedido(),
+                actualizado.getIdUsuario(),
+                actualizado.getEstado().name(),
+                "CAMBIO_ESTADO",
+                "Tu pedido #" + actualizado.getIdPedido()
+                        + " cambió al estado " + actualizado.getEstado().name(),
+                LocalDateTime.now()
+        );
+
+        pedidoEventProducer.publicarCambioEstado(evento);
 
         return PedidoMapper.toResponse(actualizado);
     }
@@ -269,6 +320,74 @@ public class PedidoService {
 
         if (actual == EstadoPedido.REVISION && nuevo != EstadoPedido.CONFIRMADO && nuevo != EstadoPedido.CANCELADO) {
             throw new IllegalStateException("Un pedido en REVISION solo puede pasar a CONFIRMADO o CANCELADO");
+        }
+    }
+
+    /* MANDAR NOTIFICACIONES POR ESTADO DE PEDIDO */
+    private void notificarEstadoPedido(PedidoEntity pedido) {
+        String mensaje = switch (pedido.getEstado()) {
+            case REVISION ->
+                    "Tu pedido #" + pedido.getIdPedido()
+                            + " fue registrado y está en revisión.";
+
+            case CONFIRMADO ->
+                    "Tu pedido #" + pedido.getIdPedido()
+                            + " fue revisado y confirmado.";
+
+            case EN_PROCESO ->
+                    "Tu pedido #" + pedido.getIdPedido()
+                            + " se encuentra en proceso.";
+
+            case COMPLETADO ->
+                    "Tu pedido #" + pedido.getIdPedido()
+                            + " está completado y listo para continuar con la entrega.";
+
+            case ENTREGADO ->
+                    "Tu pedido #" + pedido.getIdPedido()
+                            + " fue entregado. Gracias por preferir LavaClean.";
+
+            case CANCELADO ->
+                    "Tu pedido #" + pedido.getIdPedido()
+                            + " fue cancelado.";
+
+            case PAGADO ->
+                    "El pago de tu pedido #" + pedido.getIdPedido()
+                            + " fue registrado correctamente.";
+        };
+
+        PedidoEstadoCambiadoEvent evento = new PedidoEstadoCambiadoEvent(
+                UUID.randomUUID(),
+                pedido.getIdPedido(),
+                pedido.getIdUsuario(),
+                pedido.getEstado().name(),
+                "ESTADO_PEDIDO_" + pedido.getEstado().name(),
+                mensaje,
+                LocalDateTime.now()
+        );
+
+        NotificacionRequest request = new NotificacionRequest(
+                pedido.getIdUsuario(),
+                pedido.getIdPedido(),
+                "ESTADO_PEDIDO_" + pedido.getEstado().name(),
+                mensaje
+        );
+
+        try {
+            pedidoEventProducer.publicarCambioEstado(evento);
+            //notificacionClientRest.enviarNotificacion(request);
+
+            log.info(
+                    "Notificación enviada para pedido {} con estado {}",
+                    pedido.getIdPedido(),
+                    pedido.getEstado()
+            );
+        } catch (Exception exception) {
+            log.error(
+                    "El pedido {} cambió a {}, pero no se pudo enviar la notificación: {}",
+                    pedido.getIdPedido(),
+                    pedido.getEstado(),
+                    exception.getMessage()
+            );
         }
     }
 
