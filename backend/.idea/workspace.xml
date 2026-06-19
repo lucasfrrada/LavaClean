@@ -78,8 +78,8 @@
     &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.project.maven.runner&quot;,
     &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
   }
-}</component>
-  <component name="RunManager" selected="Application.PedidosApplication">
+}]]></component>
+  <component name="RunManager" selected="Application.McsvInventarioApplication">
     <configuration name="AuthApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="lavaclean.auth.AuthApplication" />
       <module name="auth" />
@@ -134,10 +134,10 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.McsvInventarioApplication" />
         <item itemvalue="Application.PedidosApplication" />
         <item itemvalue="Application.MsvcUsuarioApplication" />
         <item itemvalue="Application.AuthApplication" />
-        <item itemvalue="Application.McsvInventarioApplication" />
       </list>
     </recent_temporary>
   </component>
