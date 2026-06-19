@@ -1,5 +1,6 @@
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {ClipboardList, Plus, RefreshCcw, Trash2} from "lucide-react";
+
 import {useAuth} from "../../context/AuthContext";
 import {
   createPedidoRequest,
@@ -10,17 +11,34 @@ import {
 import {getPrendasRequest} from "../../api/prendaService";
 import {getServiciosRequest} from "../../api/servicioService";
 import {getUsuariosRequest} from "../../api/usuarioService";
+
 import type {EstadoPedido, Pedido, Prenda, Servicio} from "../../types/pedido";
 import type {AuthUser} from "../../types/auth";
 
-const emptyForm = {
+type DetalleForm = {
+  idPrenda: string;
+  idServicio: string;
+  cantidad: string;
+  observaciones: string;
+};
+
+type PedidoForm = {
+  idUsuario: string;
+  fechaLlegada: string;
+  fechaEntrega: string;
+};
+
+const emptyPedidoForm: PedidoForm = {
   idUsuario: "",
-  idPrenda: "",
-  idServicio: "",
-  cantidad: 1,
-  observaciones: "",
   fechaLlegada: "",
   fechaEntrega: "",
+};
+
+const emptyDetalle: DetalleForm = {
+  idPrenda: "",
+  idServicio: "",
+  cantidad: "1",
+  observaciones: "",
 };
 
 const estadosPedido: EstadoPedido[] = [
@@ -35,10 +53,10 @@ const estadosPedido: EstadoPedido[] = [
 
 function getEstadoLabel(estado: EstadoPedido) {
   const labels: Record<EstadoPedido, string> = {
-    REVISION: "Revision",
-    EN_PROCESO: "En proceso",
+    REVISION: "Revisión",
     CONFIRMADO: "Confirmado",
     COMPLETADO: "Completado",
+    EN_PROCESO: "En proceso",
     PAGADO: "Pagado",
     CANCELADO: "Cancelado",
     ENTREGADO: "Entregado",
@@ -50,9 +68,9 @@ function getEstadoLabel(estado: EstadoPedido) {
 function getEstadoClass(estado: EstadoPedido) {
   const classes: Record<EstadoPedido, string> = {
     REVISION: "bg-orange-100 text-orange-700",
-    EN_PROCESO: "bg-cyan-100 text-cyan-700",
     CONFIRMADO: "bg-yellow-100 text-yellow-700",
     COMPLETADO: "bg-blue-100 text-blue-700",
+    EN_PROCESO: "bg-cyan-100 text-cyan-700",
     PAGADO: "bg-green-100 text-green-700",
     CANCELADO: "bg-red-100 text-red-700",
     ENTREGADO: "bg-purple-100 text-purple-700",
@@ -76,7 +94,9 @@ export default function AdminOrdersPage() {
   const [prendas, setPrendas] = useState<Prenda[]>([]);
   const [servicios, setServicios] = useState<Servicio[]>([]);
 
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm] = useState<PedidoForm>(emptyPedidoForm);
+  const [detalles, setDetalles] = useState<DetalleForm[]>([{...emptyDetalle}]);
+
   const [estadoFiltro, setEstadoFiltro] = useState<EstadoPedido | "TODOS">(
     "TODOS",
   );
@@ -126,23 +146,81 @@ export default function AdminOrdersPage() {
 
     if (!cliente) return `Usuario #${idUsuario}`;
 
-    return `${cliente.nombres} ${cliente.apPaterno}`;
+    return `${cliente.nombres} ${cliente.apPaterno}`.trim();
   };
 
-  const getServicioPrecio = (idServicio: number) => {
-    const servicio = servicios.find((item) => item.idServicio === idServicio);
+  const getServicioPrecio = (idServicio: string) => {
+    const servicio = servicios.find(
+      (item) => item.idServicio === Number(idServicio),
+    );
+
     return Number(servicio?.precio ?? 0);
   };
 
-  const totalEstimado =
-    Number(form.idServicio) > 0
-      ? getServicioPrecio(Number(form.idServicio)) * Number(form.cantidad)
-      : 0;
+  const totalEstimado = useMemo(() => {
+    return detalles.reduce((total, detalle) => {
+      const precio = getServicioPrecio(detalle.idServicio);
+      const cantidad = Number(detalle.cantidad || 0);
+
+      return total + precio * cantidad;
+    }, 0);
+  }, [detalles, servicios]);
+
+  const handleDetalleChange = (
+    index: number,
+    field: keyof DetalleForm,
+    value: string,
+  ) => {
+    setDetalles((prev) =>
+      prev.map((detalle, detalleIndex) =>
+        detalleIndex === index
+          ? {
+              ...detalle,
+              [field]: value,
+            }
+          : detalle,
+      ),
+    );
+  };
+
+  const handleAddDetalle = () => {
+    setDetalles((prev) => [...prev, {...emptyDetalle}]);
+  };
+
+  const handleRemoveDetalle = (index: number) => {
+    setDetalles((prev) =>
+      prev.filter((_, detalleIndex) => detalleIndex !== index),
+    );
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!token) return;
+
+    if (!form.idUsuario) {
+      setErrorMessage("Debes seleccionar un cliente.");
+      return;
+    }
+
+    if (!form.fechaLlegada || !form.fechaEntrega) {
+      setErrorMessage("Debes seleccionar fecha de llegada y fecha de entrega.");
+      return;
+    }
+
+    const hasInvalidDetalle = detalles.some(
+      (detalle) =>
+        !detalle.idPrenda ||
+        !detalle.idServicio ||
+        Number(detalle.cantidad) < 1,
+    );
+
+    if (hasInvalidDetalle) {
+      setErrorMessage(
+        "Debes completar cada detalle con prenda, servicio y cantidad válida.",
+      );
+      return;
+    }
 
     try {
       setIsSaving(true);
@@ -153,19 +231,19 @@ export default function AdminOrdersPage() {
           idUsuario: Number(form.idUsuario),
           fechaLlegada: form.fechaLlegada,
           fechaEntrega: form.fechaEntrega,
-          detalles: [
-            {
-              idPrenda: Number(form.idPrenda),
-              idServicio: Number(form.idServicio),
-              cantidad: Number(form.cantidad),
-              observaciones: form.observaciones.trim(),
-            },
-          ],
+          detalles: detalles.map((detalle) => ({
+            idPrenda: Number(detalle.idPrenda),
+            idServicio: Number(detalle.idServicio),
+            cantidad: Number(detalle.cantidad),
+            observaciones: detalle.observaciones.trim(),
+          })),
         },
         token,
       );
 
-      setForm(emptyForm);
+      setForm(emptyPedidoForm);
+      setDetalles([{...emptyDetalle}]);
+
       await loadData();
     } catch (error) {
       console.error(error);
@@ -180,6 +258,7 @@ export default function AdminOrdersPage() {
 
     try {
       setErrorMessage("");
+
       await updateEstadoPedidoRequest(idPedido, estado, token);
       await loadData();
     } catch (error) {
@@ -196,6 +275,7 @@ export default function AdminOrdersPage() {
 
     try {
       setErrorMessage("");
+
       await deletePedidoRequest(idPedido, token);
       await loadData();
     } catch (error) {
@@ -205,53 +285,57 @@ export default function AdminOrdersPage() {
   };
 
   return (
-    <section>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-[#6B4F3E]">
-          Gestión de pedidos
-        </h1>
+    <section className="min-h-screen bg-[#F5EEDC] px-6 py-8 lg:px-10">
+      <div className="mx-auto max-w-7xl space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold text-[#6B4F3E]">
+            Gestión de pedidos
+          </h1>
 
-        <p className="mt-2 text-sm text-[#9A7C5F]">
-          Crea, revisa y administra pedidos con sus detalles.
-        </p>
-      </div>
+          <p className="mt-2 text-sm text-[#9A7C5F]">
+            Crea, revisa y administra pedidos con sus detalles.
+          </p>
+        </div>
 
-      <div className="mb-6 grid gap-4 md:grid-cols-5">
-        {estadosPedido.map((estado) => (
-          <SummaryCard
-            key={estado}
-            title={getEstadoLabel(estado)}
-            value={pedidos.filter((p) => p.estado === estado).length}
-          />
-        ))}
-      </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {estadosPedido.map((estado) => (
+            <SummaryCard
+              key={estado}
+              title={getEstadoLabel(estado)}
+              value={
+                pedidos.filter((pedido) => pedido.estado === estado).length
+              }
+            />
+          ))}
+        </div>
 
-      <div className="grid gap-6 xl:grid-cols-[430px_1fr]">
         <form
           onSubmit={handleSubmit}
           className="rounded-3xl bg-white p-6 shadow-xl"
         >
-          <div className="mb-5 flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#F5EEDC] text-[#6B4F3E]">
+          <div className="mb-6 flex items-center gap-3">
+            <div className="rounded-xl bg-[#F5EEDC] p-3 text-[#6B4F3E]">
               <ClipboardList size={22} />
             </div>
 
             <div>
-              <h2 className="text-xl font-bold">Nuevo pedido</h2>
+              <h2 className="text-xl font-bold text-[#6B4F3E]">Nuevo pedido</h2>
+
               <p className="text-sm text-[#9A7C5F]">
-                Selecciona cliente, prenda y servicio.
+                Selecciona cliente, prendas y servicios.
               </p>
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-5">
             <select
               value={form.idUsuario}
               onChange={(event) =>
                 setForm({...form, idUsuario: event.target.value})
               }
               required
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+              disabled={isSaving}
+              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
             >
               <option value="">Selecciona un cliente</option>
 
@@ -264,54 +348,131 @@ export default function AdminOrdersPage() {
                 ))}
             </select>
 
-            <select
-              value={form.idPrenda}
-              onChange={(event) =>
-                setForm({...form, idPrenda: event.target.value})
-              }
-              required
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
-            >
-              <option value="">Selecciona una prenda</option>
+            <div className="space-y-5">
+              {detalles.map((detalle, index) => (
+                <div
+                  key={index}
+                  className="rounded-2xl border border-[#D8C7AF] bg-[#FDF8ED] p-4"
+                >
+                  <div className="mb-4 flex items-center justify-between">
+                    <div>
+                      <h3 className="text-sm font-bold text-[#6B4F3E]">
+                        Detalle #{index + 1}
+                      </h3>
 
-              {prendas.map((prenda) => (
-                <option key={prenda.idPrenda} value={prenda.idPrenda}>
-                  {prenda.nombrePrenda} - {prenda.categoria}
-                </option>
+                      <p className="mt-1 text-xs text-[#9A7C5F]">
+                        Selecciona prenda, servicio y cantidad.
+                      </p>
+                    </div>
+
+                    {detalles.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveDetalle(index)}
+                        disabled={isSaving}
+                        className="inline-flex items-center gap-2 rounded-lg bg-red-100 px-3 py-2 text-xs font-bold text-red-700 transition hover:bg-red-200 disabled:opacity-60"
+                      >
+                        <Trash2 size={14} />
+                        Eliminar
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="grid gap-4 md:grid-cols-3">
+                    <select
+                      value={detalle.idPrenda}
+                      onChange={(event) =>
+                        handleDetalleChange(
+                          index,
+                          "idPrenda",
+                          event.target.value,
+                        )
+                      }
+                      required
+                      disabled={isSaving}
+                      className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
+                    >
+                      <option value="">Selecciona una prenda</option>
+
+                      {prendas.map((prenda) => (
+                        <option key={prenda.idPrenda} value={prenda.idPrenda}>
+                          {prenda.nombrePrenda} - {prenda.categoria}
+                        </option>
+                      ))}
+                    </select>
+
+                    <select
+                      value={detalle.idServicio}
+                      onChange={(event) =>
+                        handleDetalleChange(
+                          index,
+                          "idServicio",
+                          event.target.value,
+                        )
+                      }
+                      required
+                      disabled={isSaving}
+                      className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
+                    >
+                      <option value="">Selecciona un servicio</option>
+
+                      {servicios.map((servicio) => (
+                        <option
+                          key={servicio.idServicio}
+                          value={servicio.idServicio}
+                        >
+                          {servicio.tipoServicio} -{" "}
+                          {formatCurrency(Number(servicio.precio))}
+                        </option>
+                      ))}
+                    </select>
+
+                    <input
+                      type="number"
+                      min={1}
+                      value={detalle.cantidad}
+                      onChange={(event) =>
+                        handleDetalleChange(
+                          index,
+                          "cantidad",
+                          event.target.value,
+                        )
+                      }
+                      required
+                      disabled={isSaving}
+                      className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
+                    />
+                  </div>
+
+                  <textarea
+                    value={detalle.observaciones}
+                    onChange={(event) =>
+                      handleDetalleChange(
+                        index,
+                        "observaciones",
+                        event.target.value,
+                      )
+                    }
+                    rows={3}
+                    disabled={isSaving}
+                    placeholder="Observaciones para este detalle"
+                    className="mt-4 w-full resize-none rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
+                  />
+                </div>
               ))}
-            </select>
 
-            <select
-              value={form.idServicio}
-              onChange={(event) =>
-                setForm({...form, idServicio: event.target.value})
-              }
-              required
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
-            >
-              <option value="">Selecciona un servicio</option>
+              <button
+                type="button"
+                onClick={handleAddDetalle}
+                disabled={isSaving}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[#8A6A53] px-5 py-3 text-sm font-bold text-[#6B4F3E] transition hover:bg-[#F5EEDC] disabled:opacity-60"
+              >
+                <Plus size={18} />
+                Agregar otra prenda o servicio
+              </button>
+            </div>
 
-              {servicios.map((servicio) => (
-                <option key={servicio.idServicio} value={servicio.idServicio}>
-                  {servicio.tipoServicio} -{" "}
-                  {formatCurrency(Number(servicio.precio))}
-                </option>
-              ))}
-            </select>
-
-            <input
-              type="number"
-              min={1}
-              placeholder="Cantidad"
-              value={form.cantidad}
-              onChange={(event) =>
-                setForm({...form, cantidad: Number(event.target.value)})
-              }
-              required
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
-            />
-
-            <div className="grid gap-3 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2">
               <input
                 type="date"
                 value={form.fechaLlegada}
@@ -319,7 +480,8 @@ export default function AdminOrdersPage() {
                   setForm({...form, fechaLlegada: event.target.value})
                 }
                 required
-                className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+                disabled={isSaving}
+                className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
               />
 
               <input
@@ -329,19 +491,10 @@ export default function AdminOrdersPage() {
                   setForm({...form, fechaEntrega: event.target.value})
                 }
                 required
-                className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+                disabled={isSaving}
+                className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
               />
             </div>
-
-            <textarea
-              placeholder="Observaciones"
-              value={form.observaciones}
-              onChange={(event) =>
-                setForm({...form, observaciones: event.target.value})
-              }
-              rows={4}
-              className="w-full resize-none rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
-            />
 
             {totalEstimado > 0 && (
               <div className="rounded-lg bg-[#F8F5EE] px-4 py-3 text-sm font-bold text-[#6B4F3E]">
@@ -387,6 +540,7 @@ export default function AdminOrdersPage() {
                 className="rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
               >
                 <option value="TODOS">Todos</option>
+
                 {estadosPedido.map((estado) => (
                   <option key={estado} value={estado}>
                     {getEstadoLabel(estado)}
@@ -487,7 +641,7 @@ export default function AdminOrdersPage() {
                       </thead>
 
                       <tbody>
-                        {pedido.detalles.map((detalle, index) => (
+                        {(pedido.detalles ?? []).map((detalle, index) => (
                           <tr
                             key={`${pedido.idPedido}-${index}`}
                             className="border-t border-[#E5D8C5]"

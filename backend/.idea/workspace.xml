@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4234a5ca-c62a-458a-9207-636d1fdbfec7" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/controller/PedidoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/api/controller/PedidoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/application/service/PedidoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/application/service/PedidoService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/domain/model/EstadoPedido.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/domain/model/EstadoPedido.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/test/java/mcsv/pedidos/application/service/PedidoServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/test/java/mcsv/pedidos/application/service/PedidoServiceTest.java" afterDir="false" />
-    </list>
+    <list default="true" id="4234a5ca-c62a-458a-9207-636d1fdbfec7" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
