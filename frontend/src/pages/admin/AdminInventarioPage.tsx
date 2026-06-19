@@ -1,11 +1,12 @@
 import {useEffect, useMemo, useState} from "react";
-import {Package, Plus, RefreshCcw, ArrowDownUp} from "lucide-react";
+import {Package, Plus, RefreshCcw, ArrowDownUp, Trash2} from "lucide-react";
 import {useAuth} from "../../context/AuthContext";
 import {
   createMovimientoRequest,
   createProductoRequest,
   getMovimientosRequest,
   getProductosRequest,
+  deleteProductoRequest,
 } from "../../api/inventarioService";
 import type {
   MovimientoInventario,
@@ -40,6 +41,11 @@ export default function AdminInventarioPage() {
   const [isSavingProducto, setIsSavingProducto] = useState(false);
   const [isSavingMovimiento, setIsSavingMovimiento] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  const [productoToDelete, setProductoToDelete] = useState<Producto | null>(
+    null,
+  );
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const loadInventario = async () => {
     if (!token) return;
@@ -137,6 +143,34 @@ export default function AdminInventarioPage() {
       setErrorMessage("No se pudo registrar el movimiento.");
     } finally {
       setIsSavingMovimiento(false);
+    }
+  };
+
+  const openDeleteModal = (producto: Producto) => {
+    setProductoToDelete(producto);
+  };
+
+  const closeDeleteModal = () => {
+    if (isDeleting) return;
+    setProductoToDelete(null);
+  };
+
+  const confirmDeleteProducto = async () => {
+    if (!token || !productoToDelete) return;
+
+    try {
+      setIsDeleting(true);
+      setErrorMessage("");
+
+      await deleteProductoRequest(productoToDelete.idProducto, token);
+
+      setProductoToDelete(null);
+      await loadInventario();
+    } catch (error) {
+      console.error(error);
+      setErrorMessage("No se pudo eliminar el producto.");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -276,18 +310,29 @@ export default function AdminInventarioPage() {
               </div>
             </div>
 
-            <input
-              value={productoForm.unidadMedida}
-              onChange={(event) =>
-                setProductoForm({
-                  ...productoForm,
-                  unidadMedida: event.target.value,
-                })
-              }
-              placeholder="Unidad de medida: unidad, litro, kilo..."
-              required
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53]"
-            />
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-[#6B4F3E]">
+                Unidad de medida
+              </label>
+
+              <select
+                value={productoForm.unidadMedida}
+                onChange={(event) =>
+                  setProductoForm({
+                    ...productoForm,
+                    unidadMedida: event.target.value,
+                  })
+                }
+                required
+                className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+              >
+                <option value="">Selecciona una unidad</option>
+                <option value="LITROS">LITROS</option>
+                <option value="UNIDADES">UNIDADES</option>
+                <option value="KILO">KILO</option>
+                <option value="ONZAS">ONZAS</option>
+              </select>
+            </div>
 
             <button
               type="submit"
@@ -316,6 +361,7 @@ export default function AdminInventarioPage() {
                   <th className="px-4 py-3">Mínimo</th>
                   <th className="px-4 py-3">Unidad</th>
                   <th className="px-4 py-3">Estado</th>
+                  <th className="px-4 py-3">Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -327,15 +373,32 @@ export default function AdminInventarioPage() {
                     <td className="px-4 py-3 font-semibold text-[#6B4F3E]">
                       {producto.nombreProducto}
                     </td>
+
                     <td className="px-4 py-3">{producto.stock}</td>
+
                     <td className="px-4 py-3">{producto.stockMinimo}</td>
+
                     <td className="px-4 py-3">{producto.unidadMedida}</td>
+
                     <td className="px-4 py-3">
                       <span
-                        className={`rounded-full px-3 py-1 text-xs font-bold ${getEstadoClass(producto.estado)}`}
+                        className={`rounded-full px-3 py-1 text-xs font-bold ${getEstadoClass(
+                          producto.estado,
+                        )}`}
                       >
                         {producto.estado}
                       </span>
+                    </td>
+
+                    <td className="px-4 py-3 text-center">
+                      <button
+                        type="button"
+                        onClick={() => openDeleteModal(producto)}
+                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-100 px-3 py-2 text-xs font-bold text-red-700 transition hover:bg-red-200"
+                      >
+                        <Trash2 size={15} />
+                        Eliminar
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -432,6 +495,49 @@ export default function AdminInventarioPage() {
           className="mt-4 w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53]"
         />
       </form>
+
+      {/* Función para borrar un producto */}
+      {productoToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100 text-red-700">
+              <Trash2 size={26} />
+            </div>
+
+            <h2 className="mt-5 text-center text-xl font-bold text-[#6B4F3E]">
+              ¿Eliminar producto?
+            </h2>
+
+            <p className="mt-3 text-center text-sm leading-relaxed text-[#9A7C5F]">
+              Esta acción eliminará o desactivará el producto{" "}
+              <span className="font-bold text-[#6B4F3E]">
+                {productoToDelete.nombreProducto}
+              </span>
+              . ¿Deseas continuar?
+            </p>
+
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={closeDeleteModal}
+                disabled={isDeleting}
+                className="rounded-xl border border-[#D8C7AF] bg-white px-4 py-3 text-sm font-bold text-[#6B4F3E] transition hover:bg-[#F5EEDC] disabled:opacity-60"
+              >
+                Cancelar
+              </button>
+
+              <button
+                type="button"
+                onClick={confirmDeleteProducto}
+                disabled={isDeleting}
+                className="rounded-xl bg-red-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-red-700 disabled:opacity-60"
+              >
+                {isDeleting ? "Eliminando..." : "Eliminar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
