@@ -42,6 +42,27 @@ public class PedidoEntity {
     @Column(name = "total", nullable = false, precision = 10, scale = 2)
     private BigDecimal total;
 
+    @Column(name = "peso_estimado_kg", precision = 10, scale = 3)
+    private BigDecimal pesoEstimadoKg;
+
+    @Column(name = "peso_real_kg", precision = 10, scale = 3)
+    private BigDecimal pesoRealKg;
+
+    @Column(name = "precio_estimado", precision = 12, scale = 2)
+    private BigDecimal precioEstimado;
+
+    @Column(name = "precio_final", precision = 12, scale = 2)
+    private BigDecimal precioFinal;
+
+    @Column(name = "precio_por_carga", precision = 12, scale = 2)
+    private BigDecimal precioPorCarga;
+
+    @Column(name = "cargas_estimadas")
+    private Integer cargasEstimadas;
+
+    @Column(name = "cargas_reales")
+    private Integer cargasReales;
+
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<DetallePedidoEntity> detallePedido = new ArrayList<>();

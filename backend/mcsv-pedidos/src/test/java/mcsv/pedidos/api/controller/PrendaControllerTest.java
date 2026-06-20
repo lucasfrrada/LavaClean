@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
+import java.math.BigDecimal;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -54,11 +55,13 @@ class PrendaControllerTest {
         CrearPrendaRequest request = new CrearPrendaRequest();
         request.setNombrePrenda("Camisa");
         request.setCategoria("Ropa");
+        request.setPesoReferenciaKg(new BigDecimal("0.2"));
 
         PrendaResponse response = PrendaResponse.builder()
                 .idPrenda(1L)
                 .nombrePrenda("Camisa")
                 .categoria("Ropa")
+                .pesoReferenciaKg(new BigDecimal("0.2"))
                 .build();
 
         when(prendaService.crearPrenda(any(CrearPrendaRequest.class))).thenReturn(response);
@@ -126,11 +129,13 @@ class PrendaControllerTest {
         ActualizarPrendaRequest request = new ActualizarPrendaRequest();
         request.setNombrePrenda("Chaqueta");
         request.setCategoria("Abrigo");
+        request.setPesoReferenciaKg(BigDecimal.ONE);
 
         PrendaResponse response = PrendaResponse.builder()
                 .idPrenda(1L)
                 .nombrePrenda("Chaqueta")
                 .categoria("Abrigo")
+                .pesoReferenciaKg(BigDecimal.ONE)
                 .build();
 
         when(prendaService.actualizarPrenda(eq(1L), any(ActualizarPrendaRequest.class))).thenReturn(response);

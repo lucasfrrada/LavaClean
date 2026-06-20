@@ -23,6 +23,13 @@ public class PedidoMapper {
                 .fechaEntrega(pedidoEntity.getFecha_entrega())
                 .fechaLlegada(pedidoEntity.getFecha_llegada())
                 .total(pedidoEntity.getTotal())
+                .pesoEstimadoKg(pedidoEntity.getPesoEstimadoKg())
+                .pesoRealKg(pedidoEntity.getPesoRealKg())
+                .precioEstimado(pedidoEntity.getPrecioEstimado())
+                .precioFinal(pedidoEntity.getPrecioFinal())
+                .precioPorCarga(pedidoEntity.getPrecioPorCarga())
+                .cargasEstimadas(pedidoEntity.getCargasEstimadas())
+                .cargasReales(pedidoEntity.getCargasReales())
                 .detalles(detalles)
                 .build();
     }
@@ -36,8 +43,9 @@ public class PedidoMapper {
                 .servicio(entity.getServicio().getTipoServicio())
                 .cantidad(entity.getCantidad())
                 .observaciones(entity.getObservaciones())
-                .precioUnitario(entity.getPrecioUnitario())
-                .subtotal(entity.getSubtotal())
+                .pesoReferenciaKg(entity.getPesoReferenciaKg())
+                .pesoEstimadoKg(entity.getPesoEstimadoKg())
+                .precioPorCarga(entity.getPrecioPorCarga())
                 .build();
     }
 

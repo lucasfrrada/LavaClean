@@ -4,13 +4,11 @@ import feign.FeignException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import mcsv.pedidos.api.dto.request.Notificaciones.NotificacionRequest;
 import mcsv.pedidos.api.dto.request.Pedido.*;
 import mcsv.pedidos.api.dto.response.Pedido.PedidoResponse;
 import mcsv.pedidos.api.dto.response.UsuarioResponseRest;
 import mcsv.pedidos.application.mapper.PedidoMapper;
 import mcsv.pedidos.domain.model.EstadoPedido;
-import mcsv.pedidos.infraestructure.client.NotificacionClientRest;
 import mcsv.pedidos.infraestructure.client.UsuarioClientRest;
 import mcsv.pedidos.infraestructure.messaging.PedidoEstadoCambiadoEvent;
 import mcsv.pedidos.infraestructure.messaging.PedidoEventProducer;
@@ -25,6 +23,7 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +38,11 @@ public class PedidoService {
     private final PrendaRepository prendaRepository;
     private final ServicioRepository servicioRepository;
     private final UsuarioClientRest usuarioClientRest;
-    private final NotificacionClientRest notificacionClientRest;
     private final PedidoEventProducer pedidoEventProducer;
+
+    private static final int ESCALA_PESO = 3;
+    private static final int ESCALA_DINERO = 2;
+    private static final BigDecimal KG_POR_CARGA = new BigDecimal("5");
 
     /* GUARDAR PEDIDO */
     @Transactional
@@ -60,37 +62,18 @@ public class PedidoService {
 
         pedido.setIdUsuario(newPedidoRequest.getIdUsuario());
 
-        List<DetallePedidoEntity> detalles = new ArrayList<>();
-        BigDecimal total = BigDecimal.ZERO;
-
-        for (CrearDetallePedidoRequest item : newPedidoRequest.getDetalles()){
-            PrendaEntity prenda = prendaRepository.findById(item.getIdPrenda())
-                    .orElseThrow(() -> new EntityNotFoundException("Prenda no encontrado: "+ item.getIdPrenda()));
-
-
-            ServicioEntity servicio = servicioRepository.findById(item.getIdServicio())
-                    .orElseThrow(() -> new EntityNotFoundException("Servicio no encontrada: " + item.getIdServicio()));
-
-
-            BigDecimal precioUnitario = servicio.getPrecio();
-            BigDecimal subtotal = precioUnitario.multiply(BigDecimal.valueOf(item.getCantidad()));
-
-            DetallePedidoEntity detalle = new DetallePedidoEntity();
-            detalle.setPedido(pedido);
-            detalle.setServicio(servicio);
-            detalle.setPrenda(prenda);
-            detalle.setSubtotal(subtotal);
-            detalle.setCantidad(item.getCantidad());
-            detalle.setObservaciones(item.getObservaciones());
-            detalle.setPrecioUnitario(precioUnitario);
-
-
-            detalles.add(detalle);
-            total = total.add(subtotal);
-        }
+        List<DetallePedidoEntity> detalles = construirDetalles(newPedidoRequest.getDetalles(), pedido);
+        BigDecimal pesoEstimado = calcularPesoEstimado(detalles);
+        int cargasEstimadas = calcularCargas(pesoEstimado);
+        BigDecimal precioPorCarga = obtenerPrecioPorCarga(detalles);
+        BigDecimal precioEstimado = calcularPrecio(precioPorCarga, cargasEstimadas);
 
         pedido.setDetallePedido(detalles);
-        pedido.setTotal(total);
+        pedido.setPesoEstimadoKg(pesoEstimado);
+        pedido.setPrecioEstimado(precioEstimado);
+        pedido.setCargasEstimadas(cargasEstimadas);
+        pedido.setPrecioPorCarga(precioPorCarga);
+        pedido.setTotal(precioEstimado);
 
         PedidoEntity saved = pedidoRepository.save(pedido);
 
@@ -139,7 +122,15 @@ public class PedidoService {
         pedido.getDetallePedido().clear();
         List<DetallePedidoEntity> nuevosDetalles = construirDetallesActualizar(request.getDetalles(), pedido);
         pedido.getDetallePedido().addAll(nuevosDetalles);
-        pedido.setTotal(calcularTotal(nuevosDetalles));
+        BigDecimal pesoEstimado = calcularPesoEstimado(nuevosDetalles);
+        int cargasEstimadas = calcularCargas(pesoEstimado);
+        BigDecimal precioPorCarga = obtenerPrecioPorCarga(nuevosDetalles);
+        BigDecimal precioEstimado = calcularPrecio(precioPorCarga, cargasEstimadas);
+        pedido.setPesoEstimadoKg(pesoEstimado);
+        pedido.setPrecioEstimado(precioEstimado);
+        pedido.setCargasEstimadas(cargasEstimadas);
+        pedido.setPrecioPorCarga(precioPorCarga);
+        pedido.setTotal(precioEstimado);
 
         PedidoEntity actualizado = pedidoRepository.save(pedido);
         return PedidoMapper.toResponse(actualizado);
@@ -198,7 +189,7 @@ public class PedidoService {
 
     /* CONFIRMAR PEDIDO */
     @Transactional
-    public PedidoResponse confirmarPedido(Long id) {
+    public PedidoResponse confirmarPesoReal(Long id, ConfirmarPesoRealRequest request) {
         PedidoEntity pedido = pedidoRepository.findById(id)
                 .orElseThrow(() ->
                         new EntityNotFoundException(
@@ -208,13 +199,24 @@ public class PedidoService {
 
         if (pedido.getEstado() != EstadoPedido.REVISION) {
             throw new IllegalStateException(
-                    "Solo se pueden confirmar pedidos en estado REVISION"
+                    "Solo se puede confirmar el peso de pedidos en estado REVISION"
             );
         }
 
-        BigDecimal total = calcularTotal(pedido.getDetallePedido());
+        if (pedido.getPesoEstimadoKg() == null || pedido.getPesoEstimadoKg().signum() <= 0) {
+            throw new IllegalStateException("El pedido no tiene un peso estimado válido");
+        }
 
-        pedido.setTotal(total);
+        int cargasReales = calcularCargas(request.getPesoRealKg());
+        if (pedido.getPrecioPorCarga() == null || pedido.getPrecioPorCarga().signum() <= 0) {
+            throw new IllegalStateException("El pedido no tiene un precio por carga válido");
+        }
+        BigDecimal precioFinal = calcularPrecio(pedido.getPrecioPorCarga(), cargasReales);
+
+        pedido.setPesoRealKg(request.getPesoRealKg().setScale(ESCALA_PESO, RoundingMode.HALF_UP));
+        pedido.setPrecioFinal(precioFinal);
+        pedido.setCargasReales(cargasReales);
+        pedido.setTotal(precioFinal);
         pedido.setEstado(EstadoPedido.CONFIRMADO);
 
         PedidoEntity actualizado = pedidoRepository.save(pedido);
@@ -224,13 +226,15 @@ public class PedidoService {
                 actualizado.getIdPedido(),
                 actualizado.getIdUsuario(),
                 actualizado.getEstado().name(),
-                "CAMBIO_ESTADO",
-                "Tu pedido #" + actualizado.getIdPedido()
-                        + " cambió al estado " + actualizado.getEstado().name(),
+                "PESO_REAL_CONFIRMADO",
+                "Confirmamos el peso real de tu pedido #" + actualizado.getIdPedido()
+                        + ": " + actualizado.getPesoRealKg() + " kg. Valor final: $"
+                        + actualizado.getPrecioFinal().setScale(0, RoundingMode.HALF_UP)
+                        + " CLP (" + actualizado.getCargasReales() + " carga(s)).",
                 LocalDateTime.now()
         );
 
-        pedidoEventProducer.publicarCambioEstado(evento);
+        publicarEventoSeguro(evento, actualizado);
 
         return PedidoMapper.toResponse(actualizado);
     }
@@ -253,15 +257,19 @@ public class PedidoService {
             ServicioEntity servicio = servicioRepository.findById(item.getIdServicio())
                     .orElseThrow(() -> new EntityNotFoundException("Servicio no encontrada: " + item.getIdServicio()));
 
-            BigDecimal precioUnitario = servicio.getPrecio();
-            BigDecimal subtotal = precioUnitario.multiply(BigDecimal.valueOf(item.getCantidad()));
+            BigDecimal pesoReferencia = prenda.getPesoReferenciaKg();
+            validarPesoReferencia(prenda);
+            BigDecimal pesoEstimado = pesoReferencia.multiply(BigDecimal.valueOf(item.getCantidad()));
 
             DetallePedidoEntity detalle = new DetallePedidoEntity();
             detalle.setPedido(pedido);
             detalle.setServicio(servicio);
             detalle.setPrenda(prenda);
-            detalle.setSubtotal(subtotal);
+            detalle.setPesoReferenciaKg(pesoReferencia);
+            detalle.setPesoEstimadoKg(pesoEstimado.setScale(ESCALA_PESO, RoundingMode.HALF_UP));
+            detalle.setPrecioPorCarga(servicio.getPrecio());
             detalle.setCantidad(item.getCantidad());
+            detalle.setObservaciones(item.getObservaciones());
             detalles.add(detalle);
         }
         return detalles;
@@ -279,15 +287,19 @@ public class PedidoService {
             ServicioEntity servicio = servicioRepository.findById(item.getServicioId())
                     .orElseThrow(() -> new EntityNotFoundException("Servicio no encontrada: " + item.getServicioId()));
 
-            BigDecimal precioUnitario = servicio.getPrecio();
-            BigDecimal subtotal = precioUnitario.multiply(BigDecimal.valueOf(item.getCantidad()));
+            BigDecimal pesoReferencia = prenda.getPesoReferenciaKg();
+            validarPesoReferencia(prenda);
+            BigDecimal pesoEstimado = pesoReferencia.multiply(BigDecimal.valueOf(item.getCantidad()));
 
             DetallePedidoEntity detalle = new DetallePedidoEntity();
             detalle.setPedido(pedido);
             detalle.setServicio(servicio);
             detalle.setPrenda(prenda);
-            detalle.setSubtotal(subtotal);
+            detalle.setPesoReferenciaKg(pesoReferencia);
+            detalle.setPesoEstimadoKg(pesoEstimado.setScale(ESCALA_PESO, RoundingMode.HALF_UP));
+            detalle.setPrecioPorCarga(servicio.getPrecio());
             detalle.setCantidad(item.getCantidad());
+            detalle.setObservaciones(item.getObservaciones());
             detalles.add(detalle);
 
         }
@@ -295,10 +307,41 @@ public class PedidoService {
     }
 
     /* ACTUALIZAR TOTAL */
-    private BigDecimal calcularTotal(List<DetallePedidoEntity> detalles) {
+    private BigDecimal obtenerPrecioPorCarga(List<DetallePedidoEntity> detalles) {
+        long serviciosDistintos = detalles.stream()
+                .map(detalle -> detalle.getServicio().getIdServicio())
+                .distinct()
+                .count();
+
+        if (serviciosDistintos != 1) {
+            throw new IllegalArgumentException("Todas las prendas del pedido deben usar el mismo servicio");
+        }
+
+        return detalles.getFirst().getPrecioPorCarga();
+    }
+
+    private BigDecimal calcularPrecio(BigDecimal precioPorCarga, int cargas) {
+        return precioPorCarga.multiply(BigDecimal.valueOf(cargas))
+                .setScale(ESCALA_DINERO, RoundingMode.HALF_UP);
+    }
+
+    private int calcularCargas(BigDecimal pesoKg) {
+        return pesoKg.divide(KG_POR_CARGA, 0, RoundingMode.CEILING).intValueExact();
+    }
+
+    private BigDecimal calcularPesoEstimado(List<DetallePedidoEntity> detalles) {
         return detalles.stream()
-                .map(DetallePedidoEntity::getSubtotal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .map(DetallePedidoEntity::getPesoEstimadoKg)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .setScale(ESCALA_PESO, RoundingMode.HALF_UP);
+    }
+
+    private void validarPesoReferencia(PrendaEntity prenda) {
+        if (prenda.getPesoReferenciaKg() == null || prenda.getPesoReferenciaKg().signum() <= 0) {
+            throw new IllegalStateException(
+                    "La prenda " + prenda.getNombrePrenda() + " no tiene un peso de referencia válido"
+            );
+        }
     }
 
     /* VALIDAR PEDIDO EDITABLE */
@@ -318,8 +361,21 @@ public class PedidoService {
             throw new IllegalStateException("El pedido ya tiene ese estado");
         }
 
-        if (actual == EstadoPedido.REVISION && nuevo != EstadoPedido.CONFIRMADO && nuevo != EstadoPedido.CANCELADO) {
-            throw new IllegalStateException("Un pedido en REVISION solo puede pasar a CONFIRMADO o CANCELADO");
+        if (actual == EstadoPedido.REVISION && nuevo != EstadoPedido.CANCELADO) {
+            throw new IllegalStateException(
+                    "Un pedido en REVISION solo puede cancelarse o confirmarse registrando su peso real"
+            );
+        }
+    }
+
+    private void publicarEventoSeguro(PedidoEstadoCambiadoEvent evento, PedidoEntity pedido) {
+        try {
+            pedidoEventProducer.publicarCambioEstado(evento);
+        } catch (Exception exception) {
+            log.error(
+                    "El pedido {} fue actualizado, pero no se pudo publicar la notificación: {}",
+                    pedido.getIdPedido(), exception.getMessage()
+            );
         }
     }
 
@@ -365,16 +421,8 @@ public class PedidoService {
                 LocalDateTime.now()
         );
 
-        NotificacionRequest request = new NotificacionRequest(
-                pedido.getIdUsuario(),
-                pedido.getIdPedido(),
-                "ESTADO_PEDIDO_" + pedido.getEstado().name(),
-                mensaje
-        );
-
         try {
             pedidoEventProducer.publicarCambioEstado(evento);
-            //notificacionClientRest.enviarNotificacion(request);
 
             log.info(
                     "Notificación enviada para pedido {} con estado {}",

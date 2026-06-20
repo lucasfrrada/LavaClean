@@ -16,6 +16,13 @@ public class PedidoResponse {
     private LocalDate fechaEntrega;
     private LocalDate fechaLlegada;
     private BigDecimal total;
+    private BigDecimal pesoEstimadoKg;
+    private BigDecimal pesoRealKg;
+    private BigDecimal precioEstimado;
+    private BigDecimal precioFinal;
+    private BigDecimal precioPorCarga;
+    private Integer cargasEstimadas;
+    private Integer cargasReales;
     private List<DetallePedidoResponse> detalles;
 
 }
