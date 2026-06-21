@@ -152,10 +152,14 @@ export default function BookingPage() {
       return total + getPesoReferencia(prenda) * Number(detalle.cantidad || 0);
     }, 0);
     const cargas = esPorCarga ? getCargas(peso) : 0;
+    const cantidadPrendas = detalles.reduce(
+      (total, detalle) => total + Number(detalle.cantidad || 0),
+      0,
+    );
     const precioPorCarga = getPrecioPorCarga(servicio);
     const precioBase = esPorCarga
       ? cargas * precioPorCarga
-      : getPrecioServicio(servicio, opcionBaseCodigo);
+      : getPrecioServicio(servicio, opcionBaseCodigo) * Math.max(cantidadPrendas, 1);
     const precioExtras = Object.entries(extras).reduce((total, [id, extra]) => {
       const servicioExtra = serviciosExtras.find(
         (item) => item.idServicio === Number(id),
@@ -166,7 +170,7 @@ export default function BookingPage() {
       );
     }, 0);
 
-    return {peso, cargas, precioPorCarga, precioBase, precioExtras, precio: precioBase + precioExtras};
+    return {peso, cargas, cantidadPrendas, precioPorCarga, precioBase, precioExtras, precio: precioBase + precioExtras};
   }, [detalles, prendas, servicios, serviciosExtras, idServicio, opcionBaseCodigo, extras]);
 
   const servicioBase = servicios.find(
@@ -174,6 +178,8 @@ export default function BookingPage() {
   );
   const esPorCarga =
     (servicioBase?.modalidadCobro ?? "POR_CARGA") === "POR_CARGA";
+  const admiteDetalles =
+    esPorCarga || servicioBase?.modalidadCobro === "POR_OPCION";
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -198,7 +204,7 @@ export default function BookingPage() {
       return;
     }
 
-    const hasInvalidDetalle = esPorCarga && detalles.some(
+    const hasInvalidDetalle = admiteDetalles && detalles.some(
       (detalle) => !detalle.idPrenda || Number(detalle.cantidad) < 1,
     );
 
@@ -226,7 +232,7 @@ export default function BookingPage() {
           idServicioBase: Number(idServicio),
           opcionBaseCodigo: opcionBaseCodigo || undefined,
           observacionesServicioBase: observacionesBase.trim() || undefined,
-          detalles: esPorCarga ? detalles.map((detalle) => ({
+          detalles: admiteDetalles ? detalles.map((detalle) => ({
             idPrenda: Number(detalle.idPrenda),
             cantidad: Number(detalle.cantidad),
             observaciones: detalle.observaciones.trim(),
@@ -264,8 +270,8 @@ export default function BookingPage() {
         )}
       </AnimatePresence>
 
-      <main className="min-h-screen w-full bg-[#F5EEDC] text-[#6B4F3E]">
-        <header className="fixed left-0 top-0 z-50 w-full bg-[#6B4F3E] shadow-md">
+      <main className="min-h-screen w-full bg-[#FFFFFF] text-[#111827]">
+        <header className="fixed left-0 top-0 z-50 w-full border-b border-[#DBEAFE] bg-white/95 shadow-md backdrop-blur-md">
           <nav className="mx-auto flex max-w-7xl items-center justify-between px-8 py-4">
             <Link to="/" className="flex items-center gap-2">
               <img
@@ -273,13 +279,15 @@ export default function BookingPage() {
                 alt="Logo LavaClean"
                 className="h-10 w-10 object-contain"
               />
-              <span className="text-xl font-bold text-white">LavaClean</span>
+              <span className="text-xl font-bold text-[#111827] transition hover:text-[#2563EB]">
+                LavaClean
+              </span>
             </Link>
 
             <button
               type="button"
               onClick={() => navigate("/")}
-              className="flex items-center gap-2 text-sm font-medium text-white/90 transition hover:text-white"
+              className="flex items-center gap-2 text-sm font-medium text-[#111827] transition hover:text-[#2563EB]"
             >
               <ArrowLeft size={17} />
               Volver
@@ -290,15 +298,15 @@ export default function BookingPage() {
         <section className="flex min-h-screen w-full items-center justify-center px-4 pb-12 pt-28">
           <div className="w-full max-w-[640px]">
             <div className="mb-8 text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#6B4F3E] text-[#F8EFD8] shadow-md">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#1D4ED8] text-[#EFF6FF] shadow-md">
                 <Package size={28} />
               </div>
 
-              <h1 className="mt-5 text-4xl font-bold text-[#6B4F3E]">
+              <h1 className="mt-5 text-4xl font-bold text-[#111827]">
                 Agenda tu servicio
               </h1>
 
-              <p className="mt-3 text-sm text-[#9A7C5F]">
+              <p className="mt-3 text-sm text-[#64748B]">
                 Elige un servicio y agrega todas las prendas de tu pedido
               </p>
             </div>
@@ -309,7 +317,7 @@ export default function BookingPage() {
             >
               <div className="space-y-6">
                 {isLoadingData && (
-                  <p className="rounded-lg bg-[#F8F5EE] px-4 py-3 text-sm font-semibold text-[#9A7C5F]">
+                  <p className="rounded-lg bg-[#EFF6FF] px-4 py-3 text-sm font-semibold text-[#64748B]">
                     Cargando prendas y servicios...
                   </p>
                 )}
@@ -321,7 +329,7 @@ export default function BookingPage() {
                 )}
 
                 <div>
-                  <label className="mb-2 block text-sm font-bold text-[#7A6252]">
+                  <label className="mb-2 block text-sm font-bold text-[#1E3A8A]">
                     Servicio base *
                   </label>
                   <select
@@ -332,7 +340,7 @@ export default function BookingPage() {
                     }}
                     required
                     disabled={isLoadingData || isSaving || showSuccess}
-                    className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm text-[#6B4F3E] outline-none transition focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
+                    className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm text-[#111827] outline-none transition focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:opacity-60"
                   >
                     <option value="">Selecciona un servicio</option>
                     {servicios.map((servicio) => (
@@ -343,14 +351,14 @@ export default function BookingPage() {
                       </option>
                     ))}
                   </select>
-                  <p className="mt-2 text-xs text-[#9A7C5F]">
+                  <p className="mt-2 text-xs text-[#64748B]">
                     {servicioBase?.descripcion ?? "Este es el servicio principal del pedido."}
                   </p>
                 </div>
 
                 {servicioBase?.modalidadCobro === "POR_OPCION" && (
                   <div>
-                    <label className="mb-2 block text-sm font-bold text-[#7A6252]">
+                    <label className="mb-2 block text-sm font-bold text-[#1E3A8A]">
                       Tipo o tamaño *
                     </label>
                     <select
@@ -358,7 +366,7 @@ export default function BookingPage() {
                       onChange={(event) => setOpcionBaseCodigo(event.target.value)}
                       required
                       disabled={isSaving || showSuccess}
-                      className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm"
+                      className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm"
                     >
                       <option value="">Selecciona una opción</option>
                       {(servicioBase.opciones ?? []).filter((opcion) => opcion.activo).map((opcion) => (
@@ -377,22 +385,22 @@ export default function BookingPage() {
                     onChange={(event) => setObservacionesBase(event.target.value)}
                     placeholder="Observaciones o especificaciones del servicio base"
                     disabled={isSaving || showSuccess}
-                    className="w-full resize-none rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm"
+                    className="w-full resize-none rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm"
                   />
                 )}
 
-                {esPorCarga && idServicio && <div className="space-y-5">
+                {admiteDetalles && idServicio && <div className="space-y-5">
                   {detalles.map((detalle, index) => (
                     <div
                       key={index}
-                      className="rounded-2xl border border-[#D8C7AF] bg-[#FDF8ED] p-4"
+                      className="rounded-2xl border border-[#BFDBFE] bg-[#F8FAFC] p-4"
                     >
                       <div className="mb-4 flex items-center justify-between">
                         <div>
-                          <h3 className="text-sm font-bold text-[#6B4F3E]">
+                          <h3 className="text-sm font-bold text-[#111827]">
                             Prenda #{index + 1}
                           </h3>
-                          <p className="mt-1 text-xs text-[#9A7C5F]">
+                          <p className="mt-1 text-xs text-[#64748B]">
                             Selecciona el tipo de prenda y su cantidad.
                           </p>
                         </div>
@@ -411,7 +419,7 @@ export default function BookingPage() {
 
                       <div className="space-y-4">
                         <div>
-                          <label className="mb-2 block text-sm font-bold text-[#7A6252]">
+                          <label className="mb-2 block text-sm font-bold text-[#1E3A8A]">
                             Tipo de prenda *
                           </label>
 
@@ -426,7 +434,7 @@ export default function BookingPage() {
                             }
                             required
                             disabled={isLoadingData || isSaving || showSuccess}
-                            className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm text-[#6B4F3E] outline-none transition focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
+                            className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm text-[#111827] outline-none transition focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:opacity-60"
                           >
                             <option value="">Selecciona una prenda</option>
 
@@ -445,7 +453,7 @@ export default function BookingPage() {
                         </div>
 
                         <div>
-                          <label className="mb-2 block text-sm font-bold text-[#7A6252]">
+                          <label className="mb-2 block text-sm font-bold text-[#1E3A8A]">
                             Cantidad de prendas *
                           </label>
 
@@ -462,18 +470,27 @@ export default function BookingPage() {
                             }
                             required
                             disabled={isSaving || showSuccess}
-                            className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm text-[#6B4F3E] outline-none transition placeholder:text-[#B8A58F] focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
+                            className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm text-[#111827] outline-none transition placeholder:text-[#94A3B8] focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:opacity-60"
                           />
                         </div>
 
-                        {detalle.idPrenda && (
-                          <p className="rounded-lg bg-white px-3 py-2 text-xs font-semibold text-[#7A6252]">
+                        {detalle.idPrenda && esPorCarga && (
+                          <p className="rounded-lg bg-white px-3 py-2 text-xs font-semibold text-[#1E3A8A]">
                             Peso de referencia: {formatPeso(getPesoReferencia(prendas.find((item) => item.idPrenda === Number(detalle.idPrenda))))} por unidad · Peso estimado: {formatPeso(getPesoReferencia(prendas.find((item) => item.idPrenda === Number(detalle.idPrenda))) * Number(detalle.cantidad || 0))}
                           </p>
                         )}
 
+                        {detalle.idPrenda && servicioBase?.modalidadCobro === "POR_OPCION" && (
+                          <p className="rounded-lg bg-white px-3 py-2 text-xs font-semibold text-[#1E3A8A]">
+                            Subtotal de esta prenda: {formatCurrency(
+                              getPrecioServicio(servicioBase, opcionBaseCodigo) *
+                                Number(detalle.cantidad || 0),
+                            )}
+                          </p>
+                        )}
+
                         <div>
-                          <label className="mb-2 block text-sm font-bold text-[#7A6252]">
+                          <label className="mb-2 block text-sm font-bold text-[#1E3A8A]">
                             Observaciones
                           </label>
 
@@ -489,7 +506,7 @@ export default function BookingPage() {
                             }
                             disabled={isSaving || showSuccess}
                             placeholder="Ej: manchas difíciles, instrucciones especiales o cuidados."
-                            className="w-full resize-none rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm text-[#6B4F3E] outline-none transition placeholder:text-[#B8A58F] focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
+                            className="w-full resize-none rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm text-[#111827] outline-none transition placeholder:text-[#94A3B8] focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:opacity-60"
                           />
                         </div>
                       </div>
@@ -500,7 +517,7 @@ export default function BookingPage() {
                     type="button"
                     onClick={handleAddDetalle}
                     disabled={isSaving || showSuccess}
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[#8A6A53] px-5 py-3 text-sm font-bold text-[#6B4F3E] transition hover:bg-[#F5EEDC] disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[#2563EB] px-5 py-3 text-sm font-bold text-[#111827] transition hover:bg-[#EFF6FF] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     <Plus size={18} />
                     Agregar otra prenda
@@ -508,14 +525,14 @@ export default function BookingPage() {
                 </div>}
 
                 {serviciosExtras.length > 0 && (
-                  <div className="rounded-2xl border border-[#D8C7AF] p-4">
-                    <h3 className="font-bold text-[#6B4F3E]">Servicios extras</h3>
-                    <p className="mt-1 text-xs text-[#9A7C5F]">Opcionales; puedes agregar más de uno.</p>
+                  <div className="rounded-2xl border border-[#BFDBFE] p-4">
+                    <h3 className="font-bold text-[#111827]">Servicios extras</h3>
+                    <p className="mt-1 text-xs text-[#64748B]">Opcionales; puedes agregar más de uno.</p>
                     <div className="mt-4 space-y-3">
                       {serviciosExtras.map((servicio) => {
                         const seleccionado = extras[servicio.idServicio];
                         return (
-                          <div key={servicio.idServicio} className="rounded-xl bg-[#F8F5EE] p-3">
+                          <div key={servicio.idServicio} className="rounded-xl bg-[#EFF6FF] p-3">
                             <label className="flex cursor-pointer items-start gap-3">
                               <input
                                 type="checkbox"
@@ -532,7 +549,7 @@ export default function BookingPage() {
                               />
                               <span className="flex-1 text-sm">
                                 <strong>{servicio.tipoServicio}</strong>
-                                <span className="block text-xs text-[#8A7161]">
+                                <span className="block text-xs text-[#475569]">
                                   {servicio.descripcion} · {servicio.modalidadCobro === "POR_OPCION" ? "Precio según opción" : formatCurrency(getPrecioServicio(servicio))}
                                 </span>
                               </span>
@@ -544,7 +561,7 @@ export default function BookingPage() {
                                     value={seleccionado.opcionCodigo}
                                     onChange={(event) => setExtras((prev) => ({...prev, [servicio.idServicio]: {...seleccionado, opcionCodigo: event.target.value}}))}
                                     required
-                                    className="rounded-lg border border-[#D8C7AF] bg-white px-3 py-2 text-sm"
+                                    className="rounded-lg border border-[#BFDBFE] bg-white px-3 py-2 text-sm"
                                   >
                                     <option value="">Selecciona opción</option>
                                     {(servicio.opciones ?? []).filter((opcion) => opcion.activo).map((opcion) => (
@@ -557,13 +574,13 @@ export default function BookingPage() {
                                   min={1}
                                   value={seleccionado.cantidad}
                                   onChange={(event) => setExtras((prev) => ({...prev, [servicio.idServicio]: {...seleccionado, cantidad: Number(event.target.value)}}))}
-                                  className="rounded-lg border border-[#D8C7AF] bg-white px-3 py-2 text-sm"
+                                  className="rounded-lg border border-[#BFDBFE] bg-white px-3 py-2 text-sm"
                                 />
                                 <input
                                   value={seleccionado.observaciones}
                                   onChange={(event) => setExtras((prev) => ({...prev, [servicio.idServicio]: {...seleccionado, observaciones: event.target.value}}))}
                                   placeholder="Observaciones"
-                                  className="rounded-lg border border-[#D8C7AF] bg-white px-3 py-2 text-sm sm:col-span-2"
+                                  className="rounded-lg border border-[#BFDBFE] bg-white px-3 py-2 text-sm sm:col-span-2"
                                 />
                               </div>
                             )}
@@ -578,7 +595,7 @@ export default function BookingPage() {
                   <div>
                     <label
                       htmlFor="fechaLlegada"
-                      className="mb-2 block text-sm font-bold text-[#7A6252]"
+                      className="mb-2 block text-sm font-bold text-[#1E3A8A]"
                     >
                       Fecha de llegada *
                     </label>
@@ -590,14 +607,14 @@ export default function BookingPage() {
                       onChange={(event) => setFechaLlegada(event.target.value)}
                       required
                       disabled={isSaving || showSuccess}
-                      className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm text-[#6B4F3E] outline-none transition focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
+                      className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm text-[#111827] outline-none transition focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:opacity-60"
                     />
                   </div>
 
                   <div>
                     <label
                       htmlFor="fechaEntrega"
-                      className="mb-2 block text-sm font-bold text-[#7A6252]"
+                      className="mb-2 block text-sm font-bold text-[#1E3A8A]"
                     >
                       Fecha de entrega *
                     </label>
@@ -609,23 +626,23 @@ export default function BookingPage() {
                       onChange={(event) => setFechaEntrega(event.target.value)}
                       required
                       disabled={isSaving || showSuccess}
-                      className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm text-[#6B4F3E] outline-none transition focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
+                      className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm text-[#111827] outline-none transition focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:opacity-60"
                     />
                   </div>
                 </div>
 
-                <div className="flex gap-4 rounded-lg border border-[#D8C7AF] bg-[#F8F5EE] p-4">
+                <div className="flex gap-4 rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] p-4">
                   <CalendarDays
                     size={22}
-                    className="mt-1 shrink-0 text-[#8A6A53]"
+                    className="mt-1 shrink-0 text-[#2563EB]"
                   />
 
                   <div>
-                    <h3 className="text-sm font-bold text-[#7A6252]">
+                    <h3 className="text-sm font-bold text-[#1E3A8A]">
                       Servicio a domicilio incluido
                     </h3>
 
-                    <p className="mt-1 text-xs leading-relaxed text-[#9A7C5F]">
+                    <p className="mt-1 text-xs leading-relaxed text-[#64748B]">
                       Recogeremos y entregaremos tu ropa en la dirección que nos
                       indiques. Te contactaremos para coordinar la fecha y hora.
                     </p>
@@ -633,7 +650,7 @@ export default function BookingPage() {
                 </div>
 
                 {idServicio && resumenEstimado.precio > 0 && (
-                  <div className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-4 text-sm text-amber-950">
+                  <div className="rounded-xl border border-sky-300 bg-sky-50 px-4 py-4 text-sm text-sky-950">
                     <p className="font-bold">Valores estimados</p>
                     <div className="mt-2 grid gap-1 sm:grid-cols-3">
                       <span>Servicio base: <strong>{formatCurrency(resumenEstimado.precioBase)}</strong></span>
@@ -644,13 +661,18 @@ export default function BookingPage() {
                       Peso estimado: {formatPeso(resumenEstimado.peso)} · {resumenEstimado.cargas} carga(s).{" "}
                       El peso y el precio son estimados hasta que la sucursal registre el peso real.
                     </p>}
+                    {servicioBase?.modalidadCobro === "POR_OPCION" && (
+                      <p className="mt-2 text-xs">
+                        {resumenEstimado.cantidadPrendas} prenda(s) · La opción seleccionada se cobra por cada unidad.
+                      </p>
+                    )}
                   </div>
                 )}
 
                 <button
                   type="submit"
                   disabled={isSaving || isLoadingData || showSuccess}
-                  className="w-full rounded-lg bg-[#6B4F3E] py-4 text-sm font-bold text-white shadow-lg transition hover:bg-[#5A4334] disabled:cursor-not-allowed disabled:opacity-60"
+                  className="w-full rounded-lg bg-[#1D4ED8] py-4 text-sm font-bold text-white shadow-lg transition hover:bg-[#1E40AF] disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {showSuccess
                     ? "Redirigiendo..."
@@ -659,7 +681,7 @@ export default function BookingPage() {
                       : "Agendar servicio"}
                 </button>
 
-                <p className="text-center text-xs text-[#B8A58F]">
+                <p className="text-center text-xs text-[#94A3B8]">
                   Al agendar, aceptas nuestros términos de servicio
                 </p>
               </div>

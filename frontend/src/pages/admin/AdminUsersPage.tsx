@@ -154,11 +154,11 @@ export default function AdminUsersPage() {
   return (
     <section>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-[#6B4F3E]">
+        <h1 className="text-3xl font-bold text-[#111827]">
           Gestión de clientes
         </h1>
 
-        <p className="mt-2 text-sm text-[#9A7C5F]">
+        <p className="mt-2 text-sm text-[#64748B]">
           Crea, edita y administra los clientes registrados en LavaClean.
         </p>
       </div>
@@ -169,7 +169,7 @@ export default function AdminUsersPage() {
           className="rounded-3xl bg-white p-6 shadow-xl"
         >
           <div className="mb-5 flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#F5EEDC] text-[#6B4F3E]">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FFFFFF] text-[#111827]">
               <UserRound size={22} />
             </div>
 
@@ -177,7 +177,7 @@ export default function AdminUsersPage() {
               <h2 className="text-xl font-bold">
                 {editingCliente ? "Editar cliente" : "Nuevo cliente"}
               </h2>
-              <p className="text-sm text-[#9A7C5F]">
+              <p className="text-sm text-[#64748B]">
                 Completa los datos del cliente.
               </p>
             </div>
@@ -192,7 +192,7 @@ export default function AdminUsersPage() {
                 setForm({...form, nombres: event.target.value})
               }
               required
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+              className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
             />
 
             <input
@@ -203,7 +203,7 @@ export default function AdminUsersPage() {
                 setForm({...form, apPaterno: event.target.value})
               }
               required
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+              className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
             />
 
             <input
@@ -214,7 +214,7 @@ export default function AdminUsersPage() {
                 setForm({...form, apMaterno: event.target.value})
               }
               required
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+              className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
             />
 
             <input
@@ -225,7 +225,7 @@ export default function AdminUsersPage() {
                 setForm({...form, correo: event.target.value})
               }
               required
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+              className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
             />
 
             <input
@@ -236,7 +236,7 @@ export default function AdminUsersPage() {
                 setForm({...form, telefono: event.target.value})
               }
               required
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+              className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
             />
 
             {!editingCliente && (
@@ -249,7 +249,7 @@ export default function AdminUsersPage() {
                 }
                 required
                 minLength={8}
-                className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+                className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
               />
             )}
 
@@ -258,7 +258,7 @@ export default function AdminUsersPage() {
               onChange={(event) =>
                 setForm({...form, rol: event.target.value as UserRole})
               }
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+              className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
             >
               <option value="CLIENTE">Cliente</option>
               <option value="ADMINISTRADOR">Administrador</option>
@@ -274,7 +274,7 @@ export default function AdminUsersPage() {
               <button
                 type="submit"
                 disabled={isSaving}
-                className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#6B4F3E] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#5A4334] disabled:opacity-60"
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#1D4ED8] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#1E40AF] disabled:opacity-60"
               >
                 <Plus size={18} />
                 {isSaving
@@ -288,7 +288,7 @@ export default function AdminUsersPage() {
                 <button
                   type="button"
                   onClick={handleCancelEdit}
-                  className="inline-flex items-center justify-center rounded-lg border border-[#D8C7AF] px-4 py-3 text-sm font-bold text-[#6B4F3E] transition hover:bg-[#F5EEDC]"
+                  className="inline-flex items-center justify-center rounded-lg border border-[#BFDBFE] px-4 py-3 text-sm font-bold text-[#111827] transition hover:bg-[#EFF6FF]"
                 >
                   <X size={18} />
                 </button>
@@ -299,25 +299,25 @@ export default function AdminUsersPage() {
 
         <section className="rounded-3xl bg-white p-6 shadow-xl">
           <div className="mb-5">
-            <h2 className="text-xl font-bold text-[#6B4F3E]">
+            <h2 className="text-xl font-bold text-[#111827]">
               Listado de clientes
             </h2>
 
-            <p className="mt-1 text-sm text-[#9A7C5F]">
+            <p className="mt-1 text-sm text-[#64748B]">
               Total registrados: {clientes.length}
             </p>
           </div>
 
           {isLoading ? (
-            <p className="text-sm text-[#9A7C5F]">Cargando clientes...</p>
+            <p className="text-sm text-[#64748B]">Cargando clientes...</p>
           ) : clientes.length === 0 ? (
-            <p className="rounded-2xl bg-[#F8F5EE] p-5 text-sm text-[#9A7C5F]">
+            <p className="rounded-2xl bg-[#EFF6FF] p-5 text-sm text-[#64748B]">
               No hay clientes registrados todavía.
             </p>
           ) : (
-            <div className="overflow-hidden rounded-2xl border border-[#E5D8C5]">
+            <div className="overflow-hidden rounded-2xl border border-[#DBEAFE]">
               <table className="w-full text-left text-sm">
-                <thead className="bg-[#F5EEDC] text-[#6B4F3E]">
+                <thead className="bg-[#FFFFFF] text-[#111827]">
                   <tr>
                     <th className="px-5 py-4">ID</th>
                     <th className="px-5 py-4">Cliente</th>
@@ -331,7 +331,7 @@ export default function AdminUsersPage() {
                   {clientes.map((cliente) => (
                     <tr
                       key={cliente.idUsuario}
-                      className="border-t border-[#E5D8C5] hover:bg-[#F8F5EE]"
+                      className="border-t border-[#DBEAFE] hover:bg-[#EFF6FF]"
                     >
                       <td className="px-5 py-4 font-bold">
                         #{cliente.idUsuario}
@@ -341,14 +341,14 @@ export default function AdminUsersPage() {
                         <p className="font-bold">
                           {cliente.nombres} {cliente.apPaterno}
                         </p>
-                        <p className="mt-1 text-xs text-[#8A7161]">
+                        <p className="mt-1 text-xs text-[#475569]">
                           {cliente.apMaterno}
                         </p>
                       </td>
 
                       <td className="px-5 py-4">
                         <p className="font-semibold">{cliente.correo}</p>
-                        <p className="mt-1 text-xs text-[#8A7161]">
+                        <p className="mt-1 text-xs text-[#475569]">
                           {cliente.telefono}
                         </p>
                       </td>
@@ -357,8 +357,8 @@ export default function AdminUsersPage() {
                         <span
                           className={`rounded-full px-3 py-1 text-xs font-bold ${
                             cliente.rol === "ADMINISTRADOR"
-                              ? "bg-purple-100 text-purple-700"
-                              : "bg-green-100 text-green-700"
+                              ? "bg-indigo-100 text-indigo-700"
+                              : "bg-blue-100 text-blue-700"
                           }`}
                         >
                           {cliente.rol}
@@ -370,7 +370,7 @@ export default function AdminUsersPage() {
                           <button
                             type="button"
                             onClick={() => handleEdit(cliente)}
-                            className="rounded-lg bg-[#F5EEDC] p-2 text-[#6B4F3E] transition hover:bg-[#E8D8BE]"
+                            className="rounded-lg bg-[#FFFFFF] p-2 text-[#111827] transition hover:bg-[#DBEAFE]"
                           >
                             <Pencil size={17} />
                           </button>

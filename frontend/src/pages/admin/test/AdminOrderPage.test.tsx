@@ -128,6 +128,23 @@ const serviciosMock = [
     tipoServicio: "Planchado",
     precio: 2500,
   },
+  {
+    idServicio: 3,
+    tipoServicio: "Lavado de chaqueta",
+    precio: 0,
+    tipo: "BASE",
+    modalidadCobro: "POR_OPCION",
+    activo: true,
+    opciones: [
+      {
+        idServicioOpcion: 1,
+        codigo: "LARGA",
+        nombre: "Larga",
+        precio: 10000,
+        activo: true,
+      },
+    ],
+  },
 ];
 
 function renderPage() {
@@ -245,6 +262,55 @@ describe("AdminOrdersPage", () => {
       expect(updateEstadoPedidoRequest).toHaveBeenCalledWith(
         1,
         "CONFIRMADO",
+        "token-admin",
+      );
+    });
+  });
+
+  it("debería enviar prendas y cantidades para un servicio por opción", async () => {
+    const {container} = renderPage();
+
+    await waitFor(() => expect(getServiciosBaseRequest).toHaveBeenCalled());
+
+    const form = container.querySelector("form") as HTMLFormElement;
+    const selects = Array.from(form.querySelectorAll("select"));
+    const cliente = selects.find((select) =>
+      Array.from(select.options).some((option) => option.value === "2" && option.text.includes("Cliente")),
+    ) as HTMLSelectElement;
+    const servicio = selects.find((select) =>
+      select.options[0]?.text.includes("Servicio base") &&
+      Array.from(select.options).some((option) => option.value === "3"),
+    ) as HTMLSelectElement;
+
+    fireEvent.change(cliente, {target: {value: "2"}});
+    fireEvent.change(servicio, {target: {value: "3"}});
+
+    const selectsActualizados = Array.from(form.querySelectorAll("select"));
+    const opcion = selectsActualizados.find((select) =>
+      Array.from(select.options).some((item) => item.value === "LARGA"),
+    ) as HTMLSelectElement;
+    const prenda = selectsActualizados.find((select) =>
+      select.options[0]?.text.includes("Selecciona una prenda"),
+    ) as HTMLSelectElement;
+
+    fireEvent.change(opcion, {target: {value: "LARGA"}});
+    fireEvent.change(prenda, {target: {value: "1"}});
+    fireEvent.change(form.querySelector('input[type="number"]') as HTMLInputElement, {
+      target: {value: "2"},
+    });
+
+    const fechas = Array.from(form.querySelectorAll('input[type="date"]'));
+    fireEvent.change(fechas[0], {target: {value: "2026-06-21"}});
+    fireEvent.change(fechas[1], {target: {value: "2026-06-22"}});
+    fireEvent.submit(form);
+
+    await waitFor(() => {
+      expect(createPedidoRequest).toHaveBeenCalledWith(
+        expect.objectContaining({
+          idServicioBase: 3,
+          opcionBaseCodigo: "LARGA",
+          detalles: [expect.objectContaining({idPrenda: 1, cantidad: 2})],
+        }),
         "token-admin",
       );
     });

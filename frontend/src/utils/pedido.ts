@@ -1,4 +1,4 @@
-import type {Prenda, Servicio} from "../types/pedido";
+import type {Pedido, Prenda, Servicio} from "../types/pedido";
 
 const PESOS_REFERENCIA: Record<string, number> = {
   polera: 0.2,
@@ -46,4 +46,15 @@ export function getCargas(pesoKg: number) {
 
 export function formatPeso(pesoKg: number) {
   return `${new Intl.NumberFormat("es-CL", {maximumFractionDigits: 2}).format(pesoKg)} kg`;
+}
+
+export function compararPedidosRecientesPrimero(a: Pedido, b: Pedido) {
+  const fechaA = a.fechaCreacion ? Date.parse(a.fechaCreacion) : Number.NaN;
+  const fechaB = b.fechaCreacion ? Date.parse(b.fechaCreacion) : Number.NaN;
+
+  if (Number.isFinite(fechaA) && Number.isFinite(fechaB) && fechaA !== fechaB) {
+    return fechaB - fechaA;
+  }
+
+  return b.idPedido - a.idPedido;
 }

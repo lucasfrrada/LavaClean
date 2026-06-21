@@ -109,6 +109,43 @@ class PedidoNuevaLogicaServiceTest {
     }
 
     @Test
+    void calculaServicioPorOpcionParaTodasLasPrendasDelPedido() {
+        ServicioEntity base = servicio(3L, "Lavado de Chaqueta", TipoServicio.BASE,
+                ModalidadCobro.POR_OPCION, "0");
+        base.setOpciones(List.of(ServicioOpcionEntity.builder().servicio(base)
+                .codigo("LARGA").nombre("Larga").precio(new BigDecimal("10000"))
+                .activo(true).build()));
+        PrendaEntity chaqueta = PrendaEntity.builder().idPrenda(1L)
+                .nombrePrenda("Chaqueta").categoria("Abrigo").build();
+        PrendaEntity abrigo = PrendaEntity.builder().idPrenda(2L)
+                .nombrePrenda("Abrigo").categoria("Abrigo").build();
+        when(servicioRepository.findById(3L)).thenReturn(Optional.of(base));
+        when(prendaRepository.findById(1L)).thenReturn(Optional.of(chaqueta));
+        when(prendaRepository.findById(2L)).thenReturn(Optional.of(abrigo));
+
+        CrearDetallePedidoRequest dosChaquetas = new CrearDetallePedidoRequest();
+        dosChaquetas.setIdPrenda(1L);
+        dosChaquetas.setCantidad(2);
+        CrearDetallePedidoRequest unAbrigo = new CrearDetallePedidoRequest();
+        unAbrigo.setIdPrenda(2L);
+        unAbrigo.setCantidad(1);
+
+        CrearPedidoRequest request = new CrearPedidoRequest();
+        request.setIdUsuario(1L);
+        request.setIdServicioBase(3L);
+        request.setOpcionBaseCodigo("LARGA");
+        request.setDetalles(List.of(dosChaquetas, unAbrigo));
+
+        PedidoResponse response = pedidoService.save(request);
+
+        assertThat(response.getEstado()).isEqualTo("PENDIENTE_CONFIRMACION");
+        assertThat(response.getDetalles()).hasSize(2);
+        assertThat(response.getServicioBase().getCantidad()).isEqualTo(3);
+        assertThat(response.getPrecioEstimado()).isEqualByComparingTo("30000");
+        assertThat(response.getPesoEstimadoKg()).isNull();
+    }
+
+    @Test
     void rechazaServicioExtraComoBase() {
         ServicioEntity extra = servicio(2L, "Quita manchas", TipoServicio.EXTRA,
                 ModalidadCobro.FIJO, "2500");

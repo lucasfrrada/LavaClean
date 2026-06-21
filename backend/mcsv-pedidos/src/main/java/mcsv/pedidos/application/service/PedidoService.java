@@ -59,10 +59,12 @@ public class PedidoService {
         pedido.setObservacionesCliente(request.getObservacionesCliente());
         pedido.setObservacionesInternas(request.getObservacionesInternas());
 
-        List<DetallePedidoEntity> detalles = construirDetalles(request.getDetalles(), pedido, base);
+        List<DetallePedidoEntity> detalles = construirDetalles(
+                request.getDetalles(), pedido, base, contratoLegado);
         List<PedidoServicioEntity> servicios = new ArrayList<>();
         servicios.add(construirSeleccion(base, TipoServicio.BASE, request.getOpcionBaseCodigo(),
-                1, request.getObservacionesServicioBase(), pedido));
+                calcularCantidadServicioBase(base, detalles),
+                request.getObservacionesServicioBase(), pedido));
         servicios.addAll(construirExtras(request.getServiciosExtras(), pedido, base.getIdServicio()));
 
         pedido.setDetallePedido(detalles);
@@ -102,10 +104,13 @@ public class PedidoService {
         pedido.setObservacionesInternas(request.getObservacionesInternas());
 
         pedido.getDetallePedido().clear();
-        pedido.getDetallePedido().addAll(construirDetallesActualizar(request.getDetalles(), pedido, base));
+        List<DetallePedidoEntity> detalles = construirDetallesActualizar(
+                request.getDetalles(), pedido, base);
+        pedido.getDetallePedido().addAll(detalles);
         pedido.getServicios().clear();
         pedido.getServicios().add(construirSeleccion(base, TipoServicio.BASE,
-                request.getOpcionBaseCodigo(), 1, request.getObservacionesServicioBase(), pedido));
+                request.getOpcionBaseCodigo(), calcularCantidadServicioBase(base, detalles),
+                request.getObservacionesServicioBase(), pedido));
         pedido.getServicios().addAll(construirExtras(
                 request.getServiciosExtras(), pedido, base.getIdServicio()));
         recalcularEstimado(pedido, base, false);
@@ -313,7 +318,7 @@ public class PedidoService {
     }
 
     private List<DetallePedidoEntity> construirDetalles(List<CrearDetallePedidoRequest> items,
-            PedidoEntity pedido, ServicioEntity base) {
+            PedidoEntity pedido, ServicioEntity base, boolean contratoLegado) {
         if (items == null) return new ArrayList<>();
         List<DetallePedidoEntity> detalles = new ArrayList<>();
         for (CrearDetallePedidoRequest item : items) {
@@ -321,7 +326,7 @@ public class PedidoService {
                 throw new IllegalArgumentException("Los detalles solo pueden usar el servicio base");
             }
             detalles.add(crearDetalle(item.getIdPrenda(), item.getCantidad(),
-                    item.getObservaciones(), pedido, base));
+                    item.getObservaciones(), pedido, base, contratoLegado));
         }
         return detalles;
     }
@@ -335,27 +340,42 @@ public class PedidoService {
                 throw new IllegalArgumentException("Los detalles solo pueden usar el servicio base");
             }
             detalles.add(crearDetalle(item.getPrendaId(), item.getCantidad(),
-                    item.getObservaciones(), pedido, base));
+                    item.getObservaciones(), pedido, base, false));
         }
         return detalles;
     }
 
     private DetallePedidoEntity crearDetalle(Long idPrenda, Integer cantidad, String observaciones,
-            PedidoEntity pedido, ServicioEntity base) {
+            PedidoEntity pedido, ServicioEntity base, boolean contratoLegado) {
         PrendaEntity prenda = prendaRepository.findById(idPrenda)
                 .orElseThrow(() -> new EntityNotFoundException("Prenda no encontrada: " + idPrenda));
-        validarPesoReferencia(prenda);
+        boolean requierePeso = contratoLegado
+                || modalidad(base, false) == ModalidadCobro.POR_CARGA;
+        if (requierePeso) validarPesoReferencia(prenda);
         DetallePedidoEntity detalle = new DetallePedidoEntity();
         detalle.setPedido(pedido);
         detalle.setServicio(base);
         detalle.setPrenda(prenda);
         detalle.setCantidad(cantidad);
         detalle.setObservaciones(observaciones);
-        detalle.setPesoReferenciaKg(prenda.getPesoReferenciaKg());
-        detalle.setPesoEstimadoKg(prenda.getPesoReferenciaKg()
-                .multiply(BigDecimal.valueOf(cantidad)).setScale(ESCALA_PESO, RoundingMode.HALF_UP));
-        detalle.setPrecioPorCarga(base.getPrecio());
+        if (prenda.getPesoReferenciaKg() != null) {
+            detalle.setPesoReferenciaKg(prenda.getPesoReferenciaKg());
+            detalle.setPesoEstimadoKg(prenda.getPesoReferenciaKg()
+                    .multiply(BigDecimal.valueOf(cantidad))
+                    .setScale(ESCALA_PESO, RoundingMode.HALF_UP));
+        }
+        detalle.setPrecioPorCarga(requierePeso ? base.getPrecio() : null);
         return detalle;
+    }
+
+    private int calcularCantidadServicioBase(ServicioEntity base,
+            List<DetallePedidoEntity> detalles) {
+        if (modalidad(base, false) != ModalidadCobro.POR_OPCION || detalles.isEmpty()) {
+            return 1;
+        }
+        return detalles.stream()
+                .map(DetallePedidoEntity::getCantidad)
+                .reduce(0, Math::addExact);
     }
 
     private BigDecimal totalExtras(PedidoEntity pedido, boolean finalizado) {

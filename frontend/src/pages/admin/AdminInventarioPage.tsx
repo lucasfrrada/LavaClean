@@ -178,10 +178,10 @@ export default function AdminInventarioPage() {
     <section className="space-y-8">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-[#6B4F3E]">
+          <h1 className="text-3xl font-bold text-[#111827]">
             Gestión de inventario
           </h1>
-          <p className="mt-2 text-sm text-[#9A7C5F]">
+          <p className="mt-2 text-sm text-[#64748B]">
             Administra productos, stock y movimientos de inventario.
           </p>
         </div>
@@ -190,7 +190,7 @@ export default function AdminInventarioPage() {
           type="button"
           onClick={loadInventario}
           disabled={isLoading}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#6B4F3E] px-5 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-[#5A4334] disabled:opacity-60"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#1D4ED8] px-5 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-[#1E40AF] disabled:opacity-60"
         >
           <RefreshCcw size={17} />
           {isLoading ? "Actualizando..." : "Actualizar"}
@@ -227,14 +227,14 @@ export default function AdminInventarioPage() {
           className="rounded-2xl bg-white p-6 shadow-md"
         >
           <div className="mb-5 flex items-center gap-3">
-            <div className="rounded-xl bg-[#F5EEDC] p-3 text-[#6B4F3E]">
+            <div className="rounded-xl bg-[#FFFFFF] p-3 text-[#111827]">
               <Plus size={20} />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-[#6B4F3E]">
+              <h2 className="text-xl font-bold text-[#111827]">
                 Nuevo producto
               </h2>
-              <p className="text-sm text-[#9A7C5F]">
+              <p className="text-sm text-[#64748B]">
                 Crea un insumo para controlar su stock.
               </p>
             </div>
@@ -251,7 +251,7 @@ export default function AdminInventarioPage() {
               }
               placeholder="Nombre producto"
               required
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53]"
+              className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB]"
             />
 
             <input
@@ -263,12 +263,12 @@ export default function AdminInventarioPage() {
                 })
               }
               placeholder="Descripción"
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53]"
+              className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB]"
             />
 
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <div>
-                <label className="mb-2 block text-sm font-semibold text-[#6B4F3E]">
+                <label className="mb-2 block text-sm font-semibold text-[#111827]">
                   Stock
                 </label>
 
@@ -284,12 +284,12 @@ export default function AdminInventarioPage() {
                   }
                   placeholder="Ej: 10"
                   required
-                  className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+                  className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
                 />
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-semibold text-[#6B4F3E]">
+                <label className="mb-2 block text-sm font-semibold text-[#111827]">
                   Stock mínimo
                 </label>
 
@@ -305,13 +305,13 @@ export default function AdminInventarioPage() {
                   }
                   placeholder="Ej: 3"
                   required
-                  className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+                  className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
                 />
               </div>
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-semibold text-[#6B4F3E]">
+              <label className="mb-2 block text-sm font-semibold text-[#111827]">
                 Unidad de medida
               </label>
 
@@ -324,7 +324,7 @@ export default function AdminInventarioPage() {
                   })
                 }
                 required
-                className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+                className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
               >
                 <option value="">Selecciona una unidad</option>
                 <option value="LITROS">LITROS</option>
@@ -337,7 +337,7 @@ export default function AdminInventarioPage() {
             <button
               type="submit"
               disabled={isSavingProducto}
-              className="w-full rounded-xl bg-[#6B4F3E] px-5 py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#5A4334] disabled:opacity-60"
+              className="w-full rounded-xl bg-[#1D4ED8] px-5 py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#1E40AF] disabled:opacity-60"
             >
               {isSavingProducto ? "Guardando..." : "Crear producto"}
             </button>
@@ -345,16 +345,16 @@ export default function AdminInventarioPage() {
         </form>
 
         <div className="rounded-2xl bg-white p-6 shadow-md">
-          <h2 className="text-xl font-bold text-[#6B4F3E]">
+          <h2 className="text-xl font-bold text-[#111827]">
             Listado de productos
           </h2>
-          <p className="mt-1 text-sm text-[#9A7C5F]">
+          <p className="mt-1 text-sm text-[#64748B]">
             Total registrados: {productos.length}
           </p>
 
           <div className="mt-5 overflow-x-auto">
             <table className="min-w-full text-left text-sm">
-              <thead className="bg-[#F5EEDC] text-[#6B4F3E]">
+              <thead className="bg-[#FFFFFF] text-[#111827]">
                 <tr>
                   <th className="px-4 py-3">Producto</th>
                   <th className="px-4 py-3">Stock</th>
@@ -368,9 +368,9 @@ export default function AdminInventarioPage() {
                 {productos.map((producto) => (
                   <tr
                     key={producto.idProducto}
-                    className="border-b border-[#E8D8BE]"
+                    className="border-b border-[#DBEAFE]"
                   >
-                    <td className="px-4 py-3 font-semibold text-[#6B4F3E]">
+                    <td className="px-4 py-3 font-semibold text-[#111827]">
                       {producto.nombreProducto}
                     </td>
 
@@ -406,7 +406,7 @@ export default function AdminInventarioPage() {
             </table>
 
             {!isLoading && productos.length === 0 && (
-              <p className="py-8 text-center text-sm text-[#9A7C5F]">
+              <p className="py-8 text-center text-sm text-[#64748B]">
                 No hay productos registrados todavía.
               </p>
             )}
@@ -418,10 +418,10 @@ export default function AdminInventarioPage() {
         onSubmit={handleCreateMovimiento}
         className="rounded-2xl bg-white p-6 shadow-md"
       >
-        <h2 className="text-xl font-bold text-[#6B4F3E]">
+        <h2 className="text-xl font-bold text-[#111827]">
           Registrar movimiento
         </h2>
-        <p className="mt-1 text-sm text-[#9A7C5F]">
+        <p className="mt-1 text-sm text-[#64748B]">
           Usa esto para entradas, salidas o ajustes manuales de stock.
         </p>
 
@@ -435,7 +435,7 @@ export default function AdminInventarioPage() {
               })
             }
             required
-            className="rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53]"
+            className="rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB]"
           >
             <option value={0}>Seleccionar producto</option>
             {productos.map((producto) => (
@@ -453,7 +453,7 @@ export default function AdminInventarioPage() {
                 tipoMovimiento: event.target.value as TipoMovimientoInventario,
               })
             }
-            className="rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53]"
+            className="rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB]"
           >
             <option value="ENTRADA">Entrada</option>
             <option value="SALIDA">Salida</option>
@@ -471,13 +471,13 @@ export default function AdminInventarioPage() {
                 cantidad: Number(event.target.value),
               })
             }
-            className="rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53]"
+            className="rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB]"
           />
 
           <button
             type="submit"
             disabled={isSavingMovimiento}
-            className="rounded-xl bg-[#6B4F3E] px-5 py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#5A4334] disabled:opacity-60"
+            className="rounded-xl bg-[#1D4ED8] px-5 py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#1E40AF] disabled:opacity-60"
           >
             {isSavingMovimiento ? "Registrando..." : "Registrar"}
           </button>
@@ -492,7 +492,7 @@ export default function AdminInventarioPage() {
             })
           }
           placeholder="Motivo del movimiento"
-          className="mt-4 w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53]"
+          className="mt-4 w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB]"
         />
       </form>
 
@@ -504,13 +504,13 @@ export default function AdminInventarioPage() {
               <Trash2 size={26} />
             </div>
 
-            <h2 className="mt-5 text-center text-xl font-bold text-[#6B4F3E]">
+            <h2 className="mt-5 text-center text-xl font-bold text-[#111827]">
               ¿Eliminar producto?
             </h2>
 
-            <p className="mt-3 text-center text-sm leading-relaxed text-[#9A7C5F]">
+            <p className="mt-3 text-center text-sm leading-relaxed text-[#64748B]">
               Esta acción eliminará o desactivará el producto{" "}
-              <span className="font-bold text-[#6B4F3E]">
+              <span className="font-bold text-[#111827]">
                 {productoToDelete.nombreProducto}
               </span>
               . ¿Deseas continuar?
@@ -521,7 +521,7 @@ export default function AdminInventarioPage() {
                 type="button"
                 onClick={closeDeleteModal}
                 disabled={isDeleting}
-                className="rounded-xl border border-[#D8C7AF] bg-white px-4 py-3 text-sm font-bold text-[#6B4F3E] transition hover:bg-[#F5EEDC] disabled:opacity-60"
+                className="rounded-xl border border-[#BFDBFE] bg-white px-4 py-3 text-sm font-bold text-[#111827] transition hover:bg-[#EFF6FF] disabled:opacity-60"
               >
                 Cancelar
               </button>
@@ -553,10 +553,10 @@ function DashboardCard({title, value, icon: Icon}: DashboardCardProps) {
     <article className="rounded-2xl bg-white p-5 shadow-md">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-semibold text-[#9A7C5F]">{title}</p>
-          <h3 className="mt-2 text-3xl font-bold text-[#6B4F3E]">{value}</h3>
+          <p className="text-sm font-semibold text-[#64748B]">{title}</p>
+          <h3 className="mt-2 text-3xl font-bold text-[#111827]">{value}</h3>
         </div>
-        <div className="rounded-xl bg-[#F5EEDC] p-3 text-[#6B4F3E]">
+        <div className="rounded-xl bg-[#FFFFFF] p-3 text-[#111827]">
           <Icon size={22} />
         </div>
       </div>
@@ -566,9 +566,9 @@ function DashboardCard({title, value, icon: Icon}: DashboardCardProps) {
 
 function getEstadoClass(estado: string) {
   const classes: Record<string, string> = {
-    ACTIVO: "bg-green-100 text-green-700",
+    ACTIVO: "bg-blue-100 text-blue-700",
     INACTIVO: "bg-gray-100 text-gray-700",
-    BAJO_STOCK: "bg-yellow-100 text-yellow-700",
+    BAJO_STOCK: "bg-cyan-100 text-cyan-700",
     AGOTADO: "bg-red-100 text-red-700",
   };
 
