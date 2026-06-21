@@ -5,16 +5,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class CrearDetallePedidoRequest {
-
+public class SeleccionServicioRequest {
     @NotNull
-    private Long idPrenda;
-
     private Long idServicio;
-
-    @NotNull
+    private String opcionCodigo;
     @Min(1)
-    private Integer cantidad;
-
+    private Integer cantidad = 1;
     private String observaciones;
 }

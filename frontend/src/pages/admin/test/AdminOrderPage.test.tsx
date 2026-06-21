@@ -11,7 +11,10 @@ import {
 } from "../../../api/pedidoService";
 import {getUsuariosRequest} from "../../../api/usuarioService";
 import {getPrendasRequest} from "../../../api/prendaService";
-import {getServiciosRequest} from "../../../api/servicioService";
+import {
+  getServiciosBaseRequest,
+  getServiciosExtrasRequest,
+} from "../../../api/servicioService";
 import type {AuthUser} from "../../../types/auth";
 
 vi.mock("../../../context/AuthContext", () => ({
@@ -34,7 +37,8 @@ vi.mock("../../../api/prendaService", () => ({
 }));
 
 vi.mock("../../../api/servicioService", () => ({
-  getServiciosRequest: vi.fn(),
+  getServiciosBaseRequest: vi.fn(),
+  getServiciosExtrasRequest: vi.fn(),
 }));
 
 const usuarioAdminMock: AuthUser = {
@@ -167,7 +171,8 @@ describe("AdminOrdersPage", () => {
     vi.mocked(getPedidosRequest).mockResolvedValue(pedidosMock as never);
     vi.mocked(getUsuariosRequest).mockResolvedValue(usuariosMock as never);
     vi.mocked(getPrendasRequest).mockResolvedValue(prendasMock as never);
-    vi.mocked(getServiciosRequest).mockResolvedValue(serviciosMock as never);
+    vi.mocked(getServiciosBaseRequest).mockResolvedValue(serviciosMock as never);
+    vi.mocked(getServiciosExtrasRequest).mockResolvedValue([]);
 
     vi.mocked(createPedidoRequest).mockResolvedValue(pedidosMock[0] as never);
 

@@ -12,6 +12,7 @@ import type {Prenda} from "../../types/pedido";
 const emptyForm = {
   nombrePrenda: "",
   categoria: "",
+  pesoReferenciaKg: 0.1,
 };
 
 export default function AdminPrendasPage() {
@@ -77,6 +78,7 @@ export default function AdminPrendasPage() {
     setForm({
       nombrePrenda: prenda.nombrePrenda,
       categoria: prenda.categoria,
+      pesoReferenciaKg: Number(prenda.pesoReferenciaKg ?? 0),
     });
   };
 
@@ -154,6 +156,19 @@ export default function AdminPrendasPage() {
               className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
             />
 
+            <input
+              type="number"
+              min="0.001"
+              step="0.001"
+              placeholder="Peso de referencia (kg)"
+              value={form.pesoReferenciaKg}
+              onChange={(event) =>
+                setForm({...form, pesoReferenciaKg: Number(event.target.value)})
+              }
+              required
+              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+            />
+
             {errorMessage && (
               <p className="rounded-lg bg-red-100 px-4 py-3 text-sm font-semibold text-red-700">
                 {errorMessage}
@@ -211,6 +226,7 @@ export default function AdminPrendasPage() {
                     <th className="px-5 py-4">ID</th>
                     <th className="px-5 py-4">Nombre prenda</th>
                     <th className="px-5 py-4">Categoría</th>
+                    <th className="px-5 py-4">Peso ref.</th>
                     <th className="px-5 py-4 text-right">Acciones</th>
                   </tr>
                 </thead>
@@ -229,6 +245,9 @@ export default function AdminPrendasPage() {
                       </td>
                       <td className="px-5 py-4 text-[#8A7161]">
                         {prenda.categoria}
+                      </td>
+                      <td className="px-5 py-4 text-[#8A7161]">
+                        {Number(prenda.pesoReferenciaKg ?? 0).toLocaleString("es-CL")} kg
                       </td>
                       <td className="px-5 py-4">
                         <div className="flex justify-end gap-2">

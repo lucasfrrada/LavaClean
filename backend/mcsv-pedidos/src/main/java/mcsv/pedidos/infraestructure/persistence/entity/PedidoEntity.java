@@ -6,6 +6,7 @@ import mcsv.pedidos.domain.model.EstadoPedido;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,8 +64,36 @@ public class PedidoEntity {
     @Column(name = "cargas_reales")
     private Integer cargasReales;
 
+    @Column(name = "observaciones_cliente", length = 1000)
+    private String observacionesCliente;
+
+    @Column(name = "observaciones_internas", length = 1000)
+    private String observacionesInternas;
+
+    @Column(name = "fecha_creacion", nullable = false, updatable = false)
+    private LocalDateTime fechaCreacion;
+
+    @Column(name = "fecha_actualizacion", nullable = false)
+    private LocalDateTime fechaActualizacion;
+
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<DetallePedidoEntity> detallePedido = new ArrayList<>();
+
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<PedidoServicioEntity> servicios = new ArrayList<>();
+
+    @PrePersist
+    void prePersist() {
+        LocalDateTime ahora = LocalDateTime.now();
+        fechaCreacion = fechaCreacion == null ? ahora : fechaCreacion;
+        fechaActualizacion = ahora;
+    }
+
+    @PreUpdate
+    void preUpdate() {
+        fechaActualizacion = LocalDateTime.now();
+    }
 
 }

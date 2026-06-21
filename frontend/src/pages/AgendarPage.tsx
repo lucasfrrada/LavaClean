@@ -5,25 +5,40 @@ import {AnimatePresence} from "motion/react";
 
 import {useAuth} from "../context/AuthContext";
 import {getPrendasRequest} from "../api/prendaService";
-import {getServiciosRequest} from "../api/servicioService";
+import {
+  getServiciosBaseRequest,
+  getServiciosExtrasRequest,
+} from "../api/servicioService";
 import {createPedidoRequest} from "../api/pedidoService";
+import {getErrorMessage} from "../api/apiClient";
 
 import SuccessScreen from "../components/SuccessScreen";
 
 import type {Prenda, Servicio} from "../types/pedido";
+import {
+  formatPeso,
+  getCargas,
+  getPesoReferencia,
+  getPrecioPorCarga,
+  getPrecioServicio,
+} from "../utils/pedido";
 
 import logo from "../assets/imgs/lavaclean-icon.png";
 
 type DetalleForm = {
   idPrenda: string;
-  idServicio: string;
   cantidad: string;
+  observaciones: string;
+};
+
+type ExtraForm = {
+  opcionCodigo: string;
+  cantidad: number;
   observaciones: string;
 };
 
 const emptyDetalle: DetalleForm = {
   idPrenda: "",
-  idServicio: "",
   cantidad: "1",
   observaciones: "",
 };
@@ -52,8 +67,13 @@ export default function BookingPage() {
 
   const [prendas, setPrendas] = useState<Prenda[]>([]);
   const [servicios, setServicios] = useState<Servicio[]>([]);
+  const [serviciosExtras, setServiciosExtras] = useState<Servicio[]>([]);
 
   const [detalles, setDetalles] = useState<DetalleForm[]>([emptyDetalle]);
+  const [idServicio, setIdServicio] = useState("");
+  const [opcionBaseCodigo, setOpcionBaseCodigo] = useState("");
+  const [observacionesBase, setObservacionesBase] = useState("");
+  const [extras, setExtras] = useState<Record<number, ExtraForm>>({});
 
   const [fechaLlegada, setFechaLlegada] = useState(getTodayDate());
   const [fechaEntrega, setFechaEntrega] = useState(getTomorrowDate());
@@ -71,16 +91,20 @@ export default function BookingPage() {
         setIsLoadingData(true);
         setErrorMessage("");
 
-        const [prendasData, serviciosData] = await Promise.all([
+        const [prendasData, serviciosData, extrasData] = await Promise.all([
           getPrendasRequest(token),
-          getServiciosRequest(token),
+          getServiciosBaseRequest(token),
+          getServiciosExtrasRequest(token),
         ]);
 
         setPrendas(prendasData);
         setServicios(serviciosData);
+        setServiciosExtras(extrasData);
       } catch (error) {
         console.error(error);
-        setErrorMessage("No se pudieron cargar las prendas o servicios.");
+        setErrorMessage(
+          getErrorMessage(error, "No se pudieron cargar las prendas o servicios."),
+        );
       } finally {
         setIsLoadingData(false);
       }
@@ -116,22 +140,40 @@ export default function BookingPage() {
     );
   };
 
-  const getServicioPrecio = (idServicio: string) => {
+  const resumenEstimado = useMemo(() => {
     const servicio = servicios.find(
       (item) => item.idServicio === Number(idServicio),
     );
-
-    return Number(servicio?.precio ?? 0);
-  };
-
-  const totalEstimado = useMemo(() => {
-    return detalles.reduce((total, detalle) => {
-      const precioServicio = getServicioPrecio(detalle.idServicio);
-      const cantidad = Number(detalle.cantidad || 0);
-
-      return total + precioServicio * cantidad;
+    const esPorCarga = (servicio?.modalidadCobro ?? "POR_CARGA") === "POR_CARGA";
+    const peso = detalles.reduce((total, detalle) => {
+      const prenda = prendas.find(
+        (item) => item.idPrenda === Number(detalle.idPrenda),
+      );
+      return total + getPesoReferencia(prenda) * Number(detalle.cantidad || 0);
     }, 0);
-  }, [detalles, servicios]);
+    const cargas = esPorCarga ? getCargas(peso) : 0;
+    const precioPorCarga = getPrecioPorCarga(servicio);
+    const precioBase = esPorCarga
+      ? cargas * precioPorCarga
+      : getPrecioServicio(servicio, opcionBaseCodigo);
+    const precioExtras = Object.entries(extras).reduce((total, [id, extra]) => {
+      const servicioExtra = serviciosExtras.find(
+        (item) => item.idServicio === Number(id),
+      );
+      return (
+        total +
+        getPrecioServicio(servicioExtra, extra.opcionCodigo) * extra.cantidad
+      );
+    }, 0);
+
+    return {peso, cargas, precioPorCarga, precioBase, precioExtras, precio: precioBase + precioExtras};
+  }, [detalles, prendas, servicios, serviciosExtras, idServicio, opcionBaseCodigo, extras]);
+
+  const servicioBase = servicios.find(
+    (item) => item.idServicio === Number(idServicio),
+  );
+  const esPorCarga =
+    (servicioBase?.modalidadCobro ?? "POR_CARGA") === "POR_CARGA";
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -146,17 +188,29 @@ export default function BookingPage() {
       return;
     }
 
-    const hasInvalidDetalle = detalles.some(
-      (detalle) =>
-        !detalle.idPrenda ||
-        !detalle.idServicio ||
-        Number(detalle.cantidad) < 1,
+    if (!idServicio) {
+      setErrorMessage("Debes seleccionar un tipo de servicio para el pedido.");
+      return;
+    }
+
+    if (servicioBase?.modalidadCobro === "POR_OPCION" && !opcionBaseCodigo) {
+      setErrorMessage("Debes seleccionar una opción para el servicio base.");
+      return;
+    }
+
+    const hasInvalidDetalle = esPorCarga && detalles.some(
+      (detalle) => !detalle.idPrenda || Number(detalle.cantidad) < 1,
     );
 
     if (hasInvalidDetalle) {
       setErrorMessage(
-        "Debes completar cada servicio con prenda, tipo de servicio y cantidad válida.",
+        "Debes completar cada prenda con una cantidad válida.",
       );
+      return;
+    }
+
+    if (esPorCarga && resumenEstimado.peso < 0.5) {
+      setErrorMessage("El peso estimado mínimo para lavado por carga es 0,5 kg.");
       return;
     }
 
@@ -167,13 +221,21 @@ export default function BookingPage() {
       await createPedidoRequest(
         {
           idUsuario: user.idUsuario,
-          fechaLlegada,
-          fechaEntrega,
-          detalles: detalles.map((detalle) => ({
+          fecha_llegada: fechaLlegada,
+          fecha_entrega: fechaEntrega,
+          idServicioBase: Number(idServicio),
+          opcionBaseCodigo: opcionBaseCodigo || undefined,
+          observacionesServicioBase: observacionesBase.trim() || undefined,
+          detalles: esPorCarga ? detalles.map((detalle) => ({
             idPrenda: Number(detalle.idPrenda),
-            idServicio: Number(detalle.idServicio),
             cantidad: Number(detalle.cantidad),
             observaciones: detalle.observaciones.trim(),
+          })) : [],
+          serviciosExtras: Object.entries(extras).map(([id, extra]) => ({
+            idServicio: Number(id),
+            opcionCodigo: extra.opcionCodigo || undefined,
+            cantidad: extra.cantidad,
+            observaciones: extra.observaciones.trim() || undefined,
           })),
         },
         token,
@@ -186,7 +248,7 @@ export default function BookingPage() {
       }, 5000);
     } catch (error) {
       console.error(error);
-      setErrorMessage("No se pudo agendar el servicio.");
+      setErrorMessage(getErrorMessage(error, "No se pudo agendar el servicio."));
       setIsSaving(false);
     }
   };
@@ -237,7 +299,7 @@ export default function BookingPage() {
               </h1>
 
               <p className="mt-3 text-sm text-[#9A7C5F]">
-                Puedes agregar una o más prendas y servicios en un mismo pedido
+                Elige un servicio y agrega todas las prendas de tu pedido
               </p>
             </div>
 
@@ -258,7 +320,68 @@ export default function BookingPage() {
                   </p>
                 )}
 
-                <div className="space-y-5">
+                <div>
+                  <label className="mb-2 block text-sm font-bold text-[#7A6252]">
+                    Servicio base *
+                  </label>
+                  <select
+                    value={idServicio}
+                    onChange={(event) => {
+                      setIdServicio(event.target.value);
+                      setOpcionBaseCodigo("");
+                    }}
+                    required
+                    disabled={isLoadingData || isSaving || showSuccess}
+                    className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm text-[#6B4F3E] outline-none transition focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
+                  >
+                    <option value="">Selecciona un servicio</option>
+                    {servicios.map((servicio) => (
+                      <option key={servicio.idServicio} value={servicio.idServicio}>
+                        {servicio.tipoServicio} - {servicio.modalidadCobro === "POR_OPCION"
+                          ? "precio según opción"
+                          : `${formatCurrency(getPrecioPorCarga(servicio))}${servicio.modalidadCobro === "POR_CARGA" ? " por carga" : ""}`}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="mt-2 text-xs text-[#9A7C5F]">
+                    {servicioBase?.descripcion ?? "Este es el servicio principal del pedido."}
+                  </p>
+                </div>
+
+                {servicioBase?.modalidadCobro === "POR_OPCION" && (
+                  <div>
+                    <label className="mb-2 block text-sm font-bold text-[#7A6252]">
+                      Tipo o tamaño *
+                    </label>
+                    <select
+                      value={opcionBaseCodigo}
+                      onChange={(event) => setOpcionBaseCodigo(event.target.value)}
+                      required
+                      disabled={isSaving || showSuccess}
+                      className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm"
+                    >
+                      <option value="">Selecciona una opción</option>
+                      {(servicioBase.opciones ?? []).filter((opcion) => opcion.activo).map((opcion) => (
+                        <option key={opcion.codigo} value={opcion.codigo}>
+                          {opcion.nombre} - {formatCurrency(Number(opcion.precio))}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {servicioBase && (
+                  <textarea
+                    rows={3}
+                    value={observacionesBase}
+                    onChange={(event) => setObservacionesBase(event.target.value)}
+                    placeholder="Observaciones o especificaciones del servicio base"
+                    disabled={isSaving || showSuccess}
+                    className="w-full resize-none rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm"
+                  />
+                )}
+
+                {esPorCarga && idServicio && <div className="space-y-5">
                   {detalles.map((detalle, index) => (
                     <div
                       key={index}
@@ -267,10 +390,10 @@ export default function BookingPage() {
                       <div className="mb-4 flex items-center justify-between">
                         <div>
                           <h3 className="text-sm font-bold text-[#6B4F3E]">
-                            Servicio #{index + 1}
+                            Prenda #{index + 1}
                           </h3>
                           <p className="mt-1 text-xs text-[#9A7C5F]">
-                            Selecciona prenda, servicio y cantidad.
+                            Selecciona el tipo de prenda y su cantidad.
                           </p>
                         </div>
 
@@ -313,38 +436,9 @@ export default function BookingPage() {
                                 value={prenda.idPrenda}
                               >
                                 {prenda.nombrePrenda} - {prenda.categoria}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="mb-2 block text-sm font-bold text-[#7A6252]">
-                            Tipo de servicio *
-                          </label>
-
-                          <select
-                            value={detalle.idServicio}
-                            onChange={(event) =>
-                              handleDetalleChange(
-                                index,
-                                "idServicio",
-                                event.target.value,
-                              )
-                            }
-                            required
-                            disabled={isLoadingData || isSaving || showSuccess}
-                            className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm text-[#6B4F3E] outline-none transition focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
-                          >
-                            <option value="">Selecciona un servicio</option>
-
-                            {servicios.map((servicio) => (
-                              <option
-                                key={servicio.idServicio}
-                                value={servicio.idServicio}
-                              >
-                                {servicio.tipoServicio} -{" "}
-                                {formatCurrency(Number(servicio.precio))}
+                                {getPesoReferencia(prenda) > 0
+                                  ? ` (${formatPeso(getPesoReferencia(prenda))}/unidad)`
+                                  : ""}
                               </option>
                             ))}
                           </select>
@@ -371,6 +465,12 @@ export default function BookingPage() {
                             className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm text-[#6B4F3E] outline-none transition placeholder:text-[#B8A58F] focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
                           />
                         </div>
+
+                        {detalle.idPrenda && (
+                          <p className="rounded-lg bg-white px-3 py-2 text-xs font-semibold text-[#7A6252]">
+                            Peso de referencia: {formatPeso(getPesoReferencia(prendas.find((item) => item.idPrenda === Number(detalle.idPrenda))))} por unidad · Peso estimado: {formatPeso(getPesoReferencia(prendas.find((item) => item.idPrenda === Number(detalle.idPrenda))) * Number(detalle.cantidad || 0))}
+                          </p>
+                        )}
 
                         <div>
                           <label className="mb-2 block text-sm font-bold text-[#7A6252]">
@@ -403,9 +503,76 @@ export default function BookingPage() {
                     className="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[#8A6A53] px-5 py-3 text-sm font-bold text-[#6B4F3E] transition hover:bg-[#F5EEDC] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     <Plus size={18} />
-                    Agregar otra prenda o servicio
+                    Agregar otra prenda
                   </button>
-                </div>
+                </div>}
+
+                {serviciosExtras.length > 0 && (
+                  <div className="rounded-2xl border border-[#D8C7AF] p-4">
+                    <h3 className="font-bold text-[#6B4F3E]">Servicios extras</h3>
+                    <p className="mt-1 text-xs text-[#9A7C5F]">Opcionales; puedes agregar más de uno.</p>
+                    <div className="mt-4 space-y-3">
+                      {serviciosExtras.map((servicio) => {
+                        const seleccionado = extras[servicio.idServicio];
+                        return (
+                          <div key={servicio.idServicio} className="rounded-xl bg-[#F8F5EE] p-3">
+                            <label className="flex cursor-pointer items-start gap-3">
+                              <input
+                                type="checkbox"
+                                checked={Boolean(seleccionado)}
+                                onChange={(event) => setExtras((prev) => {
+                                  if (!event.target.checked) {
+                                    const siguiente = {...prev};
+                                    delete siguiente[servicio.idServicio];
+                                    return siguiente;
+                                  }
+                                  return {...prev, [servicio.idServicio]: {opcionCodigo: "", cantidad: 1, observaciones: ""}};
+                                })}
+                                className="mt-1"
+                              />
+                              <span className="flex-1 text-sm">
+                                <strong>{servicio.tipoServicio}</strong>
+                                <span className="block text-xs text-[#8A7161]">
+                                  {servicio.descripcion} · {servicio.modalidadCobro === "POR_OPCION" ? "Precio según opción" : formatCurrency(getPrecioServicio(servicio))}
+                                </span>
+                              </span>
+                            </label>
+                            {seleccionado && (
+                              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                                {servicio.modalidadCobro === "POR_OPCION" && (
+                                  <select
+                                    value={seleccionado.opcionCodigo}
+                                    onChange={(event) => setExtras((prev) => ({...prev, [servicio.idServicio]: {...seleccionado, opcionCodigo: event.target.value}}))}
+                                    required
+                                    className="rounded-lg border border-[#D8C7AF] bg-white px-3 py-2 text-sm"
+                                  >
+                                    <option value="">Selecciona opción</option>
+                                    {(servicio.opciones ?? []).filter((opcion) => opcion.activo).map((opcion) => (
+                                      <option key={opcion.codigo} value={opcion.codigo}>{opcion.nombre} - {formatCurrency(opcion.precio)}</option>
+                                    ))}
+                                  </select>
+                                )}
+                                <input
+                                  type="number"
+                                  min={1}
+                                  value={seleccionado.cantidad}
+                                  onChange={(event) => setExtras((prev) => ({...prev, [servicio.idServicio]: {...seleccionado, cantidad: Number(event.target.value)}}))}
+                                  className="rounded-lg border border-[#D8C7AF] bg-white px-3 py-2 text-sm"
+                                />
+                                <input
+                                  value={seleccionado.observaciones}
+                                  onChange={(event) => setExtras((prev) => ({...prev, [servicio.idServicio]: {...seleccionado, observaciones: event.target.value}}))}
+                                  placeholder="Observaciones"
+                                  className="rounded-lg border border-[#D8C7AF] bg-white px-3 py-2 text-sm sm:col-span-2"
+                                />
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
 
                 <div className="grid gap-4 md:grid-cols-2">
                   <div>
@@ -465,12 +632,18 @@ export default function BookingPage() {
                   </div>
                 </div>
 
-                {totalEstimado > 0 && (
-                  <div className="rounded-lg bg-[#F5EEDC] px-4 py-3 text-sm font-semibold text-[#6B4F3E]">
-                    Total estimado:{" "}
-                    <span className="font-bold">
-                      {formatCurrency(totalEstimado)}
-                    </span>
+                {idServicio && resumenEstimado.precio > 0 && (
+                  <div className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-4 text-sm text-amber-950">
+                    <p className="font-bold">Valores estimados</p>
+                    <div className="mt-2 grid gap-1 sm:grid-cols-3">
+                      <span>Servicio base: <strong>{formatCurrency(resumenEstimado.precioBase)}</strong></span>
+                      <span>Extras: <strong>{formatCurrency(resumenEstimado.precioExtras)}</strong></span>
+                      <span>Precio: <strong>{formatCurrency(resumenEstimado.precio)}</strong></span>
+                    </div>
+                    {esPorCarga && <p className="mt-2 text-xs">
+                      Peso estimado: {formatPeso(resumenEstimado.peso)} · {resumenEstimado.cargas} carga(s).{" "}
+                      El peso y el precio son estimados hasta que la sucursal registre el peso real.
+                    </p>}
                   </div>
                 )}
 

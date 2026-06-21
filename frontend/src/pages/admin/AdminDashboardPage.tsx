@@ -75,7 +75,7 @@ export default function AdminDashboardPage() {
   const pedidosActivos = useMemo(() => {
     return pedidos.filter(
       (pedido) =>
-        pedido.estado === "PENDIENTE" || pedido.estado === "EN_PROCESO",
+        pedido.estado === "REVISION" || pedido.estado === "EN_PROCESO",
     ).length;
   }, [pedidos]);
 

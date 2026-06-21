@@ -2,6 +2,8 @@ package mcsv.pedidos.application.mapper;
 
 import mcsv.pedidos.api.dto.response.Pedido.DetallePedidoResponse;
 import mcsv.pedidos.api.dto.response.Pedido.PedidoResponse;
+import mcsv.pedidos.api.dto.response.Pedido.PedidoServicioResponse;
+import mcsv.pedidos.domain.model.TipoServicio;
 import mcsv.pedidos.infraestructure.persistence.entity.DetallePedidoEntity;
 import mcsv.pedidos.infraestructure.persistence.entity.PedidoEntity;
 
@@ -13,6 +15,10 @@ public class PedidoMapper {
         List<DetallePedidoResponse> detalles = pedidoEntity.getDetallePedido()
                 .stream()
                 .map(PedidoMapper::toDetalleResponse)
+                .toList();
+
+        List<PedidoServicioResponse> servicios = pedidoEntity.getServicios().stream()
+                .map(PedidoMapper::toServicioResponse)
                 .toList();
 
 
@@ -31,6 +37,34 @@ public class PedidoMapper {
                 .cargasEstimadas(pedidoEntity.getCargasEstimadas())
                 .cargasReales(pedidoEntity.getCargasReales())
                 .detalles(detalles)
+                .servicioBase(servicios.stream()
+                        .filter(servicio -> servicio.getTipo() == TipoServicio.BASE)
+                        .findFirst().orElse(null))
+                .serviciosExtras(servicios.stream()
+                        .filter(servicio -> servicio.getTipo() == TipoServicio.EXTRA)
+                        .toList())
+                .observacionesCliente(pedidoEntity.getObservacionesCliente())
+                .observacionesInternas(pedidoEntity.getObservacionesInternas())
+                .fechaCreacion(pedidoEntity.getFechaCreacion())
+                .fechaActualizacion(pedidoEntity.getFechaActualizacion())
+                .build();
+    }
+
+    private static PedidoServicioResponse toServicioResponse(
+            mcsv.pedidos.infraestructure.persistence.entity.PedidoServicioEntity entity) {
+        return PedidoServicioResponse.builder()
+                .idPedidoServicio(entity.getIdPedidoServicio())
+                .idServicio(entity.getServicio().getIdServicio())
+                .nombre(entity.getServicio().getTipoServicio())
+                .tipo(entity.getTipo())
+                .modalidadCobro(entity.getServicio().getModalidadCobro())
+                .opcionCodigo(entity.getOpcionCodigo())
+                .opcionNombre(entity.getOpcionNombre())
+                .cantidad(entity.getCantidad())
+                .observaciones(entity.getObservaciones())
+                .precioUnitario(entity.getPrecioUnitario())
+                .precioEstimado(entity.getPrecioEstimado())
+                .precioFinal(entity.getPrecioFinal())
                 .build();
     }
 

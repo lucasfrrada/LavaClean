@@ -1,11 +1,13 @@
 import {useEffect, useMemo, useState} from "react";
-import {ArrowLeft, ClipboardList, RefreshCcw} from "lucide-react";
-import {Link, useNavigate} from "react-router-dom";
+import {ClipboardList, RefreshCcw} from "lucide-react";
+import {Link} from "react-router-dom";
 
 import {useAuth} from "../context/AuthContext";
 import {getPedidosRequest} from "../api/pedidoService";
+import {getErrorMessage} from "../api/apiClient";
 import type {EstadoPedido, Pedido} from "../types/pedido";
 import NavbarMain from "../components/NavbarMain";
+import {formatPeso} from "../utils/pedido";
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat("es-CL", {
@@ -16,9 +18,14 @@ function formatCurrency(value: number) {
 
 function getEstadoLabel(estado: EstadoPedido) {
   const labels: Record<EstadoPedido, string> = {
-    PENDIENTE: "Pendiente",
+    PENDIENTE_CONFIRMACION: "Pendiente de confirmación",
+    PENDIENTE_PESAJE: "Pendiente de pesaje",
+    LISTO_PARA_RETIRO: "Listo para retiro",
+    REVISION: "Revisión",
+    CONFIRMADO: "Confirmado",
     EN_PROCESO: "En proceso",
     COMPLETADO: "Completado",
+    ENTREGADO: "Entregado",
     PAGADO: "Pagado",
     CANCELADO: "Cancelado",
   };
@@ -28,9 +35,14 @@ function getEstadoLabel(estado: EstadoPedido) {
 
 function getEstadoClass(estado: EstadoPedido) {
   const classes: Record<EstadoPedido, string> = {
-    PENDIENTE: "bg-orange-100 text-orange-700",
+    PENDIENTE_CONFIRMACION: "bg-orange-100 text-orange-700",
+    PENDIENTE_PESAJE: "bg-amber-100 text-amber-700",
+    LISTO_PARA_RETIRO: "bg-purple-100 text-purple-700",
+    REVISION: "bg-orange-100 text-orange-700",
+    CONFIRMADO: "bg-yellow-100 text-yellow-700",
     EN_PROCESO: "bg-yellow-100 text-yellow-700",
     COMPLETADO: "bg-blue-100 text-blue-700",
+    ENTREGADO: "bg-purple-100 text-purple-700",
     PAGADO: "bg-green-100 text-green-700",
     CANCELADO: "bg-red-100 text-red-700",
   };
@@ -39,7 +51,6 @@ function getEstadoClass(estado: EstadoPedido) {
 }
 
 export default function PedidosPage() {
-  const navigate = useNavigate();
   const {token, user} = useAuth();
 
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
@@ -62,7 +73,7 @@ export default function PedidosPage() {
       setPedidos(misPedidos);
     } catch (error) {
       console.error(error);
-      setErrorMessage("No se pudieron cargar tus pedidos.");
+      setErrorMessage(getErrorMessage(error, "No se pudieron cargar tus pedidos."));
     } finally {
       setIsLoading(false);
     }
@@ -156,12 +167,8 @@ export default function PedidosPage() {
                     </h2>
 
                     <p className="mt-2 text-sm text-[#8A7161]">
-                      Llegada: {pedido.fechaLlegada || "-"} · Entrega:{" "}
-                      {pedido.fechaEntrega || "-"}
-                    </p>
-
-                    <p className="mt-3 text-lg font-bold text-[#6B4F3E]">
-                      Total: {formatCurrency(Number(pedido.total ?? 0))}
+                      Llegada: {pedido.fechaLlegada ?? pedido.fecha_llegada ?? "-"} · Entrega:{" "}
+                      {pedido.fechaEntrega ?? pedido.fecha_entrega ?? "-"}
                     </p>
                   </div>
 
@@ -174,15 +181,56 @@ export default function PedidosPage() {
                   </span>
                 </div>
 
-                <div className="mt-6 overflow-hidden rounded-2xl border border-[#E5D8C5]">
+                {pedido.servicioBase && (
+                  <div className="mt-5 rounded-2xl bg-[#F8F5EE] p-4">
+                    <p className="text-xs font-bold uppercase text-[#8A7161]">Servicio base</p>
+                    <p className="mt-1 font-bold">{pedido.servicioBase.nombre}</p>
+                    {pedido.servicioBase.opcionNombre && (
+                      <p className="text-sm text-[#8A7161]">Opción: {pedido.servicioBase.opcionNombre}</p>
+                    )}
+                    {pedido.servicioBase.observaciones && (
+                      <p className="text-sm text-[#8A7161]">{pedido.servicioBase.observaciones}</p>
+                    )}
+                    {(pedido.serviciosExtras?.length ?? 0) > 0 && (
+                      <div className="mt-3 border-t border-[#E5D8C5] pt-3">
+                        <p className="text-xs font-bold uppercase text-[#8A7161]">Servicios extras</p>
+                        <ul className="mt-1 text-sm">
+                          {pedido.serviciosExtras?.map((extra) => (
+                            <li key={extra.idPedidoServicio}>
+                              {extra.nombre}{extra.opcionNombre ? ` · ${extra.opcionNombre}` : ""} · {formatCurrency(Number(extra.precioFinal ?? extra.precioEstimado))}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className={`mt-5 rounded-2xl border p-4 ${pedido.precioFinal != null ? "border-green-300 bg-green-50" : "border-amber-300 bg-amber-50"}`}>
+                  <p className={`text-xs font-bold uppercase ${pedido.precioFinal != null ? "text-green-700" : "text-amber-700"}`}>
+                    {pedido.precioFinal != null ? "Valores finales" : "Valores estimados"}
+                  </p>
+                  <div className="mt-2 grid gap-2 sm:grid-cols-3">
+                    {pedido.servicioBase?.modalidadCobro === "POR_CARGA" && <span>Peso: <strong>{formatPeso(Number(pedido.pesoRealKg ?? pedido.pesoEstimadoKg ?? 0))}</strong></span>}
+                    {pedido.servicioBase?.modalidadCobro === "POR_CARGA" && <span>Cargas: <strong>{pedido.cargasReales ?? pedido.cargasEstimadas ?? 0}</strong></span>}
+                    <span>Precio: <strong>{formatCurrency(Number(pedido.precioFinal ?? pedido.precioEstimado ?? pedido.total ?? 0))}</strong></span>
+                  </div>
+                  {pedido.pesoRealKg == null && pedido.servicioBase?.modalidadCobro === "POR_CARGA" && (
+                    <p className="mt-2 text-xs text-amber-800">
+                      El peso y el precio son estimados hasta que la sucursal registre el peso real.
+                    </p>
+                  )}
+                </div>
+
+                {(pedido.detalles?.length ?? 0) > 0 && <div className="mt-6 overflow-hidden rounded-2xl border border-[#E5D8C5]">
                   <table className="w-full text-left text-sm">
                     <thead className="bg-[#F5EEDC] text-[#6B4F3E]">
                       <tr>
                         <th className="px-4 py-3">Prenda</th>
                         <th className="px-4 py-3">Servicio</th>
                         <th className="px-4 py-3">Cantidad</th>
-                        <th className="px-4 py-3">Precio</th>
-                        <th className="px-4 py-3">Subtotal</th>
+                        <th className="px-4 py-3">Peso ref.</th>
+                        <th className="px-4 py-3">Peso estimado</th>
                         <th className="px-4 py-3">Obs.</th>
                       </tr>
                     </thead>
@@ -207,11 +255,11 @@ export default function PedidosPage() {
                           <td className="px-4 py-3">{detalle.cantidad}</td>
 
                           <td className="px-4 py-3">
-                            {formatCurrency(Number(detalle.precioUnitario))}
+                            {formatPeso(Number(detalle.pesoReferenciaKg ?? 0))}
                           </td>
 
                           <td className="px-4 py-3 font-bold">
-                            {formatCurrency(Number(detalle.subtotal))}
+                            {formatPeso(Number(detalle.pesoEstimadoKg ?? (detalle.pesoReferenciaKg ?? 0) * detalle.cantidad))}
                           </td>
 
                           <td className="px-4 py-3 text-[#8A7161]">
@@ -221,7 +269,7 @@ export default function PedidosPage() {
                       ))}
                     </tbody>
                   </table>
-                </div>
+                </div>}
               </article>
             ))}
           </div>
