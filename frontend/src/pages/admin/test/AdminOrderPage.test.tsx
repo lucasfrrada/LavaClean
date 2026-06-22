@@ -7,6 +7,7 @@ import {
   getPedidosRequest,
   createPedidoRequest,
   updateEstadoPedidoRequest,
+  confirmarPesoPedidoRequest,
   deletePedidoRequest,
 } from "../../../api/pedidoService";
 import {getUsuariosRequest} from "../../../api/usuarioService";
@@ -25,6 +26,7 @@ vi.mock("../../../api/pedidoService", () => ({
   getPedidosRequest: vi.fn(),
   createPedidoRequest: vi.fn(),
   updateEstadoPedidoRequest: vi.fn(),
+  confirmarPesoPedidoRequest: vi.fn(),
   deletePedidoRequest: vi.fn(),
 }));
 
@@ -71,6 +73,19 @@ const pedidosMock = [
         observaciones: "Mancha difícil",
       },
     ],
+    servicioBase: {
+      idPedidoServicio: 1,
+      idServicio: 3,
+      nombre: "Lavado de chaqueta",
+      tipo: "BASE",
+      modalidadCobro: "POR_OPCION",
+      opcionCodigo: "CORTA",
+      opcionNombre: "Corta",
+      cantidad: 2,
+      precioUnitario: 3000,
+      precioEstimado: 6000,
+      precioFinal: null,
+    },
   },
   {
     idPedido: 2,
@@ -198,6 +213,8 @@ describe("AdminOrdersPage", () => {
       estado: "CONFIRMADO",
     } as never);
 
+    vi.mocked(confirmarPesoPedidoRequest).mockResolvedValue(pedidosMock[0] as never);
+
     vi.mocked(deletePedidoRequest).mockResolvedValue(null as never);
   });
 
@@ -265,6 +282,33 @@ describe("AdminOrdersPage", () => {
         "token-admin",
       );
     });
+  });
+
+  it("debería confirmar un servicio por opción sin solicitar peso real", async () => {
+    const {container, getByRole} = renderPage();
+
+    await waitFor(() => {
+      expect(container.textContent).toContain("Total registrados: 2");
+    });
+
+    expect(container.textContent).toContain("no requiere registrar peso real");
+    const pedidoPorOpcion = Array.from(container.querySelectorAll("article")).find(
+      (article) => article.textContent?.includes("Pedido #1"),
+    );
+    expect(
+      pedidoPorOpcion?.querySelector('input[placeholder="Peso real en kg"]'),
+    ).toBeNull();
+
+    fireEvent.click(getByRole("button", {name: "Confirmar pedido"}));
+
+    await waitFor(() => {
+      expect(updateEstadoPedidoRequest).toHaveBeenCalledWith(
+        1,
+        "CONFIRMADO",
+        "token-admin",
+      );
+    });
+    expect(confirmarPesoPedidoRequest).not.toHaveBeenCalled();
   });
 
   it("debería enviar prendas y cantidades para un servicio por opción", async () => {

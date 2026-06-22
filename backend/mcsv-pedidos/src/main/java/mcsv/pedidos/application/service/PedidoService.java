@@ -139,7 +139,7 @@ public class PedidoService {
     public PedidoResponse actualizarEstado(Long id, ActualizarEstadoPedidoRequest request) {
         PedidoEntity pedido = buscarPedido(id);
         EstadoPedido nuevo = request.getEstado();
-        validarCambioEstado(pedido.getEstado(), nuevo);
+        validarCambioEstado(pedido, nuevo);
         if (nuevo == EstadoPedido.CONFIRMADO && pedido.getPrecioFinal() == null) {
             pedido.setPrecioFinal(pedido.getPrecioEstimado());
             pedido.setTotal(pedido.getPrecioFinal());
@@ -445,15 +445,24 @@ public class PedidoService {
         }
     }
 
-    private void validarCambioEstado(EstadoPedido actual, EstadoPedido nuevo) {
+    private void validarCambioEstado(PedidoEntity pedido, EstadoPedido nuevo) {
+        EstadoPedido actual = pedido.getEstado();
         if (actual == nuevo) throw new IllegalStateException("El pedido ya tiene ese estado");
         if (actual == EstadoPedido.ENTREGADO || actual == EstadoPedido.CANCELADO) {
             throw new IllegalStateException("El pedido no puede cambiar de estado");
         }
-        if ((actual == EstadoPedido.PENDIENTE_PESAJE || actual == EstadoPedido.REVISION)
+        if ((actual == EstadoPedido.PENDIENTE_PESAJE
+                || (actual == EstadoPedido.REVISION && requiereConfirmacionPeso(pedido)))
                 && nuevo != EstadoPedido.CANCELADO) {
             throw new IllegalStateException("Debe confirmar el peso real antes de cambiar el estado");
         }
+    }
+
+    private boolean requiereConfirmacionPeso(PedidoEntity pedido) {
+        if (pedido.getServicios() == null || pedido.getServicios().isEmpty()) {
+            return true;
+        }
+        return modalidad(obtenerBaseActual(pedido), false) == ModalidadCobro.POR_CARGA;
     }
 
     private PedidoEstadoCambiadoEvent crearEvento(PedidoEntity pedido, String tipo, String mensaje) {

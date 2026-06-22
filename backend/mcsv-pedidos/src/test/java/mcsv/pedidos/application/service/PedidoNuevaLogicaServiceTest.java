@@ -3,13 +3,16 @@ package mcsv.pedidos.application.service;
 import mcsv.pedidos.api.dto.request.Pedido.CrearDetallePedidoRequest;
 import mcsv.pedidos.api.dto.request.Pedido.CrearPedidoRequest;
 import mcsv.pedidos.api.dto.request.Pedido.SeleccionServicioRequest;
+import mcsv.pedidos.api.dto.request.Pedido.ActualizarEstadoPedidoRequest;
 import mcsv.pedidos.api.dto.response.Pedido.PedidoResponse;
 import mcsv.pedidos.api.dto.response.UsuarioResponseRest;
+import mcsv.pedidos.domain.model.EstadoPedido;
 import mcsv.pedidos.domain.model.ModalidadCobro;
 import mcsv.pedidos.domain.model.TipoServicio;
 import mcsv.pedidos.infraestructure.client.UsuarioClientRest;
 import mcsv.pedidos.infraestructure.messaging.PedidoEventProducer;
 import mcsv.pedidos.infraestructure.persistence.entity.PedidoEntity;
+import mcsv.pedidos.infraestructure.persistence.entity.PedidoServicioEntity;
 import mcsv.pedidos.infraestructure.persistence.entity.PrendaEntity;
 import mcsv.pedidos.infraestructure.persistence.entity.ServicioEntity;
 import mcsv.pedidos.infraestructure.persistence.entity.ServicioOpcionEntity;
@@ -25,6 +28,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,7 +49,7 @@ class PedidoNuevaLogicaServiceTest {
 
     @BeforeEach
     void preparar() {
-        when(usuarioClientRest.getUsuario(1L)).thenReturn(new UsuarioResponseRest());
+        lenient().when(usuarioClientRest.getUsuario(1L)).thenReturn(new UsuarioResponseRest());
         lenient().when(pedidoRepository.save(any(PedidoEntity.class))).thenAnswer(invocacion -> {
             PedidoEntity pedido = invocacion.getArgument(0);
             pedido.setIdPedido(10L);
@@ -143,6 +147,76 @@ class PedidoNuevaLogicaServiceTest {
         assertThat(response.getServicioBase().getCantidad()).isEqualTo(3);
         assertThat(response.getPrecioEstimado()).isEqualByComparingTo("30000");
         assertThat(response.getPesoEstimadoKg()).isNull();
+    }
+
+    @Test
+    void confirmaPedidoPorOpcionEnRevisionSinExigirPesoReal() {
+        ServicioEntity base = servicio(3L, "Lavado de Chaqueta", TipoServicio.BASE,
+                ModalidadCobro.POR_OPCION, "0");
+        PedidoEntity pedido = PedidoEntity.builder()
+                .idPedido(19L)
+                .idUsuario(1L)
+                .estado(EstadoPedido.REVISION)
+                .precioEstimado(new BigDecimal("18000"))
+                .total(new BigDecimal("18000"))
+                .detallePedido(new ArrayList<>())
+                .servicios(new ArrayList<>())
+                .build();
+        PedidoServicioEntity seleccionBase = PedidoServicioEntity.builder()
+                .pedido(pedido)
+                .servicio(base)
+                .tipo(TipoServicio.BASE)
+                .opcionCodigo("CORTA")
+                .opcionNombre("Corta")
+                .cantidad(3)
+                .precioUnitario(new BigDecimal("6000"))
+                .precioEstimado(new BigDecimal("18000"))
+                .build();
+        pedido.getServicios().add(seleccionBase);
+        when(pedidoRepository.findById(19L)).thenReturn(Optional.of(pedido));
+        when(pedidoRepository.save(any(PedidoEntity.class)))
+                .thenAnswer(invocacion -> invocacion.getArgument(0));
+
+        ActualizarEstadoPedidoRequest request = new ActualizarEstadoPedidoRequest();
+        request.setEstado(EstadoPedido.CONFIRMADO);
+
+        PedidoResponse response = pedidoService.actualizarEstado(19L, request);
+
+        assertThat(response.getEstado()).isEqualTo("CONFIRMADO");
+        assertThat(response.getPesoRealKg()).isNull();
+        assertThat(response.getPrecioFinal()).isEqualByComparingTo("18000");
+        assertThat(response.getServicioBase().getPrecioFinal()).isEqualByComparingTo("18000");
+    }
+
+    @Test
+    void mantieneConfirmacionDePesoParaPedidoPorCargaEnRevision() {
+        ServicioEntity base = servicio(1L, "Lavado por Carga", TipoServicio.BASE,
+                ModalidadCobro.POR_CARGA, "5000");
+        PedidoEntity pedido = PedidoEntity.builder()
+                .idPedido(20L)
+                .idUsuario(1L)
+                .estado(EstadoPedido.REVISION)
+                .precioEstimado(new BigDecimal("10000"))
+                .total(new BigDecimal("10000"))
+                .detallePedido(new ArrayList<>())
+                .servicios(new ArrayList<>())
+                .build();
+        pedido.getServicios().add(PedidoServicioEntity.builder()
+                .pedido(pedido)
+                .servicio(base)
+                .tipo(TipoServicio.BASE)
+                .cantidad(2)
+                .precioUnitario(new BigDecimal("5000"))
+                .precioEstimado(new BigDecimal("10000"))
+                .build());
+        when(pedidoRepository.findById(20L)).thenReturn(Optional.of(pedido));
+
+        ActualizarEstadoPedidoRequest request = new ActualizarEstadoPedidoRequest();
+        request.setEstado(EstadoPedido.CONFIRMADO);
+
+        assertThatThrownBy(() -> pedidoService.actualizarEstado(20L, request))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("confirmar el peso real");
     }
 
     @Test

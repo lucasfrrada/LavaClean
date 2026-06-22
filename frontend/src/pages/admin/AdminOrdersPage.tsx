@@ -99,6 +99,18 @@ function getEstadoClass(estado: EstadoPedido) {
   return classes[estado];
 }
 
+function requiereConfirmacionPeso(pedido: Pedido) {
+  return !pedido.servicioBase || pedido.servicioBase.modalidadCobro === "POR_CARGA";
+}
+
+function puedeConfirmarseSinPeso(pedido: Pedido) {
+  return (
+    !requiereConfirmacionPeso(pedido) &&
+    pedido.precioFinal == null &&
+    (pedido.estado === "PENDIENTE_CONFIRMACION" || pedido.estado === "REVISION")
+  );
+}
+
 function formatCurrency(value: number) {
   return new Intl.NumberFormat("es-CL", {
     style: "currency",
@@ -798,6 +810,21 @@ export default function AdminOrdersPage() {
                         className="rounded-lg bg-[#1D4ED8] px-4 py-2 text-sm font-bold text-white"
                       >
                         Confirmar peso real
+                      </button>
+                    </div>
+                  )}
+
+                  {puedeConfirmarseSinPeso(pedido) && (
+                    <div className="mt-3 flex flex-col gap-2 rounded-xl border border-blue-300 bg-blue-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+                      <p className="text-sm text-blue-800">
+                        Este servicio se confirma por opción y no requiere registrar peso real.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => handleChangeEstado(pedido.idPedido, "CONFIRMADO")}
+                        className="shrink-0 rounded-lg bg-[#1D4ED8] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#1E40AF]"
+                      >
+                        Confirmar pedido
                       </button>
                     </div>
                   )}
