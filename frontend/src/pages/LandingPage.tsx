@@ -61,16 +61,16 @@ const benefits = [
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen w-full bg-[#F5EEDC] text-white">
+    <main className="min-h-screen w-full bg-[#FFFFFF] text-white">
       {/* Navbar */}
       <NavbarMain></NavbarMain>
       {/* Hero */}
       <HeroSection></HeroSection>
 
       {/* Compromisos */}
-      <section id="servicios" className="bg-[#6B4F3E] px-6 py-16 text-center">
+      <section id="servicios" className="bg-[#1D4ED8] px-6 py-16 text-center">
         <h2 className="text-3xl font-bold">Nuestros compromisos</h2>
-        <div className="mx-auto mt-4 h-1 w-16 rounded-full bg-[#F8EFD8]" />
+        <div className="mx-auto mt-4 h-1 w-16 rounded-full bg-[#EFF6FF]" />
 
         <div className="mx-auto mt-12 grid max-w-6xl grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
           {commitments.map((item) => {
@@ -81,13 +81,13 @@ export default function LandingPage() {
                 key={item.title}
                 className="flex flex-col items-center text-center"
               >
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#F8EFD8] text-[#6B4F3E] shadow-lg">
+                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#EFF6FF] text-[#111827] shadow-lg">
                   <Icon size={36} strokeWidth={2.2} />
                 </div>
 
                 <h3 className="mt-5 text-base font-bold">{item.title}</h3>
 
-                <p className="mt-2 max-w-[180px] text-xs leading-relaxed text-[#E7D9C2]">
+                <p className="mt-2 max-w-[180px] text-xs leading-relaxed text-[#DBEAFE]">
                   {item.description}
                 </p>
               </article>
@@ -97,7 +97,7 @@ export default function LandingPage() {
       </section>
 
       {/* Por qué elegir LavaClean */}
-      <section id="nosotros" className="bg-[#F5EEDC] px-6 py-20 text-[#6B4F3E]">
+      <section id="nosotros" className="bg-[#FFFFFF] px-6 py-20 text-[#111827]">
         <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-2">
           <div>
             <h2 className="text-3xl font-bold md:text-4xl">
@@ -110,13 +110,13 @@ export default function LandingPage() {
 
                 return (
                   <div key={benefit.title} className="flex gap-4">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#6B4F3E] text-[#F8EFD8]">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#1D4ED8] text-[#EFF6FF]">
                       <Icon size={22} />
                     </div>
 
                     <div>
                       <h3 className="text-base font-bold">{benefit.title}</h3>
-                      <p className="mt-1 text-sm leading-relaxed text-[#8A7161]">
+                      <p className="mt-1 text-sm leading-relaxed text-[#475569]">
                         {benefit.description}
                       </p>
                     </div>
@@ -126,14 +126,14 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="rounded-xl bg-gradient-to-br from-[#8A6A53] to-[#6B4F3E] p-8 text-white shadow-2xl">
+          <div className="rounded-xl bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] p-8 text-white shadow-2xl">
             <h3 className="text-3xl font-bold">¡Obtén 20% de descuento!</h3>
 
-            <p className="mt-4 text-sm text-[#F5EEDC]">
+            <p className="mt-4 text-sm text-[#FFFFFF]">
               En tu primer servicio al registrarte hoy
             </p>
 
-            <button className="mt-6 w-full rounded-full bg-[#F8EFD8] py-3 text-sm font-bold text-[#6B4F3E] transition hover:bg-white">
+            <button className="mt-6 w-full rounded-full bg-[#EFF6FF] py-3 text-sm font-bold text-[#111827] transition hover:bg-white">
               Obtener descuento
             </button>
           </div>
@@ -141,33 +141,33 @@ export default function LandingPage() {
       </section>
 
       {/* Call to action */}
-      <section className="bg-gradient-to-br from-[#7B5E48] to-[#5A4334] px-6 py-20 text-center">
+      <section className="bg-gradient-to-br from-[#1E40AF] to-[#2563EB] px-6 py-20 text-center">
         <h2 className="text-3xl font-bold md:text-4xl">
           ¿Listo para disfrutar de ropa impecable?
         </h2>
 
-        <p className="mt-5 mb-5 text-sm text-[#F5EEDC] md:text-base">
+        <p className="mt-5 mb-5 text-sm text-[#FFFFFF] md:text-base">
           Únete a miles de clientes satisfechos que confían en LavaClean
         </p>
 
         <Link
           to="/agendar"
-          className="inline-flex items-center justify-center rounded-full bg-[#F8EFD8] px-9 py-3 text-sm font-bold text-[#6B4F3E] shadow-xl transition hover:-translate-y-1 hover:bg-white"
+          className="inline-flex items-center justify-center rounded-full bg-[#EFF6FF] px-9 py-3 text-sm font-bold text-[#111827] shadow-xl transition hover:-translate-y-1 hover:bg-white"
         >
           Agenda tu servicio
         </Link>
       </section>
 
       {/* Footer */}
-      <footer id="contacto" className="bg-[#6B4F3E] px-6 py-12 text-[#F5EEDC]">
-        <div className="mx-auto grid max-w-6xl gap-10 border-b border-[#8A7161] pb-10 md:grid-cols-4">
+      <footer id="contacto" className="bg-[#1D4ED8] px-6 py-12 text-[#FFFFFF]">
+        <div className="mx-auto grid max-w-6xl gap-10 border-b border-[#475569] pb-10 md:grid-cols-4">
           <div>
             <div className="flex items-center gap-2">
               <span>🧺</span>
               <span className="text-lg font-bold text-white">LavaClean</span>
             </div>
 
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-[#E7D9C2]">
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-[#DBEAFE]">
               Lavandería ecológica con servicio premium para el cuidado de tu
               ropa.
             </p>
@@ -175,7 +175,7 @@ export default function LandingPage() {
 
           <div>
             <h4 className="font-bold text-white">Servicios</h4>
-            <ul className="mt-4 space-y-3 text-sm text-[#E7D9C2]">
+            <ul className="mt-4 space-y-3 text-sm text-[#DBEAFE]">
               <li>Lavado y planchado</li>
               <li>Tintorería</li>
               <li>Lavado express</li>
@@ -185,7 +185,7 @@ export default function LandingPage() {
 
           <div>
             <h4 className="font-bold text-white">Compañía</h4>
-            <ul className="mt-4 space-y-3 text-sm text-[#E7D9C2]">
+            <ul className="mt-4 space-y-3 text-sm text-[#DBEAFE]">
               <li>Nosotros</li>
               <li>Blog</li>
               <li>Sucursales</li>
@@ -195,7 +195,7 @@ export default function LandingPage() {
 
           <div>
             <h4 className="font-bold text-white">Contacto</h4>
-            <ul className="mt-4 space-y-3 text-sm text-[#E7D9C2]">
+            <ul className="mt-4 space-y-3 text-sm text-[#DBEAFE]">
               <li>contacto@lavaclean.com</li>
               <li>+52 123 456 7890</li>
               <li>Lun - Sáb: 8am - 8pm</li>
@@ -204,7 +204,7 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <p className="mt-8 text-center text-sm text-[#D8C7AF]">
+        <p className="mt-8 text-center text-sm text-[#BFDBFE]">
           © 2026 LavaClean. Todos los derechos reservados.
         </p>
       </footer>

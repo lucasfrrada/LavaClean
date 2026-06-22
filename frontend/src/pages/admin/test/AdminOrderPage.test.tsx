@@ -7,11 +7,15 @@ import {
   getPedidosRequest,
   createPedidoRequest,
   updateEstadoPedidoRequest,
+  confirmarPesoPedidoRequest,
   deletePedidoRequest,
 } from "../../../api/pedidoService";
 import {getUsuariosRequest} from "../../../api/usuarioService";
 import {getPrendasRequest} from "../../../api/prendaService";
-import {getServiciosRequest} from "../../../api/servicioService";
+import {
+  getServiciosBaseRequest,
+  getServiciosExtrasRequest,
+} from "../../../api/servicioService";
 import type {AuthUser} from "../../../types/auth";
 
 vi.mock("../../../context/AuthContext", () => ({
@@ -22,6 +26,7 @@ vi.mock("../../../api/pedidoService", () => ({
   getPedidosRequest: vi.fn(),
   createPedidoRequest: vi.fn(),
   updateEstadoPedidoRequest: vi.fn(),
+  confirmarPesoPedidoRequest: vi.fn(),
   deletePedidoRequest: vi.fn(),
 }));
 
@@ -34,7 +39,8 @@ vi.mock("../../../api/prendaService", () => ({
 }));
 
 vi.mock("../../../api/servicioService", () => ({
-  getServiciosRequest: vi.fn(),
+  getServiciosBaseRequest: vi.fn(),
+  getServiciosExtrasRequest: vi.fn(),
 }));
 
 const usuarioAdminMock: AuthUser = {
@@ -67,6 +73,19 @@ const pedidosMock = [
         observaciones: "Mancha difícil",
       },
     ],
+    servicioBase: {
+      idPedidoServicio: 1,
+      idServicio: 3,
+      nombre: "Lavado de chaqueta",
+      tipo: "BASE",
+      modalidadCobro: "POR_OPCION",
+      opcionCodigo: "CORTA",
+      opcionNombre: "Corta",
+      cantidad: 2,
+      precioUnitario: 3000,
+      precioEstimado: 6000,
+      precioFinal: null,
+    },
   },
   {
     idPedido: 2,
@@ -124,6 +143,23 @@ const serviciosMock = [
     tipoServicio: "Planchado",
     precio: 2500,
   },
+  {
+    idServicio: 3,
+    tipoServicio: "Lavado de chaqueta",
+    precio: 0,
+    tipo: "BASE",
+    modalidadCobro: "POR_OPCION",
+    activo: true,
+    opciones: [
+      {
+        idServicioOpcion: 1,
+        codigo: "LARGA",
+        nombre: "Larga",
+        precio: 10000,
+        activo: true,
+      },
+    ],
+  },
 ];
 
 function renderPage() {
@@ -167,7 +203,8 @@ describe("AdminOrdersPage", () => {
     vi.mocked(getPedidosRequest).mockResolvedValue(pedidosMock as never);
     vi.mocked(getUsuariosRequest).mockResolvedValue(usuariosMock as never);
     vi.mocked(getPrendasRequest).mockResolvedValue(prendasMock as never);
-    vi.mocked(getServiciosRequest).mockResolvedValue(serviciosMock as never);
+    vi.mocked(getServiciosBaseRequest).mockResolvedValue(serviciosMock as never);
+    vi.mocked(getServiciosExtrasRequest).mockResolvedValue([]);
 
     vi.mocked(createPedidoRequest).mockResolvedValue(pedidosMock[0] as never);
 
@@ -175,6 +212,8 @@ describe("AdminOrdersPage", () => {
       ...pedidosMock[0],
       estado: "CONFIRMADO",
     } as never);
+
+    vi.mocked(confirmarPesoPedidoRequest).mockResolvedValue(pedidosMock[0] as never);
 
     vi.mocked(deletePedidoRequest).mockResolvedValue(null as never);
   });
@@ -240,6 +279,82 @@ describe("AdminOrdersPage", () => {
       expect(updateEstadoPedidoRequest).toHaveBeenCalledWith(
         1,
         "CONFIRMADO",
+        "token-admin",
+      );
+    });
+  });
+
+  it("debería confirmar un servicio por opción sin solicitar peso real", async () => {
+    const {container, getByRole} = renderPage();
+
+    await waitFor(() => {
+      expect(container.textContent).toContain("Total registrados: 2");
+    });
+
+    expect(container.textContent).toContain("no requiere registrar peso real");
+    const pedidoPorOpcion = Array.from(container.querySelectorAll("article")).find(
+      (article) => article.textContent?.includes("Pedido #1"),
+    );
+    expect(
+      pedidoPorOpcion?.querySelector('input[placeholder="Peso real en kg"]'),
+    ).toBeNull();
+
+    fireEvent.click(getByRole("button", {name: "Confirmar pedido"}));
+
+    await waitFor(() => {
+      expect(updateEstadoPedidoRequest).toHaveBeenCalledWith(
+        1,
+        "CONFIRMADO",
+        "token-admin",
+      );
+    });
+    expect(confirmarPesoPedidoRequest).not.toHaveBeenCalled();
+  });
+
+  it("debería enviar prendas y cantidades para un servicio por opción", async () => {
+    const {container} = renderPage();
+
+    await waitFor(() => expect(getServiciosBaseRequest).toHaveBeenCalled());
+
+    const form = container.querySelector("form") as HTMLFormElement;
+    const selects = Array.from(form.querySelectorAll("select"));
+    const cliente = selects.find((select) =>
+      Array.from(select.options).some((option) => option.value === "2" && option.text.includes("Cliente")),
+    ) as HTMLSelectElement;
+    const servicio = selects.find((select) =>
+      select.options[0]?.text.includes("Servicio base") &&
+      Array.from(select.options).some((option) => option.value === "3"),
+    ) as HTMLSelectElement;
+
+    fireEvent.change(cliente, {target: {value: "2"}});
+    fireEvent.change(servicio, {target: {value: "3"}});
+
+    const selectsActualizados = Array.from(form.querySelectorAll("select"));
+    const opcion = selectsActualizados.find((select) =>
+      Array.from(select.options).some((item) => item.value === "LARGA"),
+    ) as HTMLSelectElement;
+    const prenda = selectsActualizados.find((select) =>
+      select.options[0]?.text.includes("Selecciona una prenda"),
+    ) as HTMLSelectElement;
+
+    fireEvent.change(opcion, {target: {value: "LARGA"}});
+    fireEvent.change(prenda, {target: {value: "1"}});
+    fireEvent.change(form.querySelector('input[type="number"]') as HTMLInputElement, {
+      target: {value: "2"},
+    });
+
+    const fechas = Array.from(form.querySelectorAll('input[type="date"]'));
+    fireEvent.change(fechas[0], {target: {value: "2026-06-21"}});
+    fireEvent.change(fechas[1], {target: {value: "2026-06-22"}});
+    fireEvent.submit(form);
+
+    await waitFor(() => {
+      expect(createPedidoRequest).toHaveBeenCalledWith(
+        expect.objectContaining({
+          idServicioBase: 3,
+          opcionBaseCodigo: "LARGA",
+          detalles: [expect.objectContaining({idPrenda: 1, cantidad: 2})],
+        }),
         "token-admin",
       );
     });

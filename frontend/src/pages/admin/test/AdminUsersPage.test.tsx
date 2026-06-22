@@ -5,7 +5,6 @@ import AdminUsersPage from "../AdminUsersPage";
 import {useAuth} from "../../../context/AuthContext";
 import {
   getUsuariosRequest,
-  createClienteRequest,
   updateClienteRequest,
   deleteClienteRequest,
 } from "../../../api/usuarioService";

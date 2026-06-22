@@ -72,7 +72,7 @@ export default function LoginPage() {
           />
         )}
       </AnimatePresence>
-      <main className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-gradient-to-br from-[#6B4F3E] via-[#7C604B] to-[#9A7C5F] px-4 py-10 text-white">
+      <main className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-gradient-to-br from-[#2563EB] via-[#1D4ED8] to-[#0F172A] px-4 py-10 text-white">
         <button
           type="button"
           onClick={() => navigate("/")}
@@ -82,8 +82,8 @@ export default function LoginPage() {
           Volver
         </button>
 
-        <section className="w-full max-w-[370px] rounded-3xl bg-[#241E1A] px-7 py-8 shadow-2xl">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[#2E2722] shadow-[0_0_35px_rgba(245,238,220,0.45)]">
+        <section className="w-full max-w-[370px] rounded-3xl border border-[#DBEAFE] bg-white px-7 py-8 text-[#111827] shadow-2xl">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center bg-white">
             <img
               src={logo}
               alt="Logo LavaClean"
@@ -102,7 +102,7 @@ export default function LoginPage() {
               value={correo}
               onChange={(event) => setCorreo(event.target.value)}
               required
-              className="w-full rounded-lg border border-[#715542] bg-[#241E1A] px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/40 focus:border-[#B19072] focus:ring-2 focus:ring-[#B19072]/30"
+              className="w-full rounded-lg border border-[#BFDBFE] bg-[#F8FAFC] px-4 py-3 text-sm text-[#111827] outline-none transition placeholder:text-[#64748B] focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
             />
 
             <input
@@ -111,18 +111,18 @@ export default function LoginPage() {
               value={contrasenia}
               onChange={(event) => setContrasena(event.target.value)}
               required
-              className="w-full rounded-lg border border-[#715542] bg-[#241E1A] px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/40 focus:border-[#B19072] focus:ring-2 focus:ring-[#B19072]/30"
+              className="w-full rounded-lg border border-[#BFDBFE] bg-[#F8FAFC] px-4 py-3 text-sm text-[#111827] outline-none transition placeholder:text-[#64748B] focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
             />
 
             <Link
               to="/register"
-              className="block w-full pt-2 text-center text-xs font-semibold text-[#D8C7AF] transition hover:text-white"
+              className="block w-full pt-2 text-center text-xs font-semibold text-[#2563EB] transition hover:text-[#1E40AF]"
             >
               Crear tu cuenta de LavaClean
             </Link>
 
-            <div className="mt-5 flex gap-3 rounded-lg bg-[#15110F] p-4 text-xs leading-relaxed text-[#C9B8A4]">
-              <Info size={18} className="mt-0.5 shrink-0 text-[#D8C7AF]" />
+            <div className="mt-5 flex gap-3 rounded-lg bg-[#EFF6FF] p-4 text-xs leading-relaxed text-[#1E3A8A]">
+              <Info size={18} className="mt-0.5 shrink-0 text-[#2563EB]" />
               <p>
                 La información de tu cuenta se usa para iniciar sesión de forma
                 segura y acceder a tus servicios.
@@ -130,7 +130,7 @@ export default function LoginPage() {
             </div>
 
             {errorMessage && (
-              <p className="rounded-lg bg-red-500/10 px-4 py-3 text-center text-xs font-semibold text-red-300">
+              <p className="rounded-lg bg-red-50 px-4 py-3 text-center text-xs font-semibold text-red-700">
                 {errorMessage}
               </p>
             )}
@@ -138,7 +138,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading || showSuccess}
-              className="mt-5 w-full rounded-lg bg-[#8A6A53] py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#9B765C] disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-5 w-full rounded-lg bg-[#2563EB] py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#3B82F6] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {showSuccess
                 ? "Ingresando..."
@@ -149,7 +149,7 @@ export default function LoginPage() {
 
             {/* <button
             type="button"
-            className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#715542] py-3 text-sm font-bold text-[#E7D9C2] transition hover:bg-[#332A24]"
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#1E40AF] py-3 text-sm font-bold text-[#DBEAFE] transition hover:bg-[#1E293B]"
           >
             <Fingerprint size={18} />
             Iniciar sesión con huella

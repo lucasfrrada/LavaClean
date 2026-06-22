@@ -23,11 +23,14 @@ public class DetallePedidoEntity {
     @Column(name = "cantidad")
     private Integer cantidad;
 
-    @Column(name = "precio_unitario")
-    private BigDecimal precioUnitario;
+    @Column(name = "peso_referencia_kg", precision = 8, scale = 3)
+    private BigDecimal pesoReferenciaKg;
 
-    @Column(name = "subtotal")
-    private BigDecimal subtotal;
+    @Column(name = "peso_estimado_kg", precision = 10, scale = 3)
+    private BigDecimal pesoEstimadoKg;
+
+    @Column(name = "precio_por_carga", precision = 12, scale = 2)
+    private BigDecimal precioPorCarga;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_pedido", nullable = false)

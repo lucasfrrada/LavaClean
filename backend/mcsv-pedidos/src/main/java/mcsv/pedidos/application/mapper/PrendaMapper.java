@@ -10,6 +10,7 @@ public class PrendaMapper {
                 .idPrenda(entity.getIdPrenda())
                 .nombrePrenda(entity.getNombrePrenda())
                 .categoria(entity.getCategoria())
+                .pesoReferenciaKg(entity.getPesoReferenciaKg())
                 .build();
     }
 }

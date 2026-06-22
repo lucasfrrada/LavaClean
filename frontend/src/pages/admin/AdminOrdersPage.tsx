@@ -4,20 +4,32 @@ import {ClipboardList, Plus, RefreshCcw, Trash2} from "lucide-react";
 import {useAuth} from "../../context/AuthContext";
 import {
   createPedidoRequest,
+  confirmarPesoPedidoRequest,
   deletePedidoRequest,
   getPedidosRequest,
   updateEstadoPedidoRequest,
 } from "../../api/pedidoService";
 import {getPrendasRequest} from "../../api/prendaService";
-import {getServiciosRequest} from "../../api/servicioService";
+import {
+  getServiciosBaseRequest,
+  getServiciosExtrasRequest,
+} from "../../api/servicioService";
 import {getUsuariosRequest} from "../../api/usuarioService";
+import {getErrorMessage} from "../../api/apiClient";
 
 import type {EstadoPedido, Pedido, Prenda, Servicio} from "../../types/pedido";
 import type {AuthUser} from "../../types/auth";
+import {
+  compararPedidosRecientesPrimero,
+  formatPeso,
+  getCargas,
+  getPesoReferencia,
+  getPrecioPorCarga,
+  getPrecioServicio,
+} from "../../utils/pedido";
 
 type DetalleForm = {
   idPrenda: string;
-  idServicio: string;
   cantidad: string;
   observaciones: string;
 };
@@ -36,12 +48,13 @@ const emptyPedidoForm: PedidoForm = {
 
 const emptyDetalle: DetalleForm = {
   idPrenda: "",
-  idServicio: "",
   cantidad: "1",
   observaciones: "",
 };
 
 const estadosPedido: EstadoPedido[] = [
+  "PENDIENTE_CONFIRMACION",
+  "PENDIENTE_PESAJE",
   "REVISION",
   "CONFIRMADO",
   "COMPLETADO",
@@ -49,10 +62,14 @@ const estadosPedido: EstadoPedido[] = [
   "PAGADO",
   "CANCELADO",
   "ENTREGADO",
+  "LISTO_PARA_RETIRO",
 ];
 
 function getEstadoLabel(estado: EstadoPedido) {
   const labels: Record<EstadoPedido, string> = {
+    PENDIENTE_CONFIRMACION: "Pend. confirmación",
+    PENDIENTE_PESAJE: "Pend. pesaje",
+    LISTO_PARA_RETIRO: "Listo para retiro",
     REVISION: "Revisión",
     CONFIRMADO: "Confirmado",
     COMPLETADO: "Completado",
@@ -67,16 +84,31 @@ function getEstadoLabel(estado: EstadoPedido) {
 
 function getEstadoClass(estado: EstadoPedido) {
   const classes: Record<EstadoPedido, string> = {
-    REVISION: "bg-orange-100 text-orange-700",
-    CONFIRMADO: "bg-yellow-100 text-yellow-700",
+    PENDIENTE_CONFIRMACION: "bg-sky-100 text-sky-700",
+    PENDIENTE_PESAJE: "bg-sky-100 text-sky-700",
+    LISTO_PARA_RETIRO: "bg-indigo-100 text-indigo-700",
+    REVISION: "bg-sky-100 text-sky-700",
+    CONFIRMADO: "bg-cyan-100 text-cyan-700",
     COMPLETADO: "bg-blue-100 text-blue-700",
     EN_PROCESO: "bg-cyan-100 text-cyan-700",
-    PAGADO: "bg-green-100 text-green-700",
+    PAGADO: "bg-blue-100 text-blue-700",
     CANCELADO: "bg-red-100 text-red-700",
-    ENTREGADO: "bg-purple-100 text-purple-700",
+    ENTREGADO: "bg-indigo-100 text-indigo-700",
   };
 
   return classes[estado];
+}
+
+function requiereConfirmacionPeso(pedido: Pedido) {
+  return !pedido.servicioBase || pedido.servicioBase.modalidadCobro === "POR_CARGA";
+}
+
+function puedeConfirmarseSinPeso(pedido: Pedido) {
+  return (
+    !requiereConfirmacionPeso(pedido) &&
+    pedido.precioFinal == null &&
+    (pedido.estado === "PENDIENTE_CONFIRMACION" || pedido.estado === "REVISION")
+  );
 }
 
 function formatCurrency(value: number) {
@@ -93,9 +125,14 @@ export default function AdminOrdersPage() {
   const [clientes, setClientes] = useState<AuthUser[]>([]);
   const [prendas, setPrendas] = useState<Prenda[]>([]);
   const [servicios, setServicios] = useState<Servicio[]>([]);
+  const [serviciosExtras, setServiciosExtras] = useState<Servicio[]>([]);
 
   const [form, setForm] = useState<PedidoForm>(emptyPedidoForm);
   const [detalles, setDetalles] = useState<DetalleForm[]>([{...emptyDetalle}]);
+  const [idServicio, setIdServicio] = useState("");
+  const [opcionBaseCodigo, setOpcionBaseCodigo] = useState("");
+  const [idsExtras, setIdsExtras] = useState<number[]>([]);
+  const [pesosReales, setPesosReales] = useState<Record<number, string>>({});
 
   const [estadoFiltro, setEstadoFiltro] = useState<EstadoPedido | "TODOS">(
     "TODOS",
@@ -112,21 +149,23 @@ export default function AdminOrdersPage() {
       setIsLoading(true);
       setErrorMessage("");
 
-      const [pedidosData, clientesData, prendasData, serviciosData] =
+      const [pedidosData, clientesData, prendasData, serviciosData, extrasData] =
         await Promise.all([
           getPedidosRequest(token),
           getUsuariosRequest(token),
           getPrendasRequest(token),
-          getServiciosRequest(token),
+          getServiciosBaseRequest(token),
+          getServiciosExtrasRequest(token),
         ]);
 
       setPedidos(pedidosData);
       setClientes(clientesData);
       setPrendas(prendasData);
       setServicios(serviciosData);
+      setServiciosExtras(extrasData);
     } catch (error) {
       console.error(error);
-      setErrorMessage("No se pudieron cargar los pedidos.");
+      setErrorMessage(getErrorMessage(error, "No se pudieron cargar los pedidos."));
     } finally {
       setIsLoading(false);
     }
@@ -136,10 +175,13 @@ export default function AdminOrdersPage() {
     loadData();
   }, [token]);
 
-  const pedidosFiltrados =
-    estadoFiltro === "TODOS"
+  const pedidosFiltrados = useMemo(() => {
+    const filtrados = estadoFiltro === "TODOS"
       ? pedidos
       : pedidos.filter((pedido) => pedido.estado === estadoFiltro);
+
+    return [...filtrados].sort(compararPedidosRecientesPrimero);
+  }, [estadoFiltro, pedidos]);
 
   const getClienteNombre = (idUsuario: number) => {
     const cliente = clientes.find((item) => item.idUsuario === idUsuario);
@@ -149,22 +191,37 @@ export default function AdminOrdersPage() {
     return `${cliente.nombres} ${cliente.apPaterno}`.trim();
   };
 
-  const getServicioPrecio = (idServicio: string) => {
+  const resumenEstimado = useMemo(() => {
     const servicio = servicios.find(
       (item) => item.idServicio === Number(idServicio),
     );
-
-    return Number(servicio?.precio ?? 0);
-  };
-
-  const totalEstimado = useMemo(() => {
-    return detalles.reduce((total, detalle) => {
-      const precio = getServicioPrecio(detalle.idServicio);
-      const cantidad = Number(detalle.cantidad || 0);
-
-      return total + precio * cantidad;
+    const esPorCarga = (servicio?.modalidadCobro ?? "POR_CARGA") === "POR_CARGA";
+    const peso = detalles.reduce((total, detalle) => {
+      const prenda = prendas.find(
+        (item) => item.idPrenda === Number(detalle.idPrenda),
+      );
+      return total + getPesoReferencia(prenda) * Number(detalle.cantidad || 0);
     }, 0);
-  }, [detalles, servicios]);
+    const cargas = esPorCarga ? getCargas(peso) : 0;
+    const cantidadPrendas = detalles.reduce(
+      (total, detalle) => total + Number(detalle.cantidad || 0),
+      0,
+    );
+    const precioBase = esPorCarga
+      ? cargas * getPrecioPorCarga(servicio)
+      : getPrecioServicio(servicio, opcionBaseCodigo) * Math.max(cantidadPrendas, 1);
+    const precioExtras = idsExtras.reduce((total, id) =>
+      total + getPrecioServicio(serviciosExtras.find((item) => item.idServicio === id)), 0);
+    return {peso, cargas, cantidadPrendas, precioBase, precioExtras, precio: precioBase + precioExtras};
+  }, [detalles, prendas, servicios, serviciosExtras, idServicio, opcionBaseCodigo, idsExtras]);
+
+  const servicioBase = servicios.find(
+    (item) => item.idServicio === Number(idServicio),
+  );
+  const esPorCarga =
+    (servicioBase?.modalidadCobro ?? "POR_CARGA") === "POR_CARGA";
+  const admiteDetalles =
+    esPorCarga || servicioBase?.modalidadCobro === "POR_OPCION";
 
   const handleDetalleChange = (
     index: number,
@@ -203,21 +260,29 @@ export default function AdminOrdersPage() {
       return;
     }
 
+    if (!idServicio) {
+      setErrorMessage("Debes seleccionar un servicio para todo el pedido.");
+      return;
+    }
+
+    if (servicioBase?.modalidadCobro === "POR_OPCION" && !opcionBaseCodigo) {
+      setErrorMessage("Debes seleccionar una opción para el servicio base.");
+      return;
+    }
+
     if (!form.fechaLlegada || !form.fechaEntrega) {
       setErrorMessage("Debes seleccionar fecha de llegada y fecha de entrega.");
       return;
     }
 
-    const hasInvalidDetalle = detalles.some(
+    const hasInvalidDetalle = admiteDetalles && detalles.some(
       (detalle) =>
-        !detalle.idPrenda ||
-        !detalle.idServicio ||
-        Number(detalle.cantidad) < 1,
+        !detalle.idPrenda || Number(detalle.cantidad) < 1,
     );
 
     if (hasInvalidDetalle) {
       setErrorMessage(
-        "Debes completar cada detalle con prenda, servicio y cantidad válida.",
+        "Debes completar cada detalle con prenda y cantidad válida.",
       );
       return;
     }
@@ -229,25 +294,30 @@ export default function AdminOrdersPage() {
       await createPedidoRequest(
         {
           idUsuario: Number(form.idUsuario),
-          fechaLlegada: form.fechaLlegada,
-          fechaEntrega: form.fechaEntrega,
-          detalles: detalles.map((detalle) => ({
+          fecha_llegada: form.fechaLlegada,
+          fecha_entrega: form.fechaEntrega,
+          idServicioBase: Number(idServicio),
+          opcionBaseCodigo: opcionBaseCodigo || undefined,
+          detalles: admiteDetalles ? detalles.map((detalle) => ({
             idPrenda: Number(detalle.idPrenda),
-            idServicio: Number(detalle.idServicio),
             cantidad: Number(detalle.cantidad),
             observaciones: detalle.observaciones.trim(),
-          })),
+          })) : [],
+          serviciosExtras: idsExtras.map((id) => ({idServicio: id, cantidad: 1})),
         },
         token,
       );
 
       setForm(emptyPedidoForm);
       setDetalles([{...emptyDetalle}]);
+      setIdServicio("");
+      setOpcionBaseCodigo("");
+      setIdsExtras([]);
 
       await loadData();
     } catch (error) {
       console.error(error);
-      setErrorMessage("No se pudo crear el pedido.");
+      setErrorMessage(getErrorMessage(error, "No se pudo crear el pedido."));
     } finally {
       setIsSaving(false);
     }
@@ -263,7 +333,30 @@ export default function AdminOrdersPage() {
       await loadData();
     } catch (error) {
       console.error(error);
-      setErrorMessage("No se pudo actualizar el estado del pedido.");
+      setErrorMessage(
+        getErrorMessage(error, "No se pudo actualizar el estado del pedido."),
+      );
+    }
+  };
+
+  const handleConfirmarPeso = async (idPedido: number) => {
+    if (!token) return;
+    const pesoRealKg = Number(pesosReales[idPedido]);
+    if (!Number.isFinite(pesoRealKg) || pesoRealKg <= 0) {
+      setErrorMessage("Ingresa un peso real mayor que 0 kg.");
+      return;
+    }
+
+    try {
+      setErrorMessage("");
+      await confirmarPesoPedidoRequest(idPedido, pesoRealKg, token);
+      setPesosReales((prev) => ({...prev, [idPedido]: ""}));
+      await loadData();
+    } catch (error) {
+      console.error(error);
+      setErrorMessage(
+        getErrorMessage(error, "No se pudo confirmar el peso del pedido."),
+      );
     }
   };
 
@@ -280,19 +373,19 @@ export default function AdminOrdersPage() {
       await loadData();
     } catch (error) {
       console.error(error);
-      setErrorMessage("No se pudo eliminar el pedido.");
+      setErrorMessage(getErrorMessage(error, "No se pudo eliminar el pedido."));
     }
   };
 
   return (
-    <section className="min-h-screen bg-[#F5EEDC] px-6 py-8 lg:px-10">
+    <section className="min-h-screen bg-[#FFFFFF] px-6 py-8 lg:px-10">
       <div className="mx-auto max-w-7xl space-y-8">
         <div>
-          <h1 className="text-3xl font-bold text-[#6B4F3E]">
+          <h1 className="text-3xl font-bold text-[#111827]">
             Gestión de pedidos
           </h1>
 
-          <p className="mt-2 text-sm text-[#9A7C5F]">
+          <p className="mt-2 text-sm text-[#64748B]">
             Crea, revisa y administra pedidos con sus detalles.
           </p>
         </div>
@@ -314,15 +407,15 @@ export default function AdminOrdersPage() {
           className="rounded-3xl bg-white p-6 shadow-xl"
         >
           <div className="mb-6 flex items-center gap-3">
-            <div className="rounded-xl bg-[#F5EEDC] p-3 text-[#6B4F3E]">
+            <div className="rounded-xl bg-[#FFFFFF] p-3 text-[#111827]">
               <ClipboardList size={22} />
             </div>
 
             <div>
-              <h2 className="text-xl font-bold text-[#6B4F3E]">Nuevo pedido</h2>
+              <h2 className="text-xl font-bold text-[#111827]">Nuevo pedido</h2>
 
-              <p className="text-sm text-[#9A7C5F]">
-                Selecciona cliente, prendas y servicios.
+              <p className="text-sm text-[#64748B]">
+                Selecciona cliente, un servicio y las prendas.
               </p>
             </div>
           </div>
@@ -335,7 +428,7 @@ export default function AdminOrdersPage() {
               }
               required
               disabled={isSaving}
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
+              className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:opacity-60"
             >
               <option value="">Selecciona un cliente</option>
 
@@ -348,20 +441,72 @@ export default function AdminOrdersPage() {
                 ))}
             </select>
 
-            <div className="space-y-5">
+            <select
+              value={idServicio}
+              onChange={(event) => {
+                setIdServicio(event.target.value);
+                setOpcionBaseCodigo("");
+              }}
+              required
+              disabled={isSaving}
+              className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:opacity-60"
+            >
+              <option value="">Servicio base</option>
+              {servicios.map((servicio) => (
+                <option key={servicio.idServicio} value={servicio.idServicio}>
+                  {servicio.tipoServicio} - {servicio.modalidadCobro === "POR_OPCION" ? "según opción" : formatCurrency(getPrecioPorCarga(servicio))}
+                </option>
+              ))}
+            </select>
+
+            {servicioBase?.modalidadCobro === "POR_OPCION" && (
+              <select
+                value={opcionBaseCodigo}
+                onChange={(event) => setOpcionBaseCodigo(event.target.value)}
+                required
+                className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm"
+              >
+                <option value="">Selecciona tipo o tamaño</option>
+                {(servicioBase.opciones ?? []).filter((opcion) => opcion.activo).map((opcion) => (
+                  <option key={opcion.codigo} value={opcion.codigo}>{opcion.nombre} - {formatCurrency(opcion.precio)}</option>
+                ))}
+              </select>
+            )}
+
+            {serviciosExtras.length > 0 && (
+              <div className="rounded-xl border border-[#BFDBFE] p-4">
+                <p className="text-sm font-bold">Servicios extras opcionales</p>
+                <div className="mt-3 flex flex-wrap gap-3">
+                  {serviciosExtras.filter((extra) => extra.modalidadCobro !== "POR_OPCION").map((extra) => (
+                    <label key={extra.idServicio} className="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={idsExtras.includes(extra.idServicio)}
+                        onChange={(event) => setIdsExtras((prev) => event.target.checked
+                          ? [...prev, extra.idServicio]
+                          : prev.filter((id) => id !== extra.idServicio))}
+                      />
+                      {extra.tipoServicio} ({formatCurrency(getPrecioServicio(extra))})
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {admiteDetalles && idServicio && <div className="space-y-5">
               {detalles.map((detalle, index) => (
                 <div
                   key={index}
-                  className="rounded-2xl border border-[#D8C7AF] bg-[#FDF8ED] p-4"
+                  className="rounded-2xl border border-[#BFDBFE] bg-[#F8FAFC] p-4"
                 >
                   <div className="mb-4 flex items-center justify-between">
                     <div>
-                      <h3 className="text-sm font-bold text-[#6B4F3E]">
+                      <h3 className="text-sm font-bold text-[#111827]">
                         Detalle #{index + 1}
                       </h3>
 
-                      <p className="mt-1 text-xs text-[#9A7C5F]">
-                        Selecciona prenda, servicio y cantidad.
+                      <p className="mt-1 text-xs text-[#64748B]">
+                        Selecciona prenda y cantidad.
                       </p>
                     </div>
 
@@ -378,7 +523,7 @@ export default function AdminOrdersPage() {
                     )}
                   </div>
 
-                  <div className="grid gap-4 md:grid-cols-3">
+                  <div className="grid gap-4 md:grid-cols-2">
                     <select
                       value={detalle.idPrenda}
                       onChange={(event) =>
@@ -390,39 +535,16 @@ export default function AdminOrdersPage() {
                       }
                       required
                       disabled={isSaving}
-                      className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
+                      className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:opacity-60"
                     >
                       <option value="">Selecciona una prenda</option>
 
                       {prendas.map((prenda) => (
                         <option key={prenda.idPrenda} value={prenda.idPrenda}>
                           {prenda.nombrePrenda} - {prenda.categoria}
-                        </option>
-                      ))}
-                    </select>
-
-                    <select
-                      value={detalle.idServicio}
-                      onChange={(event) =>
-                        handleDetalleChange(
-                          index,
-                          "idServicio",
-                          event.target.value,
-                        )
-                      }
-                      required
-                      disabled={isSaving}
-                      className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
-                    >
-                      <option value="">Selecciona un servicio</option>
-
-                      {servicios.map((servicio) => (
-                        <option
-                          key={servicio.idServicio}
-                          value={servicio.idServicio}
-                        >
-                          {servicio.tipoServicio} -{" "}
-                          {formatCurrency(Number(servicio.precio))}
+                          {getPesoReferencia(prenda) > 0
+                            ? ` (${formatPeso(getPesoReferencia(prenda))}/unidad)`
+                            : ""}
                         </option>
                       ))}
                     </select>
@@ -440,9 +562,24 @@ export default function AdminOrdersPage() {
                       }
                       required
                       disabled={isSaving}
-                      className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
+                      className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:opacity-60"
                     />
                   </div>
+
+                  {detalle.idPrenda && esPorCarga && (
+                    <p className="mt-3 text-xs font-semibold text-[#475569]">
+                      Peso de referencia: {formatPeso(getPesoReferencia(prendas.find((item) => item.idPrenda === Number(detalle.idPrenda))))} · Estimado: {formatPeso(getPesoReferencia(prendas.find((item) => item.idPrenda === Number(detalle.idPrenda))) * Number(detalle.cantidad || 0))}
+                  </p>
+                  )}
+
+                  {detalle.idPrenda && servicioBase?.modalidadCobro === "POR_OPCION" && (
+                    <p className="mt-3 text-xs font-semibold text-[#475569]">
+                      Subtotal: {formatCurrency(
+                        getPrecioServicio(servicioBase, opcionBaseCodigo) *
+                          Number(detalle.cantidad || 0),
+                      )}
+                    </p>
+                  )}
 
                   <textarea
                     value={detalle.observaciones}
@@ -456,7 +593,7 @@ export default function AdminOrdersPage() {
                     rows={3}
                     disabled={isSaving}
                     placeholder="Observaciones para este detalle"
-                    className="mt-4 w-full resize-none rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
+                    className="mt-4 w-full resize-none rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:opacity-60"
                   />
                 </div>
               ))}
@@ -465,12 +602,12 @@ export default function AdminOrdersPage() {
                 type="button"
                 onClick={handleAddDetalle}
                 disabled={isSaving}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[#8A6A53] px-5 py-3 text-sm font-bold text-[#6B4F3E] transition hover:bg-[#F5EEDC] disabled:opacity-60"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[#2563EB] px-5 py-3 text-sm font-bold text-[#111827] transition hover:bg-[#EFF6FF] disabled:opacity-60"
               >
                 <Plus size={18} />
-                Agregar otra prenda o servicio
+                Agregar otra prenda
               </button>
-            </div>
+            </div>}
 
             <div className="grid gap-4 md:grid-cols-2">
               <input
@@ -481,7 +618,7 @@ export default function AdminOrdersPage() {
                 }
                 required
                 disabled={isSaving}
-                className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
+                className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:opacity-60"
               />
 
               <input
@@ -492,13 +629,19 @@ export default function AdminOrdersPage() {
                 }
                 required
                 disabled={isSaving}
-                className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20 disabled:opacity-60"
+                className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:opacity-60"
               />
             </div>
 
-            {totalEstimado > 0 && (
-              <div className="rounded-lg bg-[#F8F5EE] px-4 py-3 text-sm font-bold text-[#6B4F3E]">
-                Total estimado: {formatCurrency(totalEstimado)}
+            {idServicio && resumenEstimado.precio > 0 && (
+              <div className="rounded-lg border border-sky-300 bg-sky-50 px-4 py-3 text-sm text-sky-950">
+                <strong>Estimado:</strong> Base {formatCurrency(resumenEstimado.precioBase)} · Extras {formatCurrency(resumenEstimado.precioExtras)} · Total {formatCurrency(resumenEstimado.precio)}
+                {esPorCarga && <p className="mt-1 text-xs">{formatPeso(resumenEstimado.peso)} · {resumenEstimado.cargas} carga(s). Sujeto al peso real.</p>}
+                {servicioBase?.modalidadCobro === "POR_OPCION" && (
+                  <p className="mt-1 text-xs">
+                    {resumenEstimado.cantidadPrendas} prenda(s); precio de opción por unidad.
+                  </p>
+                )}
               </div>
             )}
 
@@ -511,7 +654,7 @@ export default function AdminOrdersPage() {
             <button
               type="submit"
               disabled={isSaving}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#6B4F3E] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#5A4334] disabled:opacity-60"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#1D4ED8] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#1E40AF] disabled:opacity-60"
             >
               <Plus size={18} />
               {isSaving ? "Guardando..." : "Crear pedido"}
@@ -522,11 +665,11 @@ export default function AdminOrdersPage() {
         <section className="rounded-3xl bg-white p-6 shadow-xl">
           <div className="mb-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <h2 className="text-xl font-bold text-[#6B4F3E]">
+              <h2 className="text-xl font-bold text-[#111827]">
                 Listado de pedidos
               </h2>
 
-              <p className="mt-1 text-sm text-[#9A7C5F]">
+              <p className="mt-1 text-sm text-[#64748B]">
                 Total registrados: {pedidosFiltrados.length}
               </p>
             </div>
@@ -537,7 +680,7 @@ export default function AdminOrdersPage() {
                 onChange={(event) =>
                   setEstadoFiltro(event.target.value as EstadoPedido | "TODOS")
                 }
-                className="rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+                className="rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
               >
                 <option value="TODOS">Todos</option>
 
@@ -551,7 +694,7 @@ export default function AdminOrdersPage() {
               <button
                 type="button"
                 onClick={loadData}
-                className="inline-flex items-center gap-2 rounded-lg bg-[#F5EEDC] px-4 py-3 text-sm font-bold text-[#6B4F3E] transition hover:bg-[#E8D8BE]"
+                className="inline-flex items-center gap-2 rounded-lg bg-[#FFFFFF] px-4 py-3 text-sm font-bold text-[#111827] transition hover:bg-[#DBEAFE]"
               >
                 <RefreshCcw size={17} />
               </button>
@@ -559,9 +702,9 @@ export default function AdminOrdersPage() {
           </div>
 
           {isLoading ? (
-            <p className="text-sm text-[#9A7C5F]">Cargando pedidos...</p>
+            <p className="text-sm text-[#64748B]">Cargando pedidos...</p>
           ) : pedidosFiltrados.length === 0 ? (
-            <p className="rounded-2xl bg-[#F8F5EE] p-5 text-sm text-[#9A7C5F]">
+            <p className="rounded-2xl bg-[#EFF6FF] p-5 text-sm text-[#64748B]">
               No hay pedidos registrados todavía.
             </p>
           ) : (
@@ -569,26 +712,33 @@ export default function AdminOrdersPage() {
               {pedidosFiltrados.map((pedido) => (
                 <article
                   key={pedido.idPedido}
-                  className="rounded-2xl border border-[#E5D8C5] bg-[#F8F5EE] p-5"
+                  className="rounded-2xl border border-[#DBEAFE] bg-[#EFF6FF] p-5"
                 >
                   <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                     <div>
-                      <h3 className="text-lg font-bold text-[#6B4F3E]">
+                      <h3 className="text-lg font-bold text-[#111827]">
                         Pedido #{pedido.idPedido}
                       </h3>
 
-                      <p className="mt-1 text-sm text-[#8A7161]">
+                      <p className="mt-1 text-sm text-[#475569]">
                         Cliente: {getClienteNombre(pedido.idUsuario)}
                       </p>
 
-                      <p className="mt-1 text-sm text-[#8A7161]">
-                        Llegada: {pedido.fechaLlegada} · Entrega:{" "}
-                        {pedido.fechaEntrega}
+                      <p className="mt-1 text-sm text-[#475569]">
+                        Llegada: {pedido.fechaLlegada ?? pedido.fecha_llegada ?? "-"} · Entrega:{" "}
+                        {pedido.fechaEntrega ?? pedido.fecha_entrega ?? "-"}
                       </p>
-
-                      <p className="mt-2 font-bold text-[#6B4F3E]">
-                        Total: {formatCurrency(Number(pedido.total))}
-                      </p>
+                      {pedido.servicioBase && (
+                        <p className="mt-2 text-sm font-bold">
+                          Base: {pedido.servicioBase.nombre}
+                          {pedido.servicioBase.opcionNombre ? ` · ${pedido.servicioBase.opcionNombre}` : ""}
+                        </p>
+                      )}
+                      {(pedido.serviciosExtras?.length ?? 0) > 0 && (
+                        <p className="mt-1 text-xs text-[#475569]">
+                          Extras: {pedido.serviciosExtras?.map((extra) => extra.nombre).join(", ")}
+                        </p>
+                      )}
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2">
@@ -608,7 +758,7 @@ export default function AdminOrdersPage() {
                             event.target.value as EstadoPedido,
                           )
                         }
-                        className="rounded-lg border border-[#D8C7AF] bg-white px-3 py-2 text-xs font-bold outline-none"
+                        className="rounded-lg border border-[#BFDBFE] bg-white px-3 py-2 text-xs font-bold outline-none"
                       >
                         {estadosPedido.map((estado) => (
                           <option key={estado} value={estado}>
@@ -627,15 +777,72 @@ export default function AdminOrdersPage() {
                     </div>
                   </div>
 
-                  <div className="mt-5 overflow-hidden rounded-xl border border-[#E5D8C5] bg-white">
+                  <div className={`mt-4 grid gap-3 rounded-xl border p-4 sm:grid-cols-3 ${pedido.precioFinal != null ? "border-blue-300 bg-blue-50" : "border-sky-300 bg-sky-50"}`}>
+                    {pedido.precioFinal != null ? (
+                      <>
+                        {pedido.pesoRealKg != null && <div><p className="text-xs font-bold uppercase text-blue-700">Peso final</p><p className="font-bold">{formatPeso(Number(pedido.pesoRealKg))}</p></div>}
+                        {pedido.cargasReales != null && <div><p className="text-xs font-bold uppercase text-blue-700">Cargas reales</p><p className="font-bold">{pedido.cargasReales}</p></div>}
+                        <div><p className="text-xs font-bold uppercase text-blue-700">Precio final</p><p className="font-bold">{formatCurrency(Number(pedido.precioFinal ?? pedido.total))}</p></div>
+                      </>
+                    ) : (
+                      <>
+                        {(pedido.servicioBase?.modalidadCobro === "POR_CARGA" || !pedido.servicioBase) && <div><p className="text-xs font-bold uppercase text-sky-700">Peso estimado</p><p className="font-bold">{formatPeso(Number(pedido.pesoEstimadoKg ?? 0))}</p></div>}
+                        {(pedido.servicioBase?.modalidadCobro === "POR_CARGA" || !pedido.servicioBase) && <div><p className="text-xs font-bold uppercase text-sky-700">Cargas estimadas</p><p className="font-bold">{pedido.cargasEstimadas ?? 0}</p></div>}
+                        <div><p className="text-xs font-bold uppercase text-sky-700">Precio estimado</p><p className="font-bold">{formatCurrency(Number(pedido.precioEstimado ?? pedido.total))}</p></div>
+                      </>
+                    )}
+                  </div>
+
+                  {pedido.pesoRealKg == null && (pedido.servicioBase?.modalidadCobro === "POR_CARGA" || !pedido.servicioBase) && (
+                    <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                      <input
+                        type="number"
+                        min="0.001"
+                        step="0.001"
+                        value={pesosReales[pedido.idPedido] ?? ""}
+                        onChange={(event) => setPesosReales((prev) => ({...prev, [pedido.idPedido]: event.target.value}))}
+                        placeholder="Peso real en kg"
+                        className="rounded-lg border border-[#BFDBFE] bg-white px-3 py-2 text-sm outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleConfirmarPeso(pedido.idPedido)}
+                        className="rounded-lg bg-[#1D4ED8] px-4 py-2 text-sm font-bold text-white"
+                      >
+                        Confirmar peso real
+                      </button>
+                    </div>
+                  )}
+
+                  {puedeConfirmarseSinPeso(pedido) && (
+                    <div className="mt-3 flex flex-col gap-2 rounded-xl border border-blue-300 bg-blue-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+                      <p className="text-sm text-blue-800">
+                        Este servicio se confirma por opción y no requiere registrar peso real.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => handleChangeEstado(pedido.idPedido, "CONFIRMADO")}
+                        className="shrink-0 rounded-lg bg-[#1D4ED8] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#1E40AF]"
+                      >
+                        Confirmar pedido
+                      </button>
+                    </div>
+                  )}
+
+                  {(pedido.detalles?.length ?? 0) > 0 && <div className="mt-5 overflow-hidden rounded-xl border border-[#DBEAFE] bg-white">
                     <table className="w-full text-left text-sm">
-                      <thead className="bg-[#F5EEDC] text-[#6B4F3E]">
+                      <thead className="bg-[#FFFFFF] text-[#111827]">
                         <tr>
                           <th className="px-4 py-3">Prenda</th>
                           <th className="px-4 py-3">Servicio</th>
                           <th className="px-4 py-3">Cantidad</th>
-                          <th className="px-4 py-3">Precio</th>
-                          <th className="px-4 py-3">Subtotal</th>
+                          {(pedido.servicioBase?.modalidadCobro === "POR_CARGA" || !pedido.servicioBase) && <>
+                            <th className="px-4 py-3">Peso ref.</th>
+                            <th className="px-4 py-3">Peso estimado</th>
+                          </>}
+                          {pedido.servicioBase?.modalidadCobro === "POR_OPCION" && (
+                            <th className="px-4 py-3">Subtotal</th>
+                          )}
                           <th className="px-4 py-3">Obs.</th>
                         </tr>
                       </thead>
@@ -644,11 +851,11 @@ export default function AdminOrdersPage() {
                         {(pedido.detalles ?? []).map((detalle, index) => (
                           <tr
                             key={`${pedido.idPedido}-${index}`}
-                            className="border-t border-[#E5D8C5]"
+                            className="border-t border-[#DBEAFE]"
                           >
                             <td className="px-4 py-3">
                               <p className="font-bold">{detalle.prenda}</p>
-                              <p className="text-xs text-[#8A7161]">
+                              <p className="text-xs text-[#475569]">
                                 {detalle.categoriaPrenda}
                               </p>
                             </td>
@@ -657,22 +864,28 @@ export default function AdminOrdersPage() {
 
                             <td className="px-4 py-3">{detalle.cantidad}</td>
 
-                            <td className="px-4 py-3">
-                              {formatCurrency(Number(detalle.precioUnitario))}
-                            </td>
+                            {(pedido.servicioBase?.modalidadCobro === "POR_CARGA" || !pedido.servicioBase) && <>
+                              <td className="px-4 py-3">
+                                {formatPeso(Number(detalle.pesoReferenciaKg ?? 0))}
+                              </td>
+                              <td className="px-4 py-3 font-bold">
+                                {formatPeso(Number(detalle.pesoEstimadoKg ?? (detalle.pesoReferenciaKg ?? 0) * detalle.cantidad))}
+                              </td>
+                            </>}
+                            {pedido.servicioBase?.modalidadCobro === "POR_OPCION" && (
+                              <td className="px-4 py-3 font-bold">
+                                {formatCurrency(Number(pedido.servicioBase.precioUnitario) * detalle.cantidad)}
+                              </td>
+                            )}
 
-                            <td className="px-4 py-3 font-bold">
-                              {formatCurrency(Number(detalle.subtotal))}
-                            </td>
-
-                            <td className="px-4 py-3 text-[#8A7161]">
+                            <td className="px-4 py-3 text-[#475569]">
                               {detalle.observaciones || "-"}
                             </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
-                  </div>
+                  </div>}
                 </article>
               ))}
             </div>
@@ -691,8 +904,8 @@ type SummaryCardProps = {
 function SummaryCard({title, value}: SummaryCardProps) {
   return (
     <article className="rounded-2xl bg-white p-5 text-center shadow-md">
-      <p className="text-sm font-semibold text-[#9A7C5F]">{title}</p>
-      <h3 className="mt-2 text-3xl font-bold text-[#6B4F3E]">{value}</h3>
+      <p className="text-sm font-semibold text-[#64748B]">{title}</p>
+      <h3 className="mt-2 text-3xl font-bold text-[#111827]">{value}</h3>
     </article>
   );
 }

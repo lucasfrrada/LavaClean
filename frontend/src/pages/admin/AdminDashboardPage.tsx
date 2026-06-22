@@ -75,7 +75,7 @@ export default function AdminDashboardPage() {
   const pedidosActivos = useMemo(() => {
     return pedidos.filter(
       (pedido) =>
-        pedido.estado === "PENDIENTE" || pedido.estado === "EN_PROCESO",
+        pedido.estado === "REVISION" || pedido.estado === "EN_PROCESO",
     ).length;
   }, [pedidos]);
 
@@ -124,11 +124,11 @@ export default function AdminDashboardPage() {
     <section>
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-[#6B4F3E]">
+          <h1 className="text-3xl font-bold text-[#111827]">
             Dashboard administrativo
           </h1>
 
-          <p className="mt-2 text-sm text-[#9A7C5F]">
+          <p className="mt-2 text-sm text-[#64748B]">
             Resumen general de la operación de LavaClean.
           </p>
         </div>
@@ -137,7 +137,7 @@ export default function AdminDashboardPage() {
           type="button"
           onClick={loadDashboardData}
           disabled={isLoading}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-bold text-[#6B4F3E] shadow-md transition hover:bg-[#F8F5EE] disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-bold text-[#111827] shadow-md transition hover:bg-[#EFF6FF] disabled:cursor-not-allowed disabled:opacity-60"
         >
           <RefreshCcw size={17} />
           {isLoading ? "Actualizando..." : "Actualizar"}
@@ -179,28 +179,28 @@ export default function AdminDashboardPage() {
       <section className="mt-8 rounded-3xl bg-white p-6 shadow-xl">
         <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 className="text-xl font-bold text-[#6B4F3E]">
+            <h2 className="text-xl font-bold text-[#111827]">
               Pedidos recientes
             </h2>
 
-            <p className="mt-1 text-sm text-[#9A7C5F]">
+            <p className="mt-1 text-sm text-[#64748B]">
               Últimos pedidos registrados en el sistema.
             </p>
           </div>
         </div>
 
         {isLoading ? (
-          <p className="mt-6 rounded-2xl bg-[#F8F5EE] p-5 text-sm text-[#9A7C5F]">
+          <p className="mt-6 rounded-2xl bg-[#EFF6FF] p-5 text-sm text-[#64748B]">
             Cargando información...
           </p>
         ) : pedidosRecientes.length === 0 ? (
-          <p className="mt-6 rounded-2xl bg-[#F8F5EE] p-5 text-sm text-[#9A7C5F]">
+          <p className="mt-6 rounded-2xl bg-[#EFF6FF] p-5 text-sm text-[#64748B]">
             No hay pedidos registrados todavía.
           </p>
         ) : (
-          <div className="mt-6 overflow-hidden rounded-2xl border border-[#E5D8C5]">
+          <div className="mt-6 overflow-hidden rounded-2xl border border-[#DBEAFE]">
             <table className="w-full text-left text-sm">
-              <thead className="bg-[#F5EEDC] text-[#6B4F3E]">
+              <thead className="bg-[#FFFFFF] text-[#111827]">
                 <tr>
                   <th className="px-5 py-4">Pedido</th>
                   <th className="px-5 py-4">Usuario</th>
@@ -215,7 +215,7 @@ export default function AdminDashboardPage() {
                 {pedidosRecientes.map((pedido) => (
                   <tr
                     key={pedido.idPedido}
-                    className="border-t border-[#E5D8C5] transition hover:bg-[#F8F5EE]"
+                    className="border-t border-[#DBEAFE] transition hover:bg-[#EFF6FF]"
                   >
                     <td className="px-5 py-4 font-bold">#{pedido.idPedido}</td>
 
@@ -262,11 +262,11 @@ function DashboardCard({title, value, icon: Icon}: DashboardCardProps) {
     <article className="rounded-3xl bg-white p-6 shadow-xl">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <p className="text-sm font-semibold text-[#9A7C5F]">{title}</p>
-          <h3 className="mt-2 text-3xl font-bold text-[#6B4F3E]">{value}</h3>
+          <p className="text-sm font-semibold text-[#64748B]">{title}</p>
+          <h3 className="mt-2 text-3xl font-bold text-[#111827]">{value}</h3>
         </div>
 
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F5EEDC] text-[#6B4F3E]">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FFFFFF] text-[#111827]">
           <Icon size={25} />
         </div>
       </div>
@@ -288,10 +288,10 @@ function getEstadoLabel(estado: string) {
 
 function getEstadoClass(estado: string) {
   const classes: Record<string, string> = {
-    PENDIENTE: "bg-orange-100 text-orange-700",
-    EN_PROCESO: "bg-yellow-100 text-yellow-700",
+    PENDIENTE: "bg-sky-100 text-sky-700",
+    EN_PROCESO: "bg-cyan-100 text-cyan-700",
     COMPLETADO: "bg-blue-100 text-blue-700",
-    PAGADO: "bg-green-100 text-green-700",
+    PAGADO: "bg-blue-100 text-blue-700",
     CANCELADO: "bg-red-100 text-red-700",
   };
 
