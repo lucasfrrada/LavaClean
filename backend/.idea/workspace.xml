@@ -6,8 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="4234a5ca-c62a-458a-9207-636d1fdbfec7" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/application/service/PedidoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/main/java/mcsv/pedidos/application/service/PedidoService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mcsv-pedidos/src/test/java/mcsv/pedidos/application/service/PedidoNuevaLogicaServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/mcsv-pedidos/src/test/java/mcsv/pedidos/application/service/PedidoNuevaLogicaServiceTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,7 +34,7 @@
   <component name="GithubPullRequestsUISettings"><![CDATA[{
   "selectedUrlAndAccountId": {
     "url": "https://github.com/lucasfrrada/LavaClean.git",
-    "accountId": "bf8bb5de-7c03-4e01-a737-996a996d3b32"
+    "accountId": "7e6d2dc8-3eaa-46f0-a19f-ea3f80cf77d9"
   }
 }]]></component>
   <component name="KubernetesApiPersistence">{}</component>
@@ -75,7 +73,7 @@
     "Spring Boot.MsvcUsuarioApplication.executor": "Run",
     "Spring Boot.PedidosApplication.executor": "Run",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "fix__logica__pedidos",
+    "git-widget-placeholder": "main",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
@@ -97,24 +95,21 @@
         <option value="SpringBootApplicationConfigurationType" />
       </set>
     </option>
-    <option name="configurationStatuses">
-      <map>
-        <entry key="SpringBootApplicationConfigurationType">
-          <value>
-            <map>
-              <entry key="AuthApplication" value="STOPPED" />
-              <entry key="McsvInventarioApplication" value="STOPPED" />
-              <entry key="McsvNotificacionApplication" value="STOPPED" />
-              <entry key="McsvPagoApplication" value="FAILED" />
-              <entry key="MsvcUsuarioApplication" value="STOPPED" />
-              <entry key="PedidosApplication" value="STOPPED" />
-            </map>
-          </value>
-        </entry>
-      </map>
-    </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.AuthApplication">
+  <component name="RunManager" selected="Application.PedidosApplication">
+    <configuration name="AuthApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="lavaclean.auth.AuthApplication" />
+      <module name="auth" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="lavaclean.auth.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="McsvInventarioApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="lavaclean.mcsv_inventario.McsvInventarioApplication" />
       <module name="mcsv-inventario" />
@@ -167,19 +162,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="AuthApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
-      <module name="auth" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="lavaclean.auth.AuthApplication" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="lavaclean.auth.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="McsvInventarioApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="mcsv-inventario" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="lavaclean.mcsv_inventario.McsvInventarioApplication" />
@@ -217,32 +199,26 @@
       </method>
     </configuration>
     <list>
+      <item itemvalue="Application.AuthApplication" />
       <item itemvalue="Application.McsvInventarioApplication" />
       <item itemvalue="Application.McsvNotificacionApplication" />
       <item itemvalue="Application.MsvcUsuarioApplication" />
       <item itemvalue="Application.PedidosApplication" />
-      <item itemvalue="Spring Boot.McsvInventarioApplication" />
-      <item itemvalue="Spring Boot.McsvNotificacionApplication" />
-      <item itemvalue="Spring Boot.McsvPagoApplication" />
-      <item itemvalue="Spring Boot.MsvcUsuarioApplication" />
-      <item itemvalue="Spring Boot.PedidosApplication" />
-      <item itemvalue="Spring Boot.AuthApplication" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Spring Boot.AuthApplication" />
-        <item itemvalue="Application.McsvNotificacionApplication" />
         <item itemvalue="Application.PedidosApplication" />
         <item itemvalue="Application.McsvInventarioApplication" />
+        <item itemvalue="Application.McsvNotificacionApplication" />
         <item itemvalue="Application.MsvcUsuarioApplication" />
+        <item itemvalue="Application.AuthApplication" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.28238.7" />
-        <option value="bundled-js-predefined-d6986cc7102b-a71380e98a7c-JavaScript-IU-252.28238.7" />
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.27397.103" />
       </set>
     </attachedChunks>
   </component>
