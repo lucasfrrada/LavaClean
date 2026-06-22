@@ -76,7 +76,7 @@ export function AuthProvider({children}: AuthProviderProps) {
       value={{
         user,
         token,
-        isAuthenticated: Boolean(token),
+        isAuthenticated,
         login,
         logout,
         updateUser,

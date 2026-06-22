@@ -14,7 +14,8 @@ public class DetallePedidoResponse {
     private String servicio;
     private Integer cantidad;
     private String observaciones;
-    private BigDecimal precioUnitario;
-    private BigDecimal subtotal;
+    private BigDecimal pesoReferenciaKg;
+    private BigDecimal pesoEstimadoKg;
+    private BigDecimal precioPorCarga;
 
 }

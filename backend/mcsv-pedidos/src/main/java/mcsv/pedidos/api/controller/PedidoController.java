@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import mcsv.pedidos.api.dto.request.Pedido.ActualizarEstadoPedidoRequest;
 import mcsv.pedidos.api.dto.request.Pedido.ActualizarPedidoRequest;
 import mcsv.pedidos.api.dto.request.Pedido.CrearPedidoRequest;
+import mcsv.pedidos.api.dto.request.Pedido.ConfirmarPesoRealRequest;
+import mcsv.pedidos.api.dto.request.Pedido.AgregarServiciosExtrasRequest;
 import mcsv.pedidos.api.dto.response.Pedido.PedidoResponse;
 import mcsv.pedidos.application.service.PedidoService;
 import org.springframework.http.HttpStatus;
@@ -71,9 +73,20 @@ public class PedidoController {
         return ResponseEntity.noContent().build();
     }
 
-    //CONFIRMAR PEDIDO
-    @PatchMapping("/{id}/confirmar")
-    public ResponseEntity<PedidoResponse> confirmarPedido(@PathVariable Long id) {
-        return ResponseEntity.ok(pedidoService.confirmarPedido(id));
+    //CONFIRMAR PESO REAL Y VALOR FINAL
+    @PatchMapping("/{id}/confirmar-peso")
+    public ResponseEntity<PedidoResponse> confirmarPesoReal(
+            @PathVariable Long id,
+            @Valid @RequestBody ConfirmarPesoRealRequest request
+    ) {
+        return ResponseEntity.ok(pedidoService.confirmarPesoReal(id, request));
+    }
+
+    @PostMapping("/{id}/servicios-extras")
+    public ResponseEntity<PedidoResponse> agregarServiciosExtras(
+            @PathVariable Long id,
+            @Valid @RequestBody AgregarServiciosExtrasRequest request
+    ) {
+        return ResponseEntity.ok(pedidoService.agregarServiciosExtras(id, request));
     }
 }

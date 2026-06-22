@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -39,6 +40,7 @@ class PrendaServiceTest {
                 .idPrenda(1L)
                 .nombrePrenda("Camisa")
                 .categoria("Ropa")
+                .pesoReferenciaKg(new BigDecimal("0.2"))
                 .build();
     }
 
@@ -47,6 +49,7 @@ class PrendaServiceTest {
         CrearPrendaRequest request = new CrearPrendaRequest();
         request.setNombrePrenda("Camisa");
         request.setCategoria("Ropa");
+        request.setPesoReferenciaKg(new BigDecimal("0.2"));
 
         when(prendaRepository.existsByNombrePrenda("Camisa")).thenReturn(false);
 
@@ -62,6 +65,7 @@ class PrendaServiceTest {
         assertThat(response.getIdPrenda()).isEqualTo(1L);
         assertThat(response.getNombrePrenda()).isEqualTo("Camisa");
         assertThat(response.getCategoria()).isEqualTo("Ropa");
+        assertThat(response.getPesoReferenciaKg()).isEqualByComparingTo("0.2");
 
         ArgumentCaptor<PrendaEntity> prendaCaptor = ArgumentCaptor.forClass(PrendaEntity.class);
         verify(prendaRepository).save(prendaCaptor.capture());
@@ -70,6 +74,7 @@ class PrendaServiceTest {
 
         assertThat(prendaGuardada.getNombrePrenda()).isEqualTo("Camisa");
         assertThat(prendaGuardada.getCategoria()).isEqualTo("Ropa");
+        assertThat(prendaGuardada.getPesoReferenciaKg()).isEqualByComparingTo("0.2");
     }
 
     @Test
@@ -77,6 +82,7 @@ class PrendaServiceTest {
         CrearPrendaRequest request = new CrearPrendaRequest();
         request.setNombrePrenda("Camisa");
         request.setCategoria("Ropa");
+        request.setPesoReferenciaKg(new BigDecimal("0.2"));
 
         when(prendaRepository.existsByNombrePrenda("Camisa")).thenReturn(true);
 
@@ -93,6 +99,7 @@ class PrendaServiceTest {
                 .idPrenda(2L)
                 .nombrePrenda("Pantalón")
                 .categoria("Ropa")
+                .pesoReferenciaKg(new BigDecimal("0.5"))
                 .build();
 
         when(prendaRepository.findAll()).thenReturn(List.of(prenda, pantalon));
@@ -142,6 +149,7 @@ class PrendaServiceTest {
         ActualizarPrendaRequest request = new ActualizarPrendaRequest();
         request.setNombrePrenda("Chaqueta");
         request.setCategoria("Abrigo");
+        request.setPesoReferenciaKg(BigDecimal.ONE);
 
         when(prendaRepository.findById(1L)).thenReturn(Optional.of(prenda));
         when(prendaRepository.save(any(PrendaEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -152,6 +160,7 @@ class PrendaServiceTest {
         assertThat(response.getIdPrenda()).isEqualTo(1L);
         assertThat(response.getNombrePrenda()).isEqualTo("Chaqueta");
         assertThat(response.getCategoria()).isEqualTo("Abrigo");
+        assertThat(response.getPesoReferenciaKg()).isEqualByComparingTo("1");
 
         assertThat(prenda.getNombrePrenda()).isEqualTo("Chaqueta");
         assertThat(prenda.getCategoria()).isEqualTo("Abrigo");
@@ -165,6 +174,7 @@ class PrendaServiceTest {
         ActualizarPrendaRequest request = new ActualizarPrendaRequest();
         request.setNombrePrenda("Chaqueta");
         request.setCategoria("Abrigo");
+        request.setPesoReferenciaKg(BigDecimal.ONE);
 
         when(prendaRepository.findById(99L)).thenReturn(Optional.empty());
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import mcsv.pedidos.api.dto.request.Pedido.ActualizarEstadoPedidoRequest;
 import mcsv.pedidos.api.dto.request.Pedido.CrearDetallePedidoRequest;
 import mcsv.pedidos.api.dto.request.Pedido.CrearPedidoRequest;
+import mcsv.pedidos.api.dto.request.Pedido.ConfirmarPesoRealRequest;
 import mcsv.pedidos.api.dto.response.Pedido.PedidoResponse;
 import mcsv.pedidos.application.service.PedidoService;
 import mcsv.pedidos.domain.model.EstadoPedido;
@@ -184,6 +185,39 @@ class PedidoControllerTest {
                 .andExpect(status().isNoContent());
 
         verify(pedidoService).eliminarPedido(1L);
+    }
+
+    @Test
+    void deberiaConfirmarPesoRealYRetornarValorFinal() throws Exception {
+        ConfirmarPesoRealRequest request = new ConfirmarPesoRealRequest();
+        request.setPesoRealKg(new BigDecimal("5.5"));
+
+        PedidoResponse response = PedidoResponse.builder()
+                .idPedido(1L)
+                .idUsuario(1L)
+                .estado("CONFIRMADO")
+                .pesoEstimadoKg(new BigDecimal("5.6"))
+                .pesoRealKg(new BigDecimal("5.5"))
+                .precioEstimado(new BigDecimal("10000"))
+                .precioPorCarga(new BigDecimal("5000"))
+                .cargasEstimadas(2)
+                .cargasReales(2)
+                .precioFinal(new BigDecimal("10000"))
+                .total(new BigDecimal("10000"))
+                .detalles(List.of())
+                .build();
+
+        when(pedidoService.confirmarPesoReal(eq(1L), any(ConfirmarPesoRealRequest.class)))
+                .thenReturn(response);
+
+        mockMvc.perform(patch("/api/pedidos/1/confirmar-peso")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.estado").value("CONFIRMADO"))
+                .andExpect(jsonPath("$.pesoRealKg").value(5.5))
+                .andExpect(jsonPath("$.cargasReales").value(2))
+                .andExpect(jsonPath("$.precioFinal").value(10000));
     }
 
 }

@@ -58,11 +58,11 @@ export default function AdminLayout() {
   };
 
   return (
-    <main className="flex min-h-screen w-full bg-[#F5EEDC] text-[#6B4F3E]">
+    <main className="flex min-h-screen w-full bg-[#FFFFFF] text-[#111827]">
       {/* Sidebar */}
-      <aside className="fixed left-0 top-0 z-50 hidden h-screen w-72 flex-col bg-[#241E1A] text-white shadow-2xl lg:flex">
+      <aside className="fixed left-0 top-0 z-50 hidden h-screen w-72 flex-col border-r border-[#DBEAFE] bg-white text-[#111827] shadow-xl lg:flex">
         {/* Logo */}
-        <div className="flex h-20 items-center gap-3 border-b border-white/10 px-6">
+        <div className="flex h-20 items-center gap-3 border-b border-[#DBEAFE] px-6">
           <img
             src={logo}
             alt="Logo LavaClean"
@@ -71,16 +71,16 @@ export default function AdminLayout() {
 
           <div>
             <h1 className="text-lg font-bold">LavaClean</h1>
-            <p className="text-xs text-white/45">Panel administrador</p>
+            <p className="text-xs text-[#64748B]">Panel administrador</p>
           </div>
         </div>
 
         {/* Perfil admin */}
-        <div className="border-b border-white/10 px-6 py-5">
+        <div className="border-b border-[#DBEAFE] px-6 py-5">
           <p className="text-sm font-bold">
             {user?.nombres || "Administrador"}
           </p>
-          <p className="mt-1 truncate text-xs text-white/45">
+          <p className="mt-1 truncate text-xs text-[#64748B]">
             {user?.correo || "admin@lavaclean.com"}
           </p>
         </div>
@@ -98,8 +98,8 @@ export default function AdminLayout() {
                 className={({isActive}) =>
                   `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition ${
                     isActive
-                      ? "bg-[#8A6A53] text-white shadow-md"
-                      : "text-[#E7D9C2] hover:bg-white/10 hover:text-white"
+                      ? "bg-[#2563EB] text-white shadow-md"
+                      : "text-[#111827] hover:bg-[#EFF6FF] hover:text-[#2563EB]"
                   }`
                 }
               >
@@ -111,10 +111,10 @@ export default function AdminLayout() {
         </nav>
 
         {/* Acciones inferiores */}
-        <div className="space-y-2 border-t border-white/10 px-4 py-5">
+        <div className="space-y-2 border-t border-[#DBEAFE] px-4 py-5">
           <Link
             to="/"
-            className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-[#E7D9C2] transition hover:bg-white/10 hover:text-white"
+            className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-[#111827] transition hover:bg-[#EFF6FF] hover:text-[#2563EB]"
           >
             <ArrowLeft size={18} />
             Volver al sitio
@@ -123,7 +123,7 @@ export default function AdminLayout() {
           <button
             type="button"
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold text-red-300 transition hover:bg-red-500/10 hover:text-red-200"
+            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold text-red-600 transition hover:bg-red-50 hover:text-red-700"
           >
             <LogOut size={18} />
             Cerrar sesión
@@ -134,20 +134,22 @@ export default function AdminLayout() {
       {/* Contenido principal */}
       <section className="min-h-screen w-full lg:pl-72">
         {/* Header móvil / superior */}
-        <header className="sticky top-0 z-40 flex h-20 items-center justify-between bg-[#6B4F3E] px-6 text-white shadow-md lg:hidden">
+        <header className="sticky top-0 z-40 flex h-20 items-center justify-between border-b border-[#DBEAFE] bg-white px-6 text-[#111827] shadow-md lg:hidden">
           <Link to="/" className="flex items-center gap-2">
             <img
               src={logo}
               alt="Logo LavaClean"
               className="h-10 w-10 object-contain"
             />
-            <span className="font-bold">LavaClean Admin</span>
+            <span className="font-bold transition hover:text-[#2563EB]">
+              LavaClean Admin
+            </span>
           </Link>
 
           <button
             type="button"
             onClick={handleLogout}
-            className="rounded-full bg-[#F8EFD8] px-4 py-2 text-sm font-bold text-[#6B4F3E]"
+            className="rounded-full border border-[#BFDBFE] bg-white px-4 py-2 text-sm font-bold text-[#111827] transition hover:border-[#2563EB] hover:bg-[#EFF6FF] hover:text-[#2563EB]"
           >
             Salir
           </button>

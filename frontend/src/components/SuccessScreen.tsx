@@ -9,7 +9,7 @@ type SuccessScreenProps = {
 export default function SuccessScreen({title, message}: SuccessScreenProps) {
   return (
     <motion.div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#6B4F3E]/80 px-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#1D4ED8]/80 px-4 backdrop-blur-sm"
       initial={{opacity: 0}}
       animate={{opacity: 1}}
       exit={{opacity: 0}}
@@ -32,18 +32,18 @@ export default function SuccessScreen({title, message}: SuccessScreenProps) {
             stiffness: 180,
             damping: 12,
           }}
-          className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-100 text-green-600"
+          className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-blue-100 text-blue-600"
         >
           <CheckCircle size={44} />
         </motion.div>
 
-        <h2 className="mt-6 text-2xl font-bold text-[#6B4F3E]">{title}</h2>
+        <h2 className="mt-6 text-2xl font-bold text-[#111827]">{title}</h2>
 
-        <p className="mt-3 text-sm leading-relaxed text-[#9A7C5F]">{message}</p>
+        <p className="mt-3 text-sm leading-relaxed text-[#64748B]">{message}</p>
 
-        <div className="mt-6 h-2 w-full overflow-hidden rounded-full bg-[#F5EEDC]">
+        <div className="mt-6 h-2 w-full overflow-hidden rounded-full bg-[#DBEAFE]">
           <motion.div
-            className="h-full bg-[#6B4F3E]"
+            className="h-full bg-[#1D4ED8]"
             initial={{width: "0%"}}
             animate={{width: "100%"}}
             transition={{
@@ -53,7 +53,7 @@ export default function SuccessScreen({title, message}: SuccessScreenProps) {
           />
         </div>
 
-        <p className="mt-3 text-xs font-semibold text-[#B8A58F]">
+        <p className="mt-3 text-xs font-semibold text-[#94A3B8]">
           Redirigiendo...
         </p>
       </motion.div>
