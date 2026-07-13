@@ -6,6 +6,7 @@ import mcsv.pedidos.api.dto.request.Servicio.ActualizarServicioRequest;
 import mcsv.pedidos.api.dto.request.Servicio.CrearServicioRequest;
 import mcsv.pedidos.api.dto.response.Servicio.ServicioResponse;
 import mcsv.pedidos.application.service.ServicioService;
+import mcsv.pedidos.domain.model.TipoServicio;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,16 @@ public class ServicioController {
         return ResponseEntity.ok(servicioService.listarServicios());
     }
 
+    @GetMapping("/base")
+    public ResponseEntity<?> listarServiciosBase() {
+        return ResponseEntity.ok(servicioService.listarDisponibles(TipoServicio.BASE));
+    }
+
+    @GetMapping("/extras")
+    public ResponseEntity<?> listarServiciosExtra() {
+        return ResponseEntity.ok(servicioService.listarDisponibles(TipoServicio.EXTRA));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ServicioResponse> obtenerServicioPorId(@PathVariable Long id) {
         return ResponseEntity.ok(servicioService.obtenerServicioPorId(id));
@@ -45,5 +56,13 @@ public class ServicioController {
     public ResponseEntity<Void> eliminarServicio(@PathVariable Long id) {
         servicioService.eliminarServicio(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/activo")
+    public ResponseEntity<ServicioResponse> cambiarActivo(
+            @PathVariable Long id,
+            @RequestParam boolean activo
+    ) {
+        return ResponseEntity.ok(servicioService.cambiarActivo(id, activo));
     }
 }

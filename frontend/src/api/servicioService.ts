@@ -14,6 +14,32 @@ export function getServiciosRequest(token: string) {
   });
 }
 
+export function getServiciosBaseRequest(token: string) {
+  return apiClient<Servicio[]>(PEDIDO_API_URL, "/servicios/base", {
+    method: "GET",
+    token,
+  });
+}
+
+export function getServiciosExtrasRequest(token: string) {
+  return apiClient<Servicio[]>(PEDIDO_API_URL, "/servicios/extras", {
+    method: "GET",
+    token,
+  });
+}
+
+export function cambiarServicioActivoRequest(
+  idServicio: number,
+  activo: boolean,
+  token: string,
+) {
+  return apiClient<Servicio>(
+    PEDIDO_API_URL,
+    `/servicios/${idServicio}/activo?activo=${activo}`,
+    {method: "PATCH", token},
+  );
+}
+
 export function createServicioRequest(
   data: CreateServicioRequest,
   token: string,

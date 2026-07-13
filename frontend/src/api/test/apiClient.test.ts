@@ -134,4 +134,32 @@ describe("apiClient", () => {
 
     expect(result).toBeNull();
   });
+
+  it("debería mostrar el detail JSON seguro entregado por el backend", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: false,
+      status: 400,
+      statusText: "Bad Request",
+      headers: {get: () => "application/problem+json"},
+      text: async () => JSON.stringify({detail: "Debes seleccionar un servicio base."}),
+    } as unknown as Response);
+
+    await expect(apiClient("http://localhost:8080", "/api/pedidos"))
+      .rejects.toThrow("Debes seleccionar un servicio base.");
+  });
+
+  it("no debería exponer trazas recibidas desde el backend", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      statusText: "Internal Server Error",
+      headers: {get: () => "application/json"},
+      text: async () => JSON.stringify({
+        message: "java.lang.Exception stacktrace at app.Service.java:42",
+      }),
+    } as unknown as Response);
+
+    await expect(apiClient("http://localhost:8080", "/api/pedidos"))
+      .rejects.toThrow("Error 500: Internal Server Error");
+  });
 });

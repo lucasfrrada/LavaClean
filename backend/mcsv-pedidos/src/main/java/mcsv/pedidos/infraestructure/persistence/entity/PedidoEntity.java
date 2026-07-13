@@ -6,6 +6,7 @@ import mcsv.pedidos.domain.model.EstadoPedido;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,8 +43,57 @@ public class PedidoEntity {
     @Column(name = "total", nullable = false, precision = 10, scale = 2)
     private BigDecimal total;
 
+    @Column(name = "peso_estimado_kg", precision = 10, scale = 3)
+    private BigDecimal pesoEstimadoKg;
+
+    @Column(name = "peso_real_kg", precision = 10, scale = 3)
+    private BigDecimal pesoRealKg;
+
+    @Column(name = "precio_estimado", precision = 12, scale = 2)
+    private BigDecimal precioEstimado;
+
+    @Column(name = "precio_final", precision = 12, scale = 2)
+    private BigDecimal precioFinal;
+
+    @Column(name = "precio_por_carga", precision = 12, scale = 2)
+    private BigDecimal precioPorCarga;
+
+    @Column(name = "cargas_estimadas")
+    private Integer cargasEstimadas;
+
+    @Column(name = "cargas_reales")
+    private Integer cargasReales;
+
+    @Column(name = "observaciones_cliente", length = 1000)
+    private String observacionesCliente;
+
+    @Column(name = "observaciones_internas", length = 1000)
+    private String observacionesInternas;
+
+    @Column(name = "fecha_creacion", nullable = false, updatable = false)
+    private LocalDateTime fechaCreacion;
+
+    @Column(name = "fecha_actualizacion", nullable = false)
+    private LocalDateTime fechaActualizacion;
+
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<DetallePedidoEntity> detallePedido = new ArrayList<>();
+
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<PedidoServicioEntity> servicios = new ArrayList<>();
+
+    @PrePersist
+    void prePersist() {
+        LocalDateTime ahora = LocalDateTime.now();
+        fechaCreacion = fechaCreacion == null ? ahora : fechaCreacion;
+        fechaActualizacion = ahora;
+    }
+
+    @PreUpdate
+    void preUpdate() {
+        fechaActualizacion = LocalDateTime.now();
+    }
 
 }

@@ -112,13 +112,13 @@ export default function PerfilPage() {
 
   if (!user) {
     return (
-      <main className="flex min-h-screen w-full items-center justify-center bg-[#F5EEDC] px-6 text-[#6B4F3E]">
+      <main className="flex min-h-screen w-full items-center justify-center bg-[#FFFFFF] px-6 text-[#111827]">
         <section className="rounded-3xl bg-white p-8 text-center shadow-xl">
           <h1 className="text-2xl font-bold">No has iniciado sesión</h1>
 
           <Link
             to="/login"
-            className="mt-6 inline-flex rounded-full bg-[#6B4F3E] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#5A4334]"
+            className="mt-6 inline-flex rounded-full bg-[#1D4ED8] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#1E40AF]"
           >
             Iniciar sesión
           </Link>
@@ -128,17 +128,20 @@ export default function PerfilPage() {
   }
 
   return (
-    <main className="min-h-screen w-full bg-[#F5EEDC] text-[#6B4F3E]">
-      <header className="fixed left-0 top-0 z-50 w-full bg-[#6B4F3E] shadow-md">
+    <main className="min-h-screen w-full bg-[#FFFFFF] text-[#111827]">
+      <header className="fixed left-0 top-0 z-50 w-full border-b border-[#DBEAFE] bg-white/95 shadow-md backdrop-blur-md">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-8 py-4">
-          <Link to="/" className="text-xl font-bold text-white">
+          <Link
+            to="/"
+            className="text-xl font-bold text-[#111827] transition hover:text-[#2563EB]"
+          >
             LavaClean
           </Link>
 
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-sm font-medium text-white/90 transition hover:text-white"
+            className="flex items-center gap-2 text-sm font-medium text-[#111827] transition hover:text-[#2563EB]"
           >
             <ArrowLeft size={17} />
             Volver
@@ -153,13 +156,13 @@ export default function PerfilPage() {
         >
           <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#6B4F3E] text-[#F8EFD8]">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#1D4ED8] text-[#EFF6FF]">
                 <User size={28} />
               </div>
 
               <div>
-                <h1 className="text-3xl font-bold text-[#6B4F3E]">Mis datos</h1>
-                <p className="mt-1 text-sm text-[#9A7C5F]">
+                <h1 className="text-3xl font-bold text-[#111827]">Mis datos</h1>
+                <p className="mt-1 text-sm text-[#64748B]">
                   Revisa y actualiza tu información personal.
                 </p>
               </div>
@@ -173,7 +176,7 @@ export default function PerfilPage() {
                   setErrorMessage("");
                   setSuccessMessage("");
                 }}
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#6B4F3E] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#5A4334]"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#1D4ED8] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#1E40AF]"
               >
                 <Pencil size={17} />
                 Editar datos
@@ -182,7 +185,7 @@ export default function PerfilPage() {
               <button
                 type="button"
                 onClick={handleCancelEdit}
-                className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#D8C7AF] px-5 py-3 text-sm font-bold text-[#6B4F3E] transition hover:bg-[#F5EEDC]"
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#BFDBFE] px-5 py-3 text-sm font-bold text-[#111827] transition hover:bg-[#EFF6FF]"
               >
                 <X size={17} />
                 Cancelar
@@ -197,7 +200,7 @@ export default function PerfilPage() {
           )}
 
           {successMessage && (
-            <p className="mb-6 rounded-xl bg-green-100 px-5 py-4 text-sm font-semibold text-green-700">
+            <p className="mb-6 rounded-xl bg-blue-100 px-5 py-4 text-sm font-semibold text-blue-700">
               {successMessage}
             </p>
           )}
@@ -245,7 +248,7 @@ export default function PerfilPage() {
             <button
               type="submit"
               disabled={isSaving}
-              className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#6B4F3E] px-5 py-4 text-sm font-bold text-white transition hover:bg-[#5A4334] disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#1D4ED8] px-5 py-4 text-sm font-bold text-white transition hover:bg-[#1E40AF] disabled:cursor-not-allowed disabled:opacity-60"
             >
               <Check size={18} />
               {isSaving ? "Guardando..." : "Guardar cambios"}
@@ -274,7 +277,7 @@ function ProfileInput({
 }: ProfileInputProps) {
   return (
     <div>
-      <label className="mb-2 block text-sm font-bold text-[#7A6252]">
+      <label className="mb-2 block text-sm font-bold text-[#1E3A8A]">
         {label}
       </label>
 
@@ -286,8 +289,8 @@ function ProfileInput({
         required
         className={`w-full rounded-lg border px-4 py-3 text-sm outline-none transition ${
           disabled
-            ? "border-[#E5D8C5] bg-[#F8F5EE] text-[#8A7161]"
-            : "border-[#D8C7AF] bg-[#F5EEDC] text-[#6B4F3E] focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+            ? "border-[#DBEAFE] bg-[#EFF6FF] text-[#475569]"
+            : "border-[#BFDBFE] bg-[#FFFFFF] text-[#111827] focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
         }`}
       />
     </div>

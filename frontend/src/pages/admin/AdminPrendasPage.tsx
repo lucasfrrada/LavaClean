@@ -12,6 +12,7 @@ import type {Prenda} from "../../types/pedido";
 const emptyForm = {
   nombrePrenda: "",
   categoria: "",
+  pesoReferenciaKg: 0.1,
 };
 
 export default function AdminPrendasPage() {
@@ -77,6 +78,7 @@ export default function AdminPrendasPage() {
     setForm({
       nombrePrenda: prenda.nombrePrenda,
       categoria: prenda.categoria,
+      pesoReferenciaKg: Number(prenda.pesoReferenciaKg ?? 0),
     });
   };
 
@@ -103,10 +105,10 @@ export default function AdminPrendasPage() {
   return (
     <section>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-[#6B4F3E]">
+        <h1 className="text-3xl font-bold text-[#111827]">
           Gestión de prendas
         </h1>
-        <p className="mt-2 text-sm text-[#9A7C5F]">
+        <p className="mt-2 text-sm text-[#64748B]">
           Crea, edita y administra las prendas disponibles para los pedidos.
         </p>
       </div>
@@ -117,7 +119,7 @@ export default function AdminPrendasPage() {
           className="rounded-3xl bg-white p-6 shadow-xl"
         >
           <div className="mb-5 flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#F5EEDC] text-[#6B4F3E]">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FFFFFF] text-[#111827]">
               <Shirt size={22} />
             </div>
 
@@ -125,7 +127,7 @@ export default function AdminPrendasPage() {
               <h2 className="text-xl font-bold">
                 {editingPrenda ? "Editar prenda" : "Nueva prenda"}
               </h2>
-              <p className="text-sm text-[#9A7C5F]">
+              <p className="text-sm text-[#64748B]">
                 Completa los datos de la prenda.
               </p>
             </div>
@@ -140,7 +142,7 @@ export default function AdminPrendasPage() {
                 setForm({...form, nombrePrenda: event.target.value})
               }
               required
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+              className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
             />
 
             <input
@@ -151,7 +153,20 @@ export default function AdminPrendasPage() {
                 setForm({...form, categoria: event.target.value})
               }
               required
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+              className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
+            />
+
+            <input
+              type="number"
+              min="0.001"
+              step="0.001"
+              placeholder="Peso de referencia (kg)"
+              value={form.pesoReferenciaKg}
+              onChange={(event) =>
+                setForm({...form, pesoReferenciaKg: Number(event.target.value)})
+              }
+              required
+              className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
             />
 
             {errorMessage && (
@@ -164,7 +179,7 @@ export default function AdminPrendasPage() {
               <button
                 type="submit"
                 disabled={isSaving}
-                className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#6B4F3E] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#5A4334] disabled:opacity-60"
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#1D4ED8] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#1E40AF] disabled:opacity-60"
               >
                 <Plus size={18} />
                 {isSaving
@@ -178,7 +193,7 @@ export default function AdminPrendasPage() {
                 <button
                   type="button"
                   onClick={handleCancelEdit}
-                  className="inline-flex items-center justify-center rounded-lg border border-[#D8C7AF] px-4 py-3 text-sm font-bold text-[#6B4F3E] transition hover:bg-[#F5EEDC]"
+                  className="inline-flex items-center justify-center rounded-lg border border-[#BFDBFE] px-4 py-3 text-sm font-bold text-[#111827] transition hover:bg-[#EFF6FF]"
                 >
                   <X size={18} />
                 </button>
@@ -189,28 +204,29 @@ export default function AdminPrendasPage() {
 
         <section className="rounded-3xl bg-white p-6 shadow-xl">
           <div className="mb-5">
-            <h2 className="text-xl font-bold text-[#6B4F3E]">
+            <h2 className="text-xl font-bold text-[#111827]">
               Listado de prendas
             </h2>
-            <p className="mt-1 text-sm text-[#9A7C5F]">
+            <p className="mt-1 text-sm text-[#64748B]">
               Total registradas: {prendas.length}
             </p>
           </div>
 
           {isLoading ? (
-            <p className="text-sm text-[#9A7C5F]">Cargando prendas...</p>
+            <p className="text-sm text-[#64748B]">Cargando prendas...</p>
           ) : prendas.length === 0 ? (
-            <p className="rounded-2xl bg-[#F8F5EE] p-5 text-sm text-[#9A7C5F]">
+            <p className="rounded-2xl bg-[#EFF6FF] p-5 text-sm text-[#64748B]">
               No hay prendas registradas todavía.
             </p>
           ) : (
-            <div className="overflow-hidden rounded-2xl border border-[#E5D8C5]">
+            <div className="overflow-hidden rounded-2xl border border-[#DBEAFE]">
               <table className="w-full text-left text-sm">
-                <thead className="bg-[#F5EEDC] text-[#6B4F3E]">
+                <thead className="bg-[#FFFFFF] text-[#111827]">
                   <tr>
                     <th className="px-5 py-4">ID</th>
                     <th className="px-5 py-4">Nombre prenda</th>
                     <th className="px-5 py-4">Categoría</th>
+                    <th className="px-5 py-4">Peso ref.</th>
                     <th className="px-5 py-4 text-right">Acciones</th>
                   </tr>
                 </thead>
@@ -219,7 +235,7 @@ export default function AdminPrendasPage() {
                   {prendas.map((prenda) => (
                     <tr
                       key={prenda.idPrenda}
-                      className="border-t border-[#E5D8C5] hover:bg-[#F8F5EE]"
+                      className="border-t border-[#DBEAFE] hover:bg-[#EFF6FF]"
                     >
                       <td className="px-5 py-4 font-bold">
                         #{prenda.idPrenda}
@@ -227,15 +243,18 @@ export default function AdminPrendasPage() {
                       <td className="px-5 py-4 font-bold">
                         {prenda.nombrePrenda}
                       </td>
-                      <td className="px-5 py-4 text-[#8A7161]">
+                      <td className="px-5 py-4 text-[#475569]">
                         {prenda.categoria}
+                      </td>
+                      <td className="px-5 py-4 text-[#475569]">
+                        {Number(prenda.pesoReferenciaKg ?? 0).toLocaleString("es-CL")} kg
                       </td>
                       <td className="px-5 py-4">
                         <div className="flex justify-end gap-2">
                           <button
                             type="button"
                             onClick={() => handleEdit(prenda)}
-                            className="rounded-lg bg-[#F5EEDC] p-2 text-[#6B4F3E] transition hover:bg-[#E8D8BE]"
+                            className="rounded-lg bg-[#FFFFFF] p-2 text-[#111827] transition hover:bg-[#DBEAFE]"
                           >
                             <Pencil size={17} />
                           </button>

@@ -6,6 +6,45 @@ type RequestOptions = {
   token?: string | null;
 };
 
+const MAX_PUBLIC_ERROR_LENGTH = 300;
+
+function extractPublicErrorMessage(
+  responseText: string,
+  contentType: string | null,
+  status: number,
+  statusText: string,
+) {
+  const fallback = `Error ${status}${statusText ? `: ${statusText}` : ""}`;
+  let candidate = "";
+
+  if (contentType?.includes("json")) {
+    try {
+      const body = JSON.parse(responseText) as Record<string, unknown>;
+      candidate = [body.detail, body.message, body.error]
+        .find((value): value is string => typeof value === "string") ?? "";
+    } catch {
+      return fallback;
+    }
+  } else if (contentType?.startsWith("text/plain")) {
+    candidate = responseText;
+  }
+
+  const normalized = candidate.replace(/\s+/g, " ").trim();
+  const looksSensitive =
+    /<\/?[a-z][\s\S]*>/i.test(normalized) ||
+    /(?:stacktrace|exception|\bat\s+[\w.$]+\([^)]*:\d+\))/i.test(normalized);
+
+  if (!normalized || normalized.length > MAX_PUBLIC_ERROR_LENGTH || looksSensitive) {
+    return fallback;
+  }
+
+  return normalized;
+}
+
+export function getErrorMessage(error: unknown, fallback: string) {
+  return error instanceof Error && error.message.trim() ? error.message : fallback;
+}
+
 export async function apiClient<T>(
   baseUrl: string,
   endpoint: string,
@@ -35,6 +74,12 @@ export async function apiClient<T>(
 
   const contentType = response.headers.get("content-type");
   const responseText = await response.text();
+  const publicErrorMessage = extractPublicErrorMessage(
+    responseText,
+    contentType,
+    response.status,
+    response.statusText,
+  );
 
   if (response.status === 401 || response.status === 403) {
     if (token) {
@@ -46,7 +91,7 @@ export async function apiClient<T>(
       throw new Error("Sesión expirada o no autorizada.");
     }
 
-    throw new Error(responseText || "Credenciales incorrectas.");
+    throw new Error(publicErrorMessage || "Credenciales incorrectas.");
   }
 
   if (!response.ok) {
@@ -58,7 +103,7 @@ export async function apiClient<T>(
       responseText,
     });
 
-    throw new Error(responseText || `Error ${response.status}`);
+    throw new Error(publicErrorMessage);
   }
 
   if (!responseText) {

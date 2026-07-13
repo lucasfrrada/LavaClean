@@ -1,17 +1,27 @@
-import {useEffect, useState} from "react";
-import {Pencil, Plus, Trash2, WashingMachine, X} from "lucide-react";
-import {useAuth} from "../../context/AuthContext";
+import { useEffect, useState } from "react";
+import { Pencil, Plus, Trash2, WashingMachine, X } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
 import {
   createServicioRequest,
   deleteServicioRequest,
   getServiciosRequest,
   updateServicioRequest,
 } from "../../api/servicioService";
-import type {Servicio} from "../../types/pedido";
+import type {
+  ModalidadCobro,
+  Servicio,
+  ServicioOpcionRequest,
+  TipoServicio,
+} from "../../types/pedido";
 
 const emptyForm = {
   tipoServicio: "",
-  precio: 0,
+  precioPorCarga: 0,
+  descripcion: "",
+  tipo: "BASE" as TipoServicio,
+  modalidadCobro: "POR_CARGA" as ModalidadCobro,
+  activo: true,
+  opciones: [] as ServicioOpcionRequest[],
 };
 
 function formatCurrency(value: number) {
@@ -22,7 +32,7 @@ function formatCurrency(value: number) {
 }
 
 export default function AdminServiciosPage() {
-  const {token} = useAuth();
+  const { token } = useAuth();
 
   const [servicios, setServicios] = useState<Servicio[]>([]);
   const [form, setForm] = useState(emptyForm);
@@ -64,7 +74,13 @@ export default function AdminServiciosPage() {
 
       const payload = {
         tipoServicio: form.tipoServicio,
-        precio: Number(form.precio),
+        precioPorCarga: Number(form.precioPorCarga),
+        precio: Number(form.precioPorCarga),
+        descripcion: form.descripcion,
+        tipo: form.tipo,
+        modalidadCobro: form.modalidadCobro,
+        activo: form.activo,
+        opciones: form.modalidadCobro === "POR_OPCION" ? form.opciones : [],
       };
 
       if (editingServicio) {
@@ -88,7 +104,19 @@ export default function AdminServiciosPage() {
     setEditingServicio(servicio);
     setForm({
       tipoServicio: servicio.tipoServicio,
-      precio: servicio.precio,
+      precioPorCarga: Number(servicio.precioPorCarga ?? servicio.precio ?? 0),
+      descripcion: servicio.descripcion ?? "",
+      tipo: servicio.tipo ?? "BASE",
+      modalidadCobro: servicio.modalidadCobro ?? "POR_CARGA",
+      activo: servicio.activo ?? true,
+      opciones: (servicio.opciones ?? []).map(
+        ({ codigo, nombre, precio, activo }) => ({
+          codigo,
+          nombre,
+          precio,
+          activo,
+        }),
+      ),
     });
   };
 
@@ -115,10 +143,10 @@ export default function AdminServiciosPage() {
   return (
     <section>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-[#6B4F3E]">
+        <h1 className="text-3xl font-bold text-[#111827]">
           Gestión de servicios
         </h1>
-        <p className="mt-2 text-sm text-[#9A7C5F]">
+        <p className="mt-2 text-sm text-[#64748B]">
           Crea, edita y administra los servicios disponibles para los pedidos.
         </p>
       </div>
@@ -129,7 +157,7 @@ export default function AdminServiciosPage() {
           className="rounded-3xl bg-white p-6 shadow-xl"
         >
           <div className="mb-5 flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#F5EEDC] text-[#6B4F3E]">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FFFFFF] text-[#111827]">
               <WashingMachine size={22} />
             </div>
 
@@ -137,7 +165,7 @@ export default function AdminServiciosPage() {
               <h2 className="text-xl font-bold">
                 {editingServicio ? "Editar servicio" : "Nuevo servicio"}
               </h2>
-              <p className="text-sm text-[#9A7C5F]">
+              <p className="text-sm text-[#64748B]">
                 Completa los datos del servicio.
               </p>
             </div>
@@ -149,23 +177,150 @@ export default function AdminServiciosPage() {
               placeholder="Tipo de servicio"
               value={form.tipoServicio}
               onChange={(event) =>
-                setForm({...form, tipoServicio: event.target.value})
+                setForm({ ...form, tipoServicio: event.target.value })
               }
               required
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+              className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
             />
 
             <input
               type="number"
-              placeholder="Precio"
-              value={form.precio}
+              placeholder="Precio por carga de 5 kg"
+              value={form.precioPorCarga}
               onChange={(event) =>
-                setForm({...form, precio: Number(event.target.value)})
+                setForm({ ...form, precioPorCarga: Number(event.target.value) })
               }
               min={0}
               required
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+              className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
             />
+
+            <textarea
+              value={form.descripcion}
+              onChange={(event) =>
+                setForm({ ...form, descripcion: event.target.value })
+              }
+              placeholder="Descripción"
+              rows={3}
+              className="w-full resize-none rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm"
+            />
+
+            <div className="grid grid-cols-2 gap-3">
+              <select
+                value={form.tipo}
+                onChange={(event) =>
+                  setForm({ ...form, tipo: event.target.value as TipoServicio })
+                }
+                className="rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm"
+              >
+                <option value="BASE">Servicio base</option>
+                <option value="EXTRA">Servicio extra</option>
+              </select>
+              <select
+                value={form.modalidadCobro}
+                onChange={(event) =>
+                  setForm({
+                    ...form,
+                    modalidadCobro: event.target.value as ModalidadCobro,
+                    opciones: [],
+                  })
+                }
+                className="rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm"
+              >
+                <option value="POR_CARGA">Por carga</option>
+                <option value="FIJO">Precio fijo</option>
+                <option value="POR_OPCION">Según opción</option>
+              </select>
+            </div>
+
+            {form.modalidadCobro === "POR_OPCION" && (
+              <div className="space-y-3 rounded-xl border border-[#BFDBFE] p-3">
+                <p className="text-sm font-bold">Opciones o variantes</p>
+                {form.opciones.map((opcion, index) => (
+                  <div key={index} className="grid grid-cols-3 gap-2">
+                    <input
+                      value={opcion.codigo}
+                      onChange={(event) =>
+                        setForm({
+                          ...form,
+                          opciones: form.opciones.map((item, i) =>
+                            i === index
+                              ? {
+                                  ...item,
+                                  codigo: event.target.value.toUpperCase(),
+                                }
+                              : item,
+                          ),
+                        })
+                      }
+                      placeholder="Código"
+                      required
+                      className="rounded border px-2 py-2 text-xs"
+                    />
+                    <input
+                      value={opcion.nombre}
+                      onChange={(event) =>
+                        setForm({
+                          ...form,
+                          opciones: form.opciones.map((item, i) =>
+                            i === index
+                              ? { ...item, nombre: event.target.value }
+                              : item,
+                          ),
+                        })
+                      }
+                      placeholder="Nombre"
+                      required
+                      className="rounded border px-2 py-2 text-xs"
+                    />
+                    <input
+                      type="number"
+                      min={0}
+                      value={opcion.precio}
+                      onChange={(event) =>
+                        setForm({
+                          ...form,
+                          opciones: form.opciones.map((item, i) =>
+                            i === index
+                              ? { ...item, precio: Number(event.target.value) }
+                              : item,
+                          ),
+                        })
+                      }
+                      placeholder="Precio"
+                      required
+                      className="rounded border px-2 py-2 text-xs"
+                    />
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() =>
+                    setForm({
+                      ...form,
+                      opciones: [
+                        ...form.opciones,
+                        { codigo: "", nombre: "", precio: 0, activo: true },
+                      ],
+                    })
+                  }
+                  className="text-xs font-bold text-[#111827]"
+                >
+                  + Agregar opción
+                </button>
+              </div>
+            )}
+
+            <label className="flex items-center gap-2 text-sm font-semibold">
+              <input
+                type="checkbox"
+                checked={form.activo}
+                onChange={(event) =>
+                  setForm({ ...form, activo: event.target.checked })
+                }
+              />
+              Servicio activo
+            </label>
 
             {errorMessage && (
               <p className="rounded-lg bg-red-100 px-4 py-3 text-sm font-semibold text-red-700">
@@ -177,7 +332,7 @@ export default function AdminServiciosPage() {
               <button
                 type="submit"
                 disabled={isSaving}
-                className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#6B4F3E] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#5A4334] disabled:opacity-60"
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#1D4ED8] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#1E40AF] disabled:opacity-60"
               >
                 <Plus size={18} />
                 {isSaving
@@ -191,7 +346,7 @@ export default function AdminServiciosPage() {
                 <button
                   type="button"
                   onClick={handleCancelEdit}
-                  className="inline-flex items-center justify-center rounded-lg border border-[#D8C7AF] px-4 py-3 text-sm font-bold text-[#6B4F3E] transition hover:bg-[#F5EEDC]"
+                  className="inline-flex items-center justify-center rounded-lg border border-[#BFDBFE] px-4 py-3 text-sm font-bold text-[#111827] transition hover:bg-[#EFF6FF]"
                 >
                   <X size={18} />
                 </button>
@@ -202,27 +357,28 @@ export default function AdminServiciosPage() {
 
         <section className="rounded-3xl bg-white p-6 shadow-xl">
           <div className="mb-5">
-            <h2 className="text-xl font-bold text-[#6B4F3E]">
+            <h2 className="text-xl font-bold text-[#111827]">
               Listado de servicios
             </h2>
-            <p className="mt-1 text-sm text-[#9A7C5F]">
+            <p className="mt-1 text-sm text-[#64748B]">
               Total registrados: {servicios.length}
             </p>
           </div>
 
           {isLoading ? (
-            <p className="text-sm text-[#9A7C5F]">Cargando servicios...</p>
+            <p className="text-sm text-[#64748B]">Cargando servicios...</p>
           ) : servicios.length === 0 ? (
-            <p className="rounded-2xl bg-[#F8F5EE] p-5 text-sm text-[#9A7C5F]">
+            <p className="rounded-2xl bg-[#EFF6FF] p-5 text-sm text-[#64748B]">
               No hay servicios registrados todavía.
             </p>
           ) : (
-            <div className="overflow-hidden rounded-2xl border border-[#E5D8C5]">
+            <div className="overflow-hidden rounded-2xl border border-[#DBEAFE]">
               <table className="w-full text-left text-sm">
-                <thead className="bg-[#F5EEDC] text-[#6B4F3E]">
+                <thead className="bg-[#FFFFFF] text-[#111827]">
                   <tr>
                     <th className="px-5 py-4">ID</th>
                     <th className="px-5 py-4">Tipo servicio</th>
+                    <th className="px-5 py-4">Clasificación</th>
                     <th className="px-5 py-4">Precio</th>
                     <th className="px-5 py-4 text-right">Acciones</th>
                   </tr>
@@ -232,7 +388,7 @@ export default function AdminServiciosPage() {
                   {servicios.map((servicio) => (
                     <tr
                       key={servicio.idServicio}
-                      className="border-t border-[#E5D8C5] hover:bg-[#F8F5EE]"
+                      className="border-t border-[#DBEAFE] hover:bg-[#EFF6FF]"
                     >
                       <td className="px-5 py-4 font-bold">
                         #{servicio.idServicio}
@@ -242,8 +398,20 @@ export default function AdminServiciosPage() {
                         {servicio.tipoServicio}
                       </td>
 
+                      <td className="px-5 py-4 text-xs font-bold">
+                        {servicio.tipo ?? "BASE"} ·{" "}
+                        {servicio.modalidadCobro ?? "POR_CARGA"}
+                        {!servicio.activo && (
+                          <span className="block text-red-600">Inactivo</span>
+                        )}
+                      </td>
+
                       <td className="px-5 py-4 font-bold">
-                        {formatCurrency(servicio.precio)}
+                        {formatCurrency(
+                          Number(
+                            servicio.precioPorCarga ?? servicio.precio ?? 0,
+                          ),
+                        )}
                       </td>
 
                       <td className="px-5 py-4">
@@ -251,7 +419,7 @@ export default function AdminServiciosPage() {
                           <button
                             type="button"
                             onClick={() => handleEdit(servicio)}
-                            className="rounded-lg bg-[#F5EEDC] p-2 text-[#6B4F3E] transition hover:bg-[#E8D8BE]"
+                            className="rounded-lg bg-[#FFFFFF] p-2 text-[#111827] transition hover:bg-[#DBEAFE]"
                           >
                             <Pencil size={17} />
                           </button>

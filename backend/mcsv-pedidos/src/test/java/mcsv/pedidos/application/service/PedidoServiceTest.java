@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import mcsv.pedidos.api.dto.request.Pedido.ActualizarEstadoPedidoRequest;
 import mcsv.pedidos.api.dto.request.Pedido.CrearDetallePedidoRequest;
 import mcsv.pedidos.api.dto.request.Pedido.CrearPedidoRequest;
+import mcsv.pedidos.api.dto.request.Pedido.ConfirmarPesoRealRequest;
 import mcsv.pedidos.api.dto.response.Pedido.PedidoResponse;
 import mcsv.pedidos.api.dto.response.UsuarioResponseRest;
 import mcsv.pedidos.domain.model.EstadoPedido;
@@ -64,12 +65,13 @@ class PedidoServiceTest {
                 .idPrenda(1L)
                 .nombrePrenda("Camisa")
                 .categoria("Ropa")
+                .pesoReferenciaKg(new BigDecimal("0.2"))
                 .build();
 
         servicio = ServicioEntity.builder()
                 .idServicio(1L)
                 .tipoServicio("Lavado")
-                .precio(new BigDecimal("3000"))
+                .precio(new BigDecimal("5000"))
                 .build();
 
         usuario = new UsuarioResponseRest();
@@ -112,7 +114,12 @@ class PedidoServiceTest {
         assertThat(response.getIdPedido()).isEqualTo(1L);
         assertThat(response.getIdUsuario()).isEqualTo(1L);
         assertThat(response.getEstado()).isEqualTo("REVISION");
-        assertThat(response.getTotal()).isEqualByComparingTo("6000");
+        assertThat(response.getPesoEstimadoKg()).isEqualByComparingTo("0.4");
+        assertThat(response.getPrecioEstimado()).isEqualByComparingTo("5000");
+        assertThat(response.getPrecioPorCarga()).isEqualByComparingTo("5000");
+        assertThat(response.getCargasEstimadas()).isEqualTo(1);
+        assertThat(response.getPrecioFinal()).isNull();
+        assertThat(response.getTotal()).isEqualByComparingTo("5000");
 
         ArgumentCaptor<PedidoEntity> pedidoCaptor = ArgumentCaptor.forClass(PedidoEntity.class);
         verify(pedidoRepository).save(pedidoCaptor.capture());
@@ -120,11 +127,13 @@ class PedidoServiceTest {
         PedidoEntity pedidoGuardado = pedidoCaptor.getValue();
 
         assertThat(pedidoGuardado.getEstado()).isEqualTo(EstadoPedido.REVISION);
-        assertThat(pedidoGuardado.getTotal()).isEqualByComparingTo("6000");
+        assertThat(pedidoGuardado.getTotal()).isEqualByComparingTo("5000");
+        assertThat(pedidoGuardado.getPesoEstimadoKg()).isEqualByComparingTo("0.4");
         assertThat(pedidoGuardado.getDetallePedido()).hasSize(1);
         assertThat(pedidoGuardado.getDetallePedido().get(0).getCantidad()).isEqualTo(2);
-        assertThat(pedidoGuardado.getDetallePedido().get(0).getPrecioUnitario()).isEqualByComparingTo("3000");
-        assertThat(pedidoGuardado.getDetallePedido().get(0).getSubtotal()).isEqualByComparingTo("6000");
+        assertThat(pedidoGuardado.getDetallePedido().get(0).getPesoReferenciaKg()).isEqualByComparingTo("0.2");
+        assertThat(pedidoGuardado.getDetallePedido().get(0).getPesoEstimadoKg()).isEqualByComparingTo("0.4");
+        assertThat(pedidoGuardado.getDetallePedido().get(0).getPrecioPorCarga()).isEqualByComparingTo("5000");
     }
 
     @Test
@@ -181,7 +190,7 @@ class PedidoServiceTest {
         PedidoEntity pedido = PedidoEntity.builder()
                 .idPedido(1L)
                 .idUsuario(1L)
-                .estado(EstadoPedido.REVISION)
+                .estado(EstadoPedido.CONFIRMADO)
                 .fecha_llegada(LocalDate.of(2026, 6, 18))
                 .fecha_entrega(LocalDate.of(2026, 6, 19))
                 .total(new BigDecimal("6000"))
@@ -189,16 +198,47 @@ class PedidoServiceTest {
                 .build();
 
         ActualizarEstadoPedidoRequest request = new ActualizarEstadoPedidoRequest();
-        request.setEstado(EstadoPedido.CONFIRMADO);
+        request.setEstado(EstadoPedido.EN_PROCESO);
 
         when(pedidoRepository.findById(1L)).thenReturn(Optional.of(pedido));
         when(pedidoRepository.save(any(PedidoEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         PedidoResponse response = pedidoService.actualizarEstado(1L, request);
 
-        assertThat(response.getEstado()).isEqualTo("CONFIRMADO");
+        assertThat(response.getEstado()).isEqualTo("EN_PROCESO");
 
         verify(pedidoRepository).save(pedido);
+    }
+
+    @Test
+    void deberiaConfirmarPesoRealRecalcularPrecioFinalYNotificar() {
+        PedidoEntity pedido = PedidoEntity.builder()
+                .idPedido(1L)
+                .idUsuario(1L)
+                .estado(EstadoPedido.REVISION)
+                .pesoEstimadoKg(new BigDecimal("5.6"))
+                .precioEstimado(new BigDecimal("10000"))
+                .precioPorCarga(new BigDecimal("5000"))
+                .cargasEstimadas(2)
+                .total(new BigDecimal("10000"))
+                .detallePedido(List.of())
+                .build();
+
+        ConfirmarPesoRealRequest request = new ConfirmarPesoRealRequest();
+        request.setPesoRealKg(new BigDecimal("5.5"));
+
+        when(pedidoRepository.findById(1L)).thenReturn(Optional.of(pedido));
+        when(pedidoRepository.save(any(PedidoEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        PedidoResponse response = pedidoService.confirmarPesoReal(1L, request);
+
+        assertThat(response.getEstado()).isEqualTo("CONFIRMADO");
+        assertThat(response.getPesoRealKg()).isEqualByComparingTo("5.5");
+        assertThat(response.getPrecioEstimado()).isEqualByComparingTo("10000");
+        assertThat(response.getCargasReales()).isEqualTo(2);
+        assertThat(response.getPrecioFinal()).isEqualByComparingTo("10000");
+        assertThat(response.getTotal()).isEqualByComparingTo("10000");
+        verify(pedidoEventProducer).publicarCambioEstado(any());
     }
 
     @Test

@@ -29,6 +29,7 @@ public class PrendaService {
         PrendaEntity prenda = PrendaEntity.builder()
                 .nombrePrenda(request.getNombrePrenda())
                 .categoria(request.getCategoria())
+                .pesoReferenciaKg(request.getPesoReferenciaKg())
                 .build();
 
         PrendaEntity guardada = prendaRepository.save(prenda);
@@ -59,6 +60,7 @@ public class PrendaService {
 
         prenda.setNombrePrenda(request.getNombrePrenda());
         prenda.setCategoria(request.getCategoria());
+        prenda.setPesoReferenciaKg(request.getPesoReferenciaKg());
 
         PrendaEntity actualizada = prendaRepository.save(prenda);
 

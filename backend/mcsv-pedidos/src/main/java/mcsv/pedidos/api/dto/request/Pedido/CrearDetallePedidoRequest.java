@@ -10,7 +10,6 @@ public class CrearDetallePedidoRequest {
     @NotNull
     private Long idPrenda;
 
-    @NotNull
     private Long idServicio;
 
     @NotNull
