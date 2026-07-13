@@ -22,7 +22,9 @@ public class PedidoEstadoConsumer {
         NotificacionRequest request = new NotificacionRequest();
         request.setIdPedido(evento.idPedido());
         request.setIdUsuario(evento.idUsuario());
-        request.setTipoNotificacion(evento.tipoNotificacion());
+
+        request.setTipoNotificacion("ESTADO_PEDIDO_" + evento.estado());
+
         request.setMensaje(evento.mensaje());
 
         notificacionService.crearYEnviarNotificacion(request);

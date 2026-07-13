@@ -7,6 +7,7 @@ import mcsv.mcsv_notificacion.api.dto.request.NotificacionRequest;
 import mcsv.mcsv_notificacion.api.dto.response.NotificacionResponse;
 import mcsv.mcsv_notificacion.application.mapper.NotificacionMapper;
 import mcsv.mcsv_notificacion.domain.EstadoNotificacion;
+import mcsv.mcsv_notificacion.infrastructure.brevo.BrevoTemplateEmailService;
 import mcsv.mcsv_notificacion.infrastructure.client.UsuarioClient;
 import mcsv.mcsv_notificacion.infrastructure.mail.EmailSenderComponent;
 import mcsv.mcsv_notificacion.infrastructure.persistence.entity.NotificacionEntity;
@@ -24,8 +25,8 @@ public class NotificacionServiceImpl implements NotificacionService {
 
     private final NotificacionRepository notificacionRepository;
     private final UsuarioClient usuarioClient;
-    private final EmailSenderComponent emailSender;
     private final NotificacionMapper notificacionMapper;
+    private final BrevoTemplateEmailService brevoTemplateEmailService;
 
     @Override
     public NotificacionResponse crearYEnviarNotificacion(NotificacionRequest request) {
@@ -84,25 +85,41 @@ public class NotificacionServiceImpl implements NotificacionService {
     // --- METODOS AUXILIARES ---
     private void procesarEnvio(NotificacionEntity notificacion) {
         try {
-            // Rescatar Email usando Feign
+            // Rescatar usuario usando Feign
             UsuarioDTO usuario = usuarioClient.obtenerUsuarioPorId(notificacion.getIdUsuario());
 
-            // Enviar correo usando Brevo
-            String asunto = "Novedades en tu pedido LavaClean!";
-            emailSender.enviarCorreoTextoPlano(usuario.getCorreo(), asunto, notificacion.getMensaje());
+            // Enviar correo usando plantilla HTML de Brevo
+            brevoTemplateEmailService.enviarEstadoPedido(
+                    usuario.getCorreo(),
+                    usuario.getNombres(),
+                    notificacion.getIdPedido(),
+                    notificacion.getTipoNotificacion(),
+                    notificacion.getMensaje()
+            );
 
             // Si no explotó, se envió con éxito
             notificacion.setEstadoEnvio(EstadoNotificacion.ENVIADO);
             notificacion.setFechaEnvio(LocalDateTime.now());
 
-            log.info("Notificación con ID:{} enviada con éxito a {}", notificacion.getIdNotificacion(), usuario.getCorreo());
+            log.info(
+                    "Notificación con ID:{} enviada con éxito a {}",
+                    notificacion.getIdNotificacion(),
+                    usuario.getCorreo()
+            );
 
         } catch (Exception e) {
             notificacion.setEstadoEnvio(EstadoNotificacion.FALLIDO);
-            log.error("Fallo al enviar la notificación ID:{}. Causa: {}", notificacion.getIdNotificacion(), e.getMessage());
+
+            log.error(
+                    "Fallo al enviar la notificación ID:{}. Causa: {}",
+                    notificacion.getIdNotificacion(),
+                    e.getMessage()
+            );
         }
 
         notificacionRepository.save(notificacion);
     }
+
+
 
 }
