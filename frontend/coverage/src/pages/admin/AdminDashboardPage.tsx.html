@@ -738,7 +738,7 @@ export default function AdminDashboardPage() {
   const pedidosActivos = useMemo(() =&gt; {
     return pedidos.filter(
       (pedido) =&gt;
-        pedido.estado === "PENDIENTE" || pedido.estado === "EN_PROCESO",
+        pedido.estado === "REVISION" || pedido.estado === "EN_PROCESO",
     ).length;
   }, [pedidos]);
 &nbsp;
@@ -787,11 +787,11 @@ export default function AdminDashboardPage() {
     &lt;section&gt;
       &lt;div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between"&gt;
         &lt;div&gt;
-          &lt;h1 className="text-3xl font-bold text-[#6B4F3E]"&gt;
+          &lt;h1 className="text-3xl font-bold text-[#111827]"&gt;
             Dashboard administrativo
           &lt;/h1&gt;
 &nbsp;
-          &lt;p className="mt-2 text-sm text-[#9A7C5F]"&gt;
+          &lt;p className="mt-2 text-sm text-[#64748B]"&gt;
             Resumen general de la operación de LavaClean.
           &lt;/p&gt;
         &lt;/div&gt;
@@ -800,7 +800,7 @@ export default function AdminDashboardPage() {
           type="button"
           onClick={loadDashboardData}
           disabled={isLoading}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-bold text-[#6B4F3E] shadow-md transition hover:bg-[#F8F5EE] disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-bold text-[#111827] shadow-md transition hover:bg-[#EFF6FF] disabled:cursor-not-allowed disabled:opacity-60"
         &gt;
           &lt;RefreshCcw size={17} /&gt;
           {isLoading ? "Actualizando..." : "Actualizar"}
@@ -842,28 +842,28 @@ export default function AdminDashboardPage() {
       &lt;section className="mt-8 rounded-3xl bg-white p-6 shadow-xl"&gt;
         &lt;div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between"&gt;
           &lt;div&gt;
-            &lt;h2 className="text-xl font-bold text-[#6B4F3E]"&gt;
+            &lt;h2 className="text-xl font-bold text-[#111827]"&gt;
               Pedidos recientes
             &lt;/h2&gt;
 &nbsp;
-            &lt;p className="mt-1 text-sm text-[#9A7C5F]"&gt;
+            &lt;p className="mt-1 text-sm text-[#64748B]"&gt;
               Últimos pedidos registrados en el sistema.
             &lt;/p&gt;
           &lt;/div&gt;
         &lt;/div&gt;
 &nbsp;
         {isLoading ? (
-          &lt;p className="mt-6 rounded-2xl bg-[#F8F5EE] p-5 text-sm text-[#9A7C5F]"&gt;
+          &lt;p className="mt-6 rounded-2xl bg-[#EFF6FF] p-5 text-sm text-[#64748B]"&gt;
             Cargando información...
           &lt;/p&gt;
         ) : pedidosRecientes.length === 0 ? (
-          &lt;p className="mt-6 rounded-2xl bg-[#F8F5EE] p-5 text-sm text-[#9A7C5F]"&gt;
+          &lt;p className="mt-6 rounded-2xl bg-[#EFF6FF] p-5 text-sm text-[#64748B]"&gt;
             No hay pedidos registrados todavía.
           &lt;/p&gt;
         ) : (
-          &lt;div className="mt-6 overflow-hidden rounded-2xl border border-[#E5D8C5]"&gt;
+          &lt;div className="mt-6 overflow-hidden rounded-2xl border border-[#DBEAFE]"&gt;
             &lt;table className="w-full text-left text-sm"&gt;
-              &lt;thead className="bg-[#F5EEDC] text-[#6B4F3E]"&gt;
+              &lt;thead className="bg-[#FFFFFF] text-[#111827]"&gt;
                 &lt;tr&gt;
                   &lt;th className="px-5 py-4"&gt;Pedido&lt;/th&gt;
                   &lt;th className="px-5 py-4"&gt;Usuario&lt;/th&gt;
@@ -878,7 +878,7 @@ export default function AdminDashboardPage() {
                 {pedidosRecientes.map((pedido) =&gt; (
                   &lt;tr
                     key={pedido.idPedido}
-                    className="border-t border-[#E5D8C5] transition hover:bg-[#F8F5EE]"
+                    className="border-t border-[#DBEAFE] transition hover:bg-[#EFF6FF]"
                   &gt;
                     &lt;td className="px-5 py-4 font-bold"&gt;#{pedido.idPedido}&lt;/td&gt;
 &nbsp;
@@ -925,11 +925,11 @@ function DashboardCard({title, value, icon: Icon}: DashboardCardProps) {
     &lt;article className="rounded-3xl bg-white p-6 shadow-xl"&gt;
       &lt;div className="flex items-center justify-between gap-4"&gt;
         &lt;div&gt;
-          &lt;p className="text-sm font-semibold text-[#9A7C5F]"&gt;{title}&lt;/p&gt;
-          &lt;h3 className="mt-2 text-3xl font-bold text-[#6B4F3E]"&gt;{value}&lt;/h3&gt;
+          &lt;p className="text-sm font-semibold text-[#64748B]"&gt;{title}&lt;/p&gt;
+          &lt;h3 className="mt-2 text-3xl font-bold text-[#111827]"&gt;{value}&lt;/h3&gt;
         &lt;/div&gt;
 &nbsp;
-        &lt;div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F5EEDC] text-[#6B4F3E]"&gt;
+        &lt;div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FFFFFF] text-[#111827]"&gt;
           &lt;Icon size={25} /&gt;
         &lt;/div&gt;
       &lt;/div&gt;
@@ -951,10 +951,10 @@ function getEstadoLabel(estado: string) {
 &nbsp;
 function getEstadoClass(estado: string) {
   const classes: Record&lt;string, string&gt; = {
-    PENDIENTE: "bg-orange-100 text-orange-700",
-    EN_PROCESO: "bg-yellow-100 text-yellow-700",
+    PENDIENTE: "bg-sky-100 text-sky-700",
+    EN_PROCESO: "bg-cyan-100 text-cyan-700",
     COMPLETADO: "bg-blue-100 text-blue-700",
-    PAGADO: "bg-green-100 text-green-700",
+    PAGADO: "bg-blue-100 text-blue-700",
     CANCELADO: "bg-red-100 text-red-700",
   };
 &nbsp;
@@ -967,7 +967,7 @@ function getEstadoClass(estado: string) {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-06-20T00:53:05.808Z
+                at 2026-07-13T06:03:01.808Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

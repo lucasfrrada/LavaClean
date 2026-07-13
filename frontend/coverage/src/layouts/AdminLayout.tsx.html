@@ -229,7 +229,9 @@
 <a name='L164'></a><a href='#L164'>164</a>
 <a name='L165'></a><a href='#L165'>165</a>
 <a name='L166'></a><a href='#L166'>166</a>
-<a name='L167'></a><a href='#L167'>167</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L167'></a><a href='#L167'>167</a>
+<a name='L168'></a><a href='#L168'>168</a>
+<a name='L169'></a><a href='#L169'>169</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -328,6 +330,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -455,11 +459,11 @@ export default function <span class="fstat-no" title="function not covered" >Adm
   };
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  return (</span>
-    &lt;main className="flex min-h-screen w-full bg-[#F5EEDC] text-[#6B4F3E]"&gt;
+    &lt;main className="flex min-h-screen w-full bg-[#FFFFFF] text-[#111827]"&gt;
       {/* Sidebar */}
-      &lt;aside className="fixed left-0 top-0 z-50 hidden h-screen w-72 flex-col bg-[#241E1A] text-white shadow-2xl lg:flex"&gt;
+      &lt;aside className="fixed left-0 top-0 z-50 hidden h-screen w-72 flex-col border-r border-[#DBEAFE] bg-white text-[#111827] shadow-xl lg:flex"&gt;
         {/* Logo */}
-        &lt;div className="flex h-20 items-center gap-3 border-b border-white/10 px-6"&gt;
+        &lt;div className="flex h-20 items-center gap-3 border-b border-[#DBEAFE] px-6"&gt;
           &lt;img
             src={logo}
             alt="Logo LavaClean"
@@ -468,16 +472,16 @@ export default function <span class="fstat-no" title="function not covered" >Adm
 &nbsp;
           &lt;div&gt;
             &lt;h1 className="text-lg font-bold"&gt;LavaClean&lt;/h1&gt;
-            &lt;p className="text-xs text-white/45"&gt;Panel administrador&lt;/p&gt;
+            &lt;p className="text-xs text-[#64748B]"&gt;Panel administrador&lt;/p&gt;
           &lt;/div&gt;
         &lt;/div&gt;
 &nbsp;
         {/* Perfil admin */}
-        &lt;div className="border-b border-white/10 px-6 py-5"&gt;
+        &lt;div className="border-b border-[#DBEAFE] px-6 py-5"&gt;
           &lt;p className="text-sm font-bold"&gt;
             {user?.nombres || "Administrador"}
           &lt;/p&gt;
-          &lt;p className="mt-1 truncate text-xs text-white/45"&gt;
+          &lt;p className="mt-1 truncate text-xs text-[#64748B]"&gt;
             {user?.correo || "admin@lavaclean.com"}
           &lt;/p&gt;
         &lt;/div&gt;
@@ -495,8 +499,8 @@ export default function <span class="fstat-no" title="function not covered" >Adm
 <span class="fstat-no" title="function not covered" >                className={({</span>isActive}) =&gt;
 <span class="cstat-no" title="statement not covered" >                  `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition ${</span>
                     isActive
-                      ? "bg-[#8A6A53] text-white shadow-md"
-                      : "text-[#E7D9C2] hover:bg-white/10 hover:text-white"
+                      ? "bg-[#2563EB] text-white shadow-md"
+                      : "text-[#111827] hover:bg-[#EFF6FF] hover:text-[#2563EB]"
                   }`
                 }
               &gt;
@@ -508,10 +512,10 @@ export default function <span class="fstat-no" title="function not covered" >Adm
         &lt;/nav&gt;
 &nbsp;
         {/* Acciones inferiores */}
-        &lt;div className="space-y-2 border-t border-white/10 px-4 py-5"&gt;
+        &lt;div className="space-y-2 border-t border-[#DBEAFE] px-4 py-5"&gt;
           &lt;Link
             to="/"
-            className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-[#E7D9C2] transition hover:bg-white/10 hover:text-white"
+            className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-[#111827] transition hover:bg-[#EFF6FF] hover:text-[#2563EB]"
           &gt;
             &lt;ArrowLeft size={18} /&gt;
             Volver al sitio
@@ -520,7 +524,7 @@ export default function <span class="fstat-no" title="function not covered" >Adm
           &lt;button
             type="button"
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold text-red-300 transition hover:bg-red-500/10 hover:text-red-200"
+            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold text-red-600 transition hover:bg-red-50 hover:text-red-700"
           &gt;
             &lt;LogOut size={18} /&gt;
             Cerrar sesión
@@ -531,20 +535,22 @@ export default function <span class="fstat-no" title="function not covered" >Adm
       {/* Contenido principal */}
       &lt;section className="min-h-screen w-full lg:pl-72"&gt;
         {/* Header móvil / superior */}
-        &lt;header className="sticky top-0 z-40 flex h-20 items-center justify-between bg-[#6B4F3E] px-6 text-white shadow-md lg:hidden"&gt;
+        &lt;header className="sticky top-0 z-40 flex h-20 items-center justify-between border-b border-[#DBEAFE] bg-white px-6 text-[#111827] shadow-md lg:hidden"&gt;
           &lt;Link to="/" className="flex items-center gap-2"&gt;
             &lt;img
               src={logo}
               alt="Logo LavaClean"
               className="h-10 w-10 object-contain"
             /&gt;
-            &lt;span className="font-bold"&gt;LavaClean Admin&lt;/span&gt;
+            &lt;span className="font-bold transition hover:text-[#2563EB]"&gt;
+              LavaClean Admin
+            &lt;/span&gt;
           &lt;/Link&gt;
 &nbsp;
           &lt;button
             type="button"
             onClick={handleLogout}
-            className="rounded-full bg-[#F8EFD8] px-4 py-2 text-sm font-bold text-[#6B4F3E]"
+            className="rounded-full border border-[#BFDBFE] bg-white px-4 py-2 text-sm font-bold text-[#111827] transition hover:border-[#2563EB] hover:bg-[#EFF6FF] hover:text-[#2563EB]"
           &gt;
             Salir
           &lt;/button&gt;
@@ -568,7 +574,7 @@ export default function <span class="fstat-no" title="function not covered" >Adm
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-06-20T00:53:05.808Z
+                at 2026-07-13T06:03:01.808Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

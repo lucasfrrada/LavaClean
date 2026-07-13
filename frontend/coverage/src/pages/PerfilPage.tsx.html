@@ -358,7 +358,10 @@
 <a name='L293'></a><a href='#L293'>293</a>
 <a name='L294'></a><a href='#L294'>294</a>
 <a name='L295'></a><a href='#L295'>295</a>
-<a name='L296'></a><a href='#L296'>296</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L296'></a><a href='#L296'>296</a>
+<a name='L297'></a><a href='#L297'>297</a>
+<a name='L298'></a><a href='#L298'>298</a>
+<a name='L299'></a><a href='#L299'>299</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -488,6 +491,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -767,13 +773,13 @@ export default function PerfilPage() {
 &nbsp;
   if (!user) {
     return (
-      &lt;main className="flex min-h-screen w-full items-center justify-center bg-[#F5EEDC] px-6 text-[#6B4F3E]"&gt;
+      &lt;main className="flex min-h-screen w-full items-center justify-center bg-[#FFFFFF] px-6 text-[#111827]"&gt;
         &lt;section className="rounded-3xl bg-white p-8 text-center shadow-xl"&gt;
           &lt;h1 className="text-2xl font-bold"&gt;No has iniciado sesión&lt;/h1&gt;
 &nbsp;
           &lt;Link
             to="/login"
-            className="mt-6 inline-flex rounded-full bg-[#6B4F3E] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#5A4334]"
+            className="mt-6 inline-flex rounded-full bg-[#1D4ED8] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#1E40AF]"
           &gt;
             Iniciar sesión
           &lt;/Link&gt;
@@ -783,17 +789,20 @@ export default function PerfilPage() {
   }
 &nbsp;
   return (
-    &lt;main className="min-h-screen w-full bg-[#F5EEDC] text-[#6B4F3E]"&gt;
-      &lt;header className="fixed left-0 top-0 z-50 w-full bg-[#6B4F3E] shadow-md"&gt;
+    &lt;main className="min-h-screen w-full bg-[#FFFFFF] text-[#111827]"&gt;
+      &lt;header className="fixed left-0 top-0 z-50 w-full border-b border-[#DBEAFE] bg-white/95 shadow-md backdrop-blur-md"&gt;
         &lt;nav className="mx-auto flex max-w-7xl items-center justify-between px-8 py-4"&gt;
-          &lt;Link to="/" className="text-xl font-bold text-white"&gt;
+          &lt;Link
+            to="/"
+            className="text-xl font-bold text-[#111827] transition hover:text-[#2563EB]"
+          &gt;
             LavaClean
           &lt;/Link&gt;
 &nbsp;
           &lt;button
             type="button"
 <span class="fstat-no" title="function not covered" >            onClick={() =&gt; <span class="cstat-no" title="statement not covered" >n</span>avigate(-1)}</span>
-            className="flex items-center gap-2 text-sm font-medium text-white/90 transition hover:text-white"
+            className="flex items-center gap-2 text-sm font-medium text-[#111827] transition hover:text-[#2563EB]"
           &gt;
             &lt;ArrowLeft size={17} /&gt;
             Volver
@@ -808,13 +817,13 @@ export default function PerfilPage() {
         &gt;
           &lt;div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between"&gt;
             &lt;div className="flex items-center gap-4"&gt;
-              &lt;div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#6B4F3E] text-[#F8EFD8]"&gt;
+              &lt;div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#1D4ED8] text-[#EFF6FF]"&gt;
                 &lt;User size={28} /&gt;
               &lt;/div&gt;
 &nbsp;
               &lt;div&gt;
-                &lt;h1 className="text-3xl font-bold text-[#6B4F3E]"&gt;Mis datos&lt;/h1&gt;
-                &lt;p className="mt-1 text-sm text-[#9A7C5F]"&gt;
+                &lt;h1 className="text-3xl font-bold text-[#111827]"&gt;Mis datos&lt;/h1&gt;
+                &lt;p className="mt-1 text-sm text-[#64748B]"&gt;
                   Revisa y actualiza tu información personal.
                 &lt;/p&gt;
               &lt;/div&gt;
@@ -828,7 +837,7 @@ export default function PerfilPage() {
                   setErrorMessage("");
                   setSuccessMessage("");
                 }}
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#6B4F3E] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#5A4334]"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#1D4ED8] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#1E40AF]"
               &gt;
                 &lt;Pencil size={17} /&gt;
                 Editar datos
@@ -837,7 +846,7 @@ export default function PerfilPage() {
               &lt;button
                 type="button"
                 onClick={handleCancelEdit}
-                className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#D8C7AF] px-5 py-3 text-sm font-bold text-[#6B4F3E] transition hover:bg-[#F5EEDC]"
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#BFDBFE] px-5 py-3 text-sm font-bold text-[#111827] transition hover:bg-[#EFF6FF]"
               &gt;
                 &lt;X size={17} /&gt;
                 Cancelar
@@ -852,7 +861,7 @@ export default function PerfilPage() {
           )}
 &nbsp;
           {successMessage &amp;&amp; (
-            &lt;p className="mb-6 rounded-xl bg-green-100 px-5 py-4 text-sm font-semibold text-green-700"&gt;
+            &lt;p className="mb-6 rounded-xl bg-blue-100 px-5 py-4 text-sm font-semibold text-blue-700"&gt;
               {successMessage}
             &lt;/p&gt;
           )}
@@ -900,7 +909,7 @@ export default function PerfilPage() {
             &lt;button
               type="submit"
               disabled={isSaving}
-              className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#6B4F3E] px-5 py-4 text-sm font-bold text-white transition hover:bg-[#5A4334] disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#1D4ED8] px-5 py-4 text-sm font-bold text-white transition hover:bg-[#1E40AF] disabled:cursor-not-allowed disabled:opacity-60"
             &gt;
               &lt;Check size={18} /&gt;
               {isSaving ? "Guardando..." : "Guardar cambios"}
@@ -929,7 +938,7 @@ function ProfileInput({
 }: ProfileInputProps) {
   return (
     &lt;div&gt;
-      &lt;label className="mb-2 block text-sm font-bold text-[#7A6252]"&gt;
+      &lt;label className="mb-2 block text-sm font-bold text-[#1E3A8A]"&gt;
         {label}
       &lt;/label&gt;
 &nbsp;
@@ -941,8 +950,8 @@ function ProfileInput({
         required
         className={`w-full rounded-lg border px-4 py-3 text-sm outline-none transition ${
           disabled
-            ? "border-[#E5D8C5] bg-[#F8F5EE] text-[#8A7161]"
-            : "border-[#D8C7AF] bg-[#F5EEDC] text-[#6B4F3E] focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+            ? "border-[#DBEAFE] bg-[#EFF6FF] text-[#475569]"
+            : "border-[#BFDBFE] bg-[#FFFFFF] text-[#111827] focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
         }`}
       /&gt;
     &lt;/div&gt;
@@ -955,7 +964,7 @@ function ProfileInput({
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-06-20T00:53:05.808Z
+                at 2026-07-13T06:03:01.808Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

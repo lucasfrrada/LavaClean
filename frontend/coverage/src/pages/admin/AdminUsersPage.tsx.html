@@ -1013,11 +1013,11 @@ export default function AdminUsersPage() {
   return (
     &lt;section&gt;
       &lt;div className="mb-8"&gt;
-        &lt;h1 className="text-3xl font-bold text-[#6B4F3E]"&gt;
+        &lt;h1 className="text-3xl font-bold text-[#111827]"&gt;
           Gestión de clientes
         &lt;/h1&gt;
 &nbsp;
-        &lt;p className="mt-2 text-sm text-[#9A7C5F]"&gt;
+        &lt;p className="mt-2 text-sm text-[#64748B]"&gt;
           Crea, edita y administra los clientes registrados en LavaClean.
         &lt;/p&gt;
       &lt;/div&gt;
@@ -1028,7 +1028,7 @@ export default function AdminUsersPage() {
           className="rounded-3xl bg-white p-6 shadow-xl"
         &gt;
           &lt;div className="mb-5 flex items-center gap-3"&gt;
-            &lt;div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#F5EEDC] text-[#6B4F3E]"&gt;
+            &lt;div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FFFFFF] text-[#111827]"&gt;
               &lt;UserRound size={22} /&gt;
             &lt;/div&gt;
 &nbsp;
@@ -1036,7 +1036,7 @@ export default function AdminUsersPage() {
               &lt;h2 className="text-xl font-bold"&gt;
                 {editingCliente ? <span class="branch-0 cbranch-no" title="branch not covered" >"Editar cliente" : "</span>Nuevo cliente"}
               &lt;/h2&gt;
-              &lt;p className="text-sm text-[#9A7C5F]"&gt;
+              &lt;p className="text-sm text-[#64748B]"&gt;
                 Completa los datos del cliente.
               &lt;/p&gt;
             &lt;/div&gt;
@@ -1051,7 +1051,7 @@ export default function AdminUsersPage() {
 <span class="cstat-no" title="statement not covered" >                setForm({...form, nombres: event.target.value})</span>
               }
               required
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+              className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
             /&gt;
 &nbsp;
             &lt;input
@@ -1062,7 +1062,7 @@ export default function AdminUsersPage() {
 <span class="cstat-no" title="statement not covered" >                setForm({...form, apPaterno: event.target.value})</span>
               }
               required
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+              className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
             /&gt;
 &nbsp;
             &lt;input
@@ -1073,7 +1073,7 @@ export default function AdminUsersPage() {
 <span class="cstat-no" title="statement not covered" >                setForm({...form, apMaterno: event.target.value})</span>
               }
               required
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+              className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
             /&gt;
 &nbsp;
             &lt;input
@@ -1084,7 +1084,7 @@ export default function AdminUsersPage() {
 <span class="cstat-no" title="statement not covered" >                setForm({...form, correo: event.target.value})</span>
               }
               required
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+              className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
             /&gt;
 &nbsp;
             &lt;input
@@ -1095,7 +1095,7 @@ export default function AdminUsersPage() {
 <span class="cstat-no" title="statement not covered" >                setForm({...form, telefono: event.target.value})</span>
               }
               required
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+              className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
             /&gt;
 &nbsp;
             {!editingCliente &amp;&amp; (
@@ -1108,7 +1108,7 @@ export default function AdminUsersPage() {
                 }
                 required
                 minLength={8}
-                className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+                className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
               /&gt;
             )}
 &nbsp;
@@ -1117,7 +1117,7 @@ export default function AdminUsersPage() {
 <span class="fstat-no" title="function not covered" >              onChange={(e</span>vent) =&gt;
 <span class="cstat-no" title="statement not covered" >                setForm({...form, rol: event.target.value as UserRole})</span>
               }
-              className="w-full rounded-lg border border-[#D8C7AF] bg-[#F5EEDC] px-4 py-3 text-sm outline-none focus:border-[#8A6A53] focus:ring-2 focus:ring-[#8A6A53]/20"
+              className="w-full rounded-lg border border-[#BFDBFE] bg-[#FFFFFF] px-4 py-3 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
             &gt;
               &lt;option value="CLIENTE"&gt;Cliente&lt;/option&gt;
               &lt;option value="ADMINISTRADOR"&gt;Administrador&lt;/option&gt;
@@ -1133,7 +1133,7 @@ export default function AdminUsersPage() {
               &lt;button
                 type="submit"
                 disabled={isSaving}
-                className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#6B4F3E] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#5A4334] disabled:opacity-60"
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#1D4ED8] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#1E40AF] disabled:opacity-60"
               &gt;
                 &lt;Plus size={18} /&gt;
                 {isSaving
@@ -1147,7 +1147,7 @@ export default function AdminUsersPage() {
 <span class="branch-1 cbranch-no" title="branch not covered" >                &lt;button</span>
                   type="button"
                   onClick={handleCancelEdit}
-                  className="inline-flex items-center justify-center rounded-lg border border-[#D8C7AF] px-4 py-3 text-sm font-bold text-[#6B4F3E] transition hover:bg-[#F5EEDC]"
+                  className="inline-flex items-center justify-center rounded-lg border border-[#BFDBFE] px-4 py-3 text-sm font-bold text-[#111827] transition hover:bg-[#EFF6FF]"
                 &gt;
                   &lt;X size={18} /&gt;
                 &lt;/button&gt;
@@ -1158,25 +1158,25 @@ export default function AdminUsersPage() {
 &nbsp;
         &lt;section className="rounded-3xl bg-white p-6 shadow-xl"&gt;
           &lt;div className="mb-5"&gt;
-            &lt;h2 className="text-xl font-bold text-[#6B4F3E]"&gt;
+            &lt;h2 className="text-xl font-bold text-[#111827]"&gt;
               Listado de clientes
             &lt;/h2&gt;
 &nbsp;
-            &lt;p className="mt-1 text-sm text-[#9A7C5F]"&gt;
+            &lt;p className="mt-1 text-sm text-[#64748B]"&gt;
               Total registrados: {clientes.length}
             &lt;/p&gt;
           &lt;/div&gt;
 &nbsp;
           {isLoading ? (
-            &lt;p className="text-sm text-[#9A7C5F]"&gt;Cargando clientes...&lt;/p&gt;
+            &lt;p className="text-sm text-[#64748B]"&gt;Cargando clientes...&lt;/p&gt;
           ) : clientes.length === 0 ? (
-            &lt;p className="rounded-2xl bg-[#F8F5EE] p-5 text-sm text-[#9A7C5F]"&gt;
+            &lt;p className="rounded-2xl bg-[#EFF6FF] p-5 text-sm text-[#64748B]"&gt;
               No hay clientes registrados todavía.
             &lt;/p&gt;
           ) : (
-            &lt;div className="overflow-hidden rounded-2xl border border-[#E5D8C5]"&gt;
+            &lt;div className="overflow-hidden rounded-2xl border border-[#DBEAFE]"&gt;
               &lt;table className="w-full text-left text-sm"&gt;
-                &lt;thead className="bg-[#F5EEDC] text-[#6B4F3E]"&gt;
+                &lt;thead className="bg-[#FFFFFF] text-[#111827]"&gt;
                   &lt;tr&gt;
                     &lt;th className="px-5 py-4"&gt;ID&lt;/th&gt;
                     &lt;th className="px-5 py-4"&gt;Cliente&lt;/th&gt;
@@ -1190,7 +1190,7 @@ export default function AdminUsersPage() {
                   {clientes.map((cliente) =&gt; (
                     &lt;tr
                       key={cliente.idUsuario}
-                      className="border-t border-[#E5D8C5] hover:bg-[#F8F5EE]"
+                      className="border-t border-[#DBEAFE] hover:bg-[#EFF6FF]"
                     &gt;
                       &lt;td className="px-5 py-4 font-bold"&gt;
                         #{cliente.idUsuario}
@@ -1200,14 +1200,14 @@ export default function AdminUsersPage() {
                         &lt;p className="font-bold"&gt;
                           {cliente.nombres} {cliente.apPaterno}
                         &lt;/p&gt;
-                        &lt;p className="mt-1 text-xs text-[#8A7161]"&gt;
+                        &lt;p className="mt-1 text-xs text-[#475569]"&gt;
                           {cliente.apMaterno}
                         &lt;/p&gt;
                       &lt;/td&gt;
 &nbsp;
                       &lt;td className="px-5 py-4"&gt;
                         &lt;p className="font-semibold"&gt;{cliente.correo}&lt;/p&gt;
-                        &lt;p className="mt-1 text-xs text-[#8A7161]"&gt;
+                        &lt;p className="mt-1 text-xs text-[#475569]"&gt;
                           {cliente.telefono}
                         &lt;/p&gt;
                       &lt;/td&gt;
@@ -1216,8 +1216,8 @@ export default function AdminUsersPage() {
                         &lt;span
                           className={`rounded-full px-3 py-1 text-xs font-bold ${
                             cliente.rol === "ADMINISTRADOR"
-                              ? <span class="branch-0 cbranch-no" title="branch not covered" >"bg-purple-100 text-purple-700"</span>
-                              : "bg-green-100 text-green-700"
+                              ? <span class="branch-0 cbranch-no" title="branch not covered" >"bg-indigo-100 text-indigo-700"</span>
+                              : "bg-blue-100 text-blue-700"
                           }`}
                         &gt;
                           {cliente.rol}
@@ -1229,7 +1229,7 @@ export default function AdminUsersPage() {
                           &lt;button
                             type="button"
 <span class="fstat-no" title="function not covered" >                            onClick={() =&gt; <span class="cstat-no" title="statement not covered" >h</span>andleEdit(cliente)}</span>
-                            className="rounded-lg bg-[#F5EEDC] p-2 text-[#6B4F3E] transition hover:bg-[#E8D8BE]"
+                            className="rounded-lg bg-[#FFFFFF] p-2 text-[#111827] transition hover:bg-[#DBEAFE]"
                           &gt;
                             &lt;Pencil size={17} /&gt;
                           &lt;/button&gt;
@@ -1261,7 +1261,7 @@ export default function AdminUsersPage() {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-06-20T00:53:05.808Z
+                at 2026-07-13T06:03:01.808Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

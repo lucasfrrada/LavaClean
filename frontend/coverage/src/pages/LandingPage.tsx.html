@@ -552,16 +552,16 @@ const benefits = [
 &nbsp;
 export default function LandingPage() {
   return (
-    &lt;main className="min-h-screen w-full bg-[#F5EEDC] text-white"&gt;
+    &lt;main className="min-h-screen w-full bg-[#FFFFFF] text-white"&gt;
       {/* Navbar */}
       &lt;NavbarMain&gt;&lt;/NavbarMain&gt;
       {/* Hero */}
       &lt;HeroSection&gt;&lt;/HeroSection&gt;
 &nbsp;
       {/* Compromisos */}
-      &lt;section id="servicios" className="bg-[#6B4F3E] px-6 py-16 text-center"&gt;
+      &lt;section id="servicios" className="bg-[#1D4ED8] px-6 py-16 text-center"&gt;
         &lt;h2 className="text-3xl font-bold"&gt;Nuestros compromisos&lt;/h2&gt;
-        &lt;div className="mx-auto mt-4 h-1 w-16 rounded-full bg-[#F8EFD8]" /&gt;
+        &lt;div className="mx-auto mt-4 h-1 w-16 rounded-full bg-[#EFF6FF]" /&gt;
 &nbsp;
         &lt;div className="mx-auto mt-12 grid max-w-6xl grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5"&gt;
           {commitments.map((item) =&gt; {
@@ -572,13 +572,13 @@ export default function LandingPage() {
                 key={item.title}
                 className="flex flex-col items-center text-center"
               &gt;
-                &lt;div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#F8EFD8] text-[#6B4F3E] shadow-lg"&gt;
+                &lt;div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#EFF6FF] text-[#111827] shadow-lg"&gt;
                   &lt;Icon size={36} strokeWidth={2.2} /&gt;
                 &lt;/div&gt;
 &nbsp;
                 &lt;h3 className="mt-5 text-base font-bold"&gt;{item.title}&lt;/h3&gt;
 &nbsp;
-                &lt;p className="mt-2 max-w-[180px] text-xs leading-relaxed text-[#E7D9C2]"&gt;
+                &lt;p className="mt-2 max-w-[180px] text-xs leading-relaxed text-[#DBEAFE]"&gt;
                   {item.description}
                 &lt;/p&gt;
               &lt;/article&gt;
@@ -588,7 +588,7 @@ export default function LandingPage() {
       &lt;/section&gt;
 &nbsp;
       {/* Por qué elegir LavaClean */}
-      &lt;section id="nosotros" className="bg-[#F5EEDC] px-6 py-20 text-[#6B4F3E]"&gt;
+      &lt;section id="nosotros" className="bg-[#FFFFFF] px-6 py-20 text-[#111827]"&gt;
         &lt;div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-2"&gt;
           &lt;div&gt;
             &lt;h2 className="text-3xl font-bold md:text-4xl"&gt;
@@ -601,13 +601,13 @@ export default function LandingPage() {
 &nbsp;
                 return (
                   &lt;div key={benefit.title} className="flex gap-4"&gt;
-                    &lt;div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#6B4F3E] text-[#F8EFD8]"&gt;
+                    &lt;div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#1D4ED8] text-[#EFF6FF]"&gt;
                       &lt;Icon size={22} /&gt;
                     &lt;/div&gt;
 &nbsp;
                     &lt;div&gt;
                       &lt;h3 className="text-base font-bold"&gt;{benefit.title}&lt;/h3&gt;
-                      &lt;p className="mt-1 text-sm leading-relaxed text-[#8A7161]"&gt;
+                      &lt;p className="mt-1 text-sm leading-relaxed text-[#475569]"&gt;
                         {benefit.description}
                       &lt;/p&gt;
                     &lt;/div&gt;
@@ -617,14 +617,14 @@ export default function LandingPage() {
             &lt;/div&gt;
           &lt;/div&gt;
 &nbsp;
-          &lt;div className="rounded-xl bg-gradient-to-br from-[#8A6A53] to-[#6B4F3E] p-8 text-white shadow-2xl"&gt;
+          &lt;div className="rounded-xl bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] p-8 text-white shadow-2xl"&gt;
             &lt;h3 className="text-3xl font-bold"&gt;¡Obtén 20% de descuento!&lt;/h3&gt;
 &nbsp;
-            &lt;p className="mt-4 text-sm text-[#F5EEDC]"&gt;
+            &lt;p className="mt-4 text-sm text-[#FFFFFF]"&gt;
               En tu primer servicio al registrarte hoy
             &lt;/p&gt;
 &nbsp;
-            &lt;button className="mt-6 w-full rounded-full bg-[#F8EFD8] py-3 text-sm font-bold text-[#6B4F3E] transition hover:bg-white"&gt;
+            &lt;button className="mt-6 w-full rounded-full bg-[#EFF6FF] py-3 text-sm font-bold text-[#111827] transition hover:bg-white"&gt;
               Obtener descuento
             &lt;/button&gt;
           &lt;/div&gt;
@@ -632,33 +632,33 @@ export default function LandingPage() {
       &lt;/section&gt;
 &nbsp;
       {/* Call to action */}
-      &lt;section className="bg-gradient-to-br from-[#7B5E48] to-[#5A4334] px-6 py-20 text-center"&gt;
+      &lt;section className="bg-gradient-to-br from-[#1E40AF] to-[#2563EB] px-6 py-20 text-center"&gt;
         &lt;h2 className="text-3xl font-bold md:text-4xl"&gt;
           ¿Listo para disfrutar de ropa impecable?
         &lt;/h2&gt;
 &nbsp;
-        &lt;p className="mt-5 mb-5 text-sm text-[#F5EEDC] md:text-base"&gt;
+        &lt;p className="mt-5 mb-5 text-sm text-[#FFFFFF] md:text-base"&gt;
           Únete a miles de clientes satisfechos que confían en LavaClean
         &lt;/p&gt;
 &nbsp;
         &lt;Link
           to="/agendar"
-          className="inline-flex items-center justify-center rounded-full bg-[#F8EFD8] px-9 py-3 text-sm font-bold text-[#6B4F3E] shadow-xl transition hover:-translate-y-1 hover:bg-white"
+          className="inline-flex items-center justify-center rounded-full bg-[#EFF6FF] px-9 py-3 text-sm font-bold text-[#111827] shadow-xl transition hover:-translate-y-1 hover:bg-white"
         &gt;
           Agenda tu servicio
         &lt;/Link&gt;
       &lt;/section&gt;
 &nbsp;
       {/* Footer */}
-      &lt;footer id="contacto" className="bg-[#6B4F3E] px-6 py-12 text-[#F5EEDC]"&gt;
-        &lt;div className="mx-auto grid max-w-6xl gap-10 border-b border-[#8A7161] pb-10 md:grid-cols-4"&gt;
+      &lt;footer id="contacto" className="bg-[#1D4ED8] px-6 py-12 text-[#FFFFFF]"&gt;
+        &lt;div className="mx-auto grid max-w-6xl gap-10 border-b border-[#475569] pb-10 md:grid-cols-4"&gt;
           &lt;div&gt;
             &lt;div className="flex items-center gap-2"&gt;
               &lt;span&gt;🧺&lt;/span&gt;
               &lt;span className="text-lg font-bold text-white"&gt;LavaClean&lt;/span&gt;
             &lt;/div&gt;
 &nbsp;
-            &lt;p className="mt-4 max-w-xs text-sm leading-relaxed text-[#E7D9C2]"&gt;
+            &lt;p className="mt-4 max-w-xs text-sm leading-relaxed text-[#DBEAFE]"&gt;
               Lavandería ecológica con servicio premium para el cuidado de tu
               ropa.
             &lt;/p&gt;
@@ -666,7 +666,7 @@ export default function LandingPage() {
 &nbsp;
           &lt;div&gt;
             &lt;h4 className="font-bold text-white"&gt;Servicios&lt;/h4&gt;
-            &lt;ul className="mt-4 space-y-3 text-sm text-[#E7D9C2]"&gt;
+            &lt;ul className="mt-4 space-y-3 text-sm text-[#DBEAFE]"&gt;
               &lt;li&gt;Lavado y planchado&lt;/li&gt;
               &lt;li&gt;Tintorería&lt;/li&gt;
               &lt;li&gt;Lavado express&lt;/li&gt;
@@ -676,7 +676,7 @@ export default function LandingPage() {
 &nbsp;
           &lt;div&gt;
             &lt;h4 className="font-bold text-white"&gt;Compañía&lt;/h4&gt;
-            &lt;ul className="mt-4 space-y-3 text-sm text-[#E7D9C2]"&gt;
+            &lt;ul className="mt-4 space-y-3 text-sm text-[#DBEAFE]"&gt;
               &lt;li&gt;Nosotros&lt;/li&gt;
               &lt;li&gt;Blog&lt;/li&gt;
               &lt;li&gt;Sucursales&lt;/li&gt;
@@ -686,7 +686,7 @@ export default function LandingPage() {
 &nbsp;
           &lt;div&gt;
             &lt;h4 className="font-bold text-white"&gt;Contacto&lt;/h4&gt;
-            &lt;ul className="mt-4 space-y-3 text-sm text-[#E7D9C2]"&gt;
+            &lt;ul className="mt-4 space-y-3 text-sm text-[#DBEAFE]"&gt;
               &lt;li&gt;contacto@lavaclean.com&lt;/li&gt;
               &lt;li&gt;+52 123 456 7890&lt;/li&gt;
               &lt;li&gt;Lun - Sáb: 8am - 8pm&lt;/li&gt;
@@ -695,7 +695,7 @@ export default function LandingPage() {
           &lt;/div&gt;
         &lt;/div&gt;
 &nbsp;
-        &lt;p className="mt-8 text-center text-sm text-[#D8C7AF]"&gt;
+        &lt;p className="mt-8 text-center text-sm text-[#BFDBFE]"&gt;
           © 2026 LavaClean. Todos los derechos reservados.
         &lt;/p&gt;
       &lt;/footer&gt;
@@ -709,7 +709,7 @@ export default function LandingPage() {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-06-20T00:53:05.808Z
+                at 2026-07-13T06:03:01.808Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

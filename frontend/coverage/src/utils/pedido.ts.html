@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for src/api/pedidoService.ts</title>
+    <title>Code coverage report for src/utils/pedido.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">src/api</a> pedidoService.ts</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">src/utils</a> pedido.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">66.66% </span>
+                <span class="strong">89.47% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>6/9</span>
+                <span class='fraction'>17/19</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">88.46% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>23/26</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
-                <span class="quiet">Branches</span>
-                <span class='fraction'>0/0</span>
-            </div>
-        
-            
-            <div class='fl pad1y space-right2'>
-                <span class="strong">66.66% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>4/6</span>
+                <span class='fraction'>8/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">66.66% </span>
+                <span class="strong">94.11% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>6/9</span>
+                <span class='fraction'>16/17</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -123,20 +123,9 @@
 <a name='L58'></a><a href='#L58'>58</a>
 <a name='L59'></a><a href='#L59'>59</a>
 <a name='L60'></a><a href='#L60'>60</a>
-<a name='L61'></a><a href='#L61'>61</a>
-<a name='L62'></a><a href='#L62'>62</a>
-<a name='L63'></a><a href='#L63'>63</a>
-<a name='L64'></a><a href='#L64'>64</a>
-<a name='L65'></a><a href='#L65'>65</a>
-<a name='L66'></a><a href='#L66'>66</a>
-<a name='L67'></a><a href='#L67'>67</a>
-<a name='L68'></a><a href='#L68'>68</a>
-<a name='L69'></a><a href='#L69'>69</a>
-<a name='L70'></a><a href='#L70'>70</a>
-<a name='L71'></a><a href='#L71'>71</a>
-<a name='L72'></a><a href='#L72'>72</a>
-<a name='L73'></a><a href='#L73'>73</a>
-<a name='L74'></a><a href='#L74'>74</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L61'></a><a href='#L61'>61</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -145,18 +134,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">23x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -164,42 +142,23 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">36x</span>
+<span class="cline-any cline-yes">23x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">47x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -207,80 +166,82 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {apiClient} from "./apiClient";
-import type {
-  CreatePedidoRequest,
-  ConfirmarPesoRequest,
-  EstadoPedido,
-  Pedido,
-  UpdateEstadoPedidoRequest,
-  SeleccionServicioRequest,
-} from "../types/pedido";
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">29x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import type {Pedido, Prenda, Servicio} from "../types/pedido";
 &nbsp;
-const PEDIDO_API_URL = import.meta.env.VITE_PEDIDO_API_URL;
+const PESOS_REFERENCIA: Record&lt;string, number&gt; = {
+  polera: 0.2,
+  pantalon: 0.5,
+  "ropa interior": 0.1,
+  chaqueta: 1,
+  sabana: 0.8,
+};
 &nbsp;
-export function getPedidosRequest(token: string) {
-  return apiClient&lt;Pedido[]&gt;(PEDIDO_API_URL, "/pedidos", {
-    method: "GET",
-    token,
-  });
+function normalizar(texto: string) {
+  return texto
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase();
 }
 &nbsp;
-export function createPedidoRequest(data: CreatePedidoRequest, token: string) {
-  return apiClient&lt;Pedido&gt;(PEDIDO_API_URL, "/pedidos", {
-    method: "POST",
-    body: data,
-    token,
-  });
-}
-&nbsp;
-export function updateEstadoPedidoRequest(
-  idPedido: number,
-  estado: EstadoPedido,
-  token: string,
-) {
-  const data: UpdateEstadoPedidoRequest = {estado};
-&nbsp;
-  return apiClient&lt;Pedido&gt;(PEDIDO_API_URL, `/pedidos/${idPedido}/estado`, {
-    method: "PATCH",
-    body: data,
-    token,
-  });
-}
-&nbsp;
-export function <span class="fstat-no" title="function not covered" >confirmarPesoPedidoRequest(</span>
-  idPedido: number,
-  pesoRealKg: number,
-  token: string,
-) {
-  const data: ConfirmarPesoRequest = <span class="cstat-no" title="statement not covered" >{pesoRealKg};</span>
-&nbsp;
-<span class="cstat-no" title="statement not covered" >  return apiClient&lt;Pedido&gt;(</span>
-    PEDIDO_API_URL,
-    `/pedidos/${idPedido}/confirmar-peso`,
-    {method: "PATCH", body: data, token},
+export function getPesoReferencia(prenda?: Prenda) {
+  if (!prenda) return 0;
+  return Number(
+    prenda.pesoReferenciaKg ?? PESOS_REFERENCIA[normalizar(prenda.nombrePrenda)] ?? 0,
   );
 }
 &nbsp;
-export function deletePedidoRequest(idPedido: number, token: string) {
-  return apiClient&lt;void&gt;(PEDIDO_API_URL, `/pedidos/${idPedido}`, {
-    method: "DELETE",
-    token,
-  });
+export function getPrecioPorCarga(servicio?: Servicio) {
+  return Number(
+    servicio?.precioBase ?? servicio?.precioPorCarga ?? servicio?.precio ?? 0,
+  );
 }
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >agregarServiciosExtrasRequest(</span>
-  idPedido: number,
-  serviciosExtras: SeleccionServicioRequest[],
-  token: string,
-) {
-<span class="cstat-no" title="statement not covered" >  return apiClient&lt;Pedido&gt;(</span>
-    PEDIDO_API_URL,
-    `/pedidos/${idPedido}/servicios-extras`,
-    {method: "POST", body: {serviciosExtras}, token},
-  );
+export function getPrecioServicio(servicio?: Servicio, opcionCodigo?: string) {
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!servicio) <span class="cstat-no" title="statement not covered" >return 0;</span>
+  <span class="missing-if-branch" title="else path not taken" >E</span>if (servicio.modalidadCobro === "POR_OPCION") {
+    return Number(
+      servicio.opciones?.find((opcion) =&gt; opcion.codigo === opcionCodigo)
+        ?.precio ?? 0,
+    );
+  }
+<span class="cstat-no" title="statement not covered" >  return getPrecioPorCarga(servicio);</span>
+}
+&nbsp;
+export function getCargas(pesoKg: number) {
+  return pesoKg &gt; 0 ? <span class="branch-0 cbranch-no" title="branch not covered" >Math.ceil(pesoKg / 5) : 0</span>;
+}
+&nbsp;
+export function formatPeso(pesoKg: number) {
+  return `${new Intl.NumberFormat("es-CL", {maximumFractionDigits: 2}).format(pesoKg)} kg`;
+}
+&nbsp;
+export function compararPedidosRecientesPrimero(a: Pedido, b: Pedido) {
+  const fechaA = a.fechaCreacion ? Date.parse(a.fechaCreacion) : Number.NaN;
+  const fechaB = b.fechaCreacion ? Date.parse(b.fechaCreacion) : Number.NaN;
+&nbsp;
+  if (Number.isFinite(fechaA) &amp;&amp; Number.isFinite(fechaB) &amp;&amp; fechaA !== fechaB) {
+    return fechaB - fechaA;
+  }
+&nbsp;
+  return b.idPedido - a.idPedido;
 }
 &nbsp;</pre></td></tr></table></pre>
 

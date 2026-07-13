@@ -1,13 +1,10 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
 import {fireEvent, render, screen, waitFor} from "@testing-library/react";
 import {MemoryRouter} from "react-router-dom";
-import LoginPage from "../LoginPage";
-import {loginRequest} from "../../api/authService";
-import {useAuth} from "../../context/AuthContext";
-import type {LoginResponse} from "../../types/auth";
+import RegisterPage from "../RegisterPage";
+import {registerRequest} from "../../api/usuarioService";
 
 const navigateMock = vi.hoisted(() => vi.fn());
-const loginMock = vi.hoisted(() => vi.fn());
 
 vi.mock("react-router-dom", async () => {
   const actual =
@@ -21,230 +18,169 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
-vi.mock("../../api/authService", () => ({
-  loginRequest: vi.fn(),
+vi.mock("../../api/usuarioService", () => ({
+  registerRequest: vi.fn(),
 }));
 
-vi.mock("../../context/AuthContext", () => ({
-  useAuth: vi.fn(),
-}));
-
-vi.mock("../../components/SuccessScreen", () => ({
-  default: () => <div>Login exitoso</div>,
-}));
-
-const loginResponseClienteMock: LoginResponse = {
-  token: "token-cliente",
-  message: "Login exitoso",
-  idUsuario: 1,
-  nombres: "Benjamín",
-  apPaterno: "Aranda",
-  apMaterno: "Test",
-  correo: "cliente@test.com",
-  telefono: 999999999,
-  rol: "CLIENTE",
-};
-
-const loginResponseAdminMock: LoginResponse = {
-  token: "token-admin",
-  message: "Login exitoso",
-  idUsuario: 2,
-  nombres: "Admin",
-  apPaterno: "Lava",
-  apMaterno: "Clean",
-  correo: "admin@test.com",
-  telefono: 888888888,
-  rol: "ADMINISTRADOR",
-};
-
-function renderLoginPage() {
+function renderRegisterPage() {
   return render(
     <MemoryRouter>
-      <LoginPage />
+      <RegisterPage />
     </MemoryRouter>,
   );
 }
 
-function getLoginInputs(container: HTMLElement) {
-  const correoInput = container.querySelector(
-    'input[type="email"]',
-  ) as HTMLInputElement;
-
-  const contraseniaInput = container.querySelector(
-    'input[type="password"]',
-  ) as HTMLInputElement;
-
-  return {
-    correoInput,
-    contraseniaInput,
-  };
+function fillRegisterForm() {
+  fireEvent.change(screen.getByPlaceholderText("Nombres"), {
+    target: {value: "  Benjamín  "},
+  });
+  fireEvent.change(screen.getByPlaceholderText("Apellido paterno"), {
+    target: {value: "  Aranda  "},
+  });
+  fireEvent.change(screen.getByPlaceholderText("Apellido materno"), {
+    target: {value: "  Test  "},
+  });
+  fireEvent.change(screen.getByPlaceholderText("Correo electrónico"), {
+    target: {value: "  cliente@test.com  "},
+  });
+  fireEvent.change(screen.getByPlaceholderText("Número de teléfono"), {
+    target: {value: "999999999"},
+  });
+  fireEvent.change(screen.getByPlaceholderText("Contraseña"), {
+    target: {value: "password123"},
+  });
+  fireEvent.change(screen.getByPlaceholderText("Confirmar contraseña"), {
+    target: {value: "password123"},
+  });
 }
 
-describe("LoginPage", () => {
+function submitRegisterForm() {
+  const form = screen
+    .getByRole("button", {name: "Crear cuenta"})
+    .closest("form");
+
+  if (!form) {
+    throw new Error("Formulario de registro no encontrado");
+  }
+
+  fireEvent.submit(form);
+}
+
+describe("RegisterPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-
-    vi.mocked(useAuth).mockReturnValue({
-      user: null,
-      token: null,
-      isAuthenticated: false,
-      login: loginMock,
-      logout: vi.fn(),
-      updateUser: vi.fn(),
-    });
+    vi.useRealTimers();
   });
 
-  it("debería renderizar el formulario de login", () => {
-    const {container} = renderLoginPage();
+  it("debería renderizar el formulario de registro", () => {
+    renderRegisterPage();
 
-    const {correoInput, contraseniaInput} = getLoginInputs(container);
-
-    expect(screen.getByText("Iniciar sesión en LavaClean")).toBeInTheDocument();
-
-    expect(correoInput).toBeInTheDocument();
-
-    expect(contraseniaInput).toBeInTheDocument();
-
+    expect(screen.getByText("Crear tu cuenta de LavaClean")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Nombres")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", {name: "Iniciar sesión"}),
+      screen.getByPlaceholderText("Correo electrónico"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", {name: "Crear cuenta"}),
     ).toBeInTheDocument();
   });
 
-  it("debería iniciar sesión como cliente y redirigir al inicio", async () => {
-    vi.mocked(loginRequest).mockResolvedValueOnce(loginResponseClienteMock);
+  it("debería mostrar error si las contraseñas no coinciden", () => {
+    renderRegisterPage();
 
-    const {container} = renderLoginPage();
-
-    const {correoInput, contraseniaInput} = getLoginInputs(container);
-
-    fireEvent.change(correoInput, {
-      target: {
-        value: " cliente@test.com ",
-      },
+    fillRegisterForm();
+    fireEvent.change(screen.getByPlaceholderText("Confirmar contraseña"), {
+      target: {value: "otraPassword"},
     });
 
-    fireEvent.change(contraseniaInput, {
-      target: {
-        value: " password123 ",
-      },
+    submitRegisterForm();
+
+    expect(screen.getByText("Las contraseñas no coinciden.")).toBeInTheDocument();
+    expect(registerRequest).not.toHaveBeenCalled();
+  });
+
+  it("debería mostrar error si la contraseña es demasiado corta", () => {
+    renderRegisterPage();
+
+    fillRegisterForm();
+    fireEvent.change(screen.getByPlaceholderText("Contraseña"), {
+      target: {value: "short"},
+    });
+    fireEvent.change(screen.getByPlaceholderText("Confirmar contraseña"), {
+      target: {value: "short"},
     });
 
-    fireEvent.click(screen.getByRole("button", {name: "Iniciar sesión"}));
+    submitRegisterForm();
+
+    expect(
+      screen.getByText("La contraseña debe tener al menos 8 caracteres."),
+    ).toBeInTheDocument();
+    expect(registerRequest).not.toHaveBeenCalled();
+  });
+
+  it("debería registrar un cliente y redirigir al login", async () => {
+    vi.mocked(registerRequest).mockResolvedValueOnce({
+      idUsuario: 1,
+      nombres: "Benjamín",
+      apPaterno: "Aranda",
+      apMaterno: "Test",
+      correo: "cliente@test.com",
+      telefono: 999999999,
+      rol: "CLIENTE",
+    });
+
+    renderRegisterPage();
+    fillRegisterForm();
+    submitRegisterForm();
 
     await waitFor(() => {
-      expect(loginRequest).toHaveBeenCalledWith({
+      expect(registerRequest).toHaveBeenCalledWith({
+        nombres: "Benjamín",
+        apPaterno: "Aranda",
+        apMaterno: "Test",
         correo: "cliente@test.com",
+        telefono: 999999999,
         contrasenia: "password123",
+        rol: "CLIENTE",
       });
     });
-
-    expect(await screen.findByText("Login exitoso")).toBeInTheDocument();
-
-    await waitFor(
-      () => {
-        expect(loginMock).toHaveBeenCalledWith(
-          {
-            idUsuario: loginResponseClienteMock.idUsuario,
-            nombres: loginResponseClienteMock.nombres,
-            apPaterno: loginResponseClienteMock.apPaterno,
-            apMaterno: loginResponseClienteMock.apMaterno,
-            correo: loginResponseClienteMock.correo,
-            telefono: loginResponseClienteMock.telefono,
-            rol: loginResponseClienteMock.rol,
-          },
-          loginResponseClienteMock.token,
-        );
-      },
-      {
-        timeout: 4000,
-      },
-    );
-
-    expect(navigateMock).toHaveBeenCalledWith("/");
-  }, 8000);
-
-  it("debería iniciar sesión como administrador y redirigir al panel admin", async () => {
-    vi.mocked(loginRequest).mockResolvedValueOnce(loginResponseAdminMock);
-
-    const {container} = renderLoginPage();
-
-    const {correoInput, contraseniaInput} = getLoginInputs(container);
-
-    fireEvent.change(correoInput, {
-      target: {
-        value: "admin@test.com",
-      },
-    });
-
-    fireEvent.change(contraseniaInput, {
-      target: {
-        value: "admin123",
-      },
-    });
-
-    fireEvent.click(screen.getByRole("button", {name: "Iniciar sesión"}));
-
-    await waitFor(() => {
-      expect(loginRequest).toHaveBeenCalledWith({
-        correo: "admin@test.com",
-        contrasenia: "admin123",
-      });
-    });
-
-    expect(await screen.findByText("Login exitoso")).toBeInTheDocument();
-
-    await waitFor(
-      () => {
-        expect(loginMock).toHaveBeenCalledWith(
-          {
-            idUsuario: loginResponseAdminMock.idUsuario,
-            nombres: loginResponseAdminMock.nombres,
-            apPaterno: loginResponseAdminMock.apPaterno,
-            apMaterno: loginResponseAdminMock.apMaterno,
-            correo: loginResponseAdminMock.correo,
-            telefono: loginResponseAdminMock.telefono,
-            rol: loginResponseAdminMock.rol,
-          },
-          loginResponseAdminMock.token,
-        );
-      },
-      {
-        timeout: 4000,
-      },
-    );
-
-    expect(navigateMock).toHaveBeenCalledWith("/admin");
-  }, 8000);
-
-  it("debería mostrar error si las credenciales son incorrectas", async () => {
-    vi.mocked(loginRequest).mockRejectedValueOnce(
-      new Error("Credenciales incorrectas"),
-    );
-
-    const {container} = renderLoginPage();
-
-    const {correoInput, contraseniaInput} = getLoginInputs(container);
-
-    fireEvent.change(correoInput, {
-      target: {
-        value: "error@test.com",
-      },
-    });
-
-    fireEvent.change(contraseniaInput, {
-      target: {
-        value: "wrongpassword",
-      },
-    });
-
-    fireEvent.click(screen.getByRole("button", {name: "Iniciar sesión"}));
 
     expect(
-      await screen.findByText("Correo o contraseña incorrectos."),
+      await screen.findByText(
+        "Cuenta creada correctamente. Redirigiendo al login...",
+      ),
     ).toBeInTheDocument();
 
-    expect(loginMock).not.toHaveBeenCalled();
+    await waitFor(
+      () => {
+        expect(navigateMock).toHaveBeenCalledWith("/login");
+      },
+      {
+        timeout: 1500,
+      },
+    );
+  }, 3000);
 
+  it("debería mostrar error si el registro falla", async () => {
+    const consoleErrorMock = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+
+    vi.mocked(registerRequest).mockRejectedValueOnce(
+      new Error("Correo ya registrado"),
+    );
+
+    renderRegisterPage();
+    fillRegisterForm();
+    submitRegisterForm();
+
+    expect(
+      await screen.findByText(
+        "No se pudo crear la cuenta. Verifica los datos ingresados.",
+      ),
+    ).toBeInTheDocument();
     expect(navigateMock).not.toHaveBeenCalled();
+
+    consoleErrorMock.mockRestore();
   });
 });
